@@ -1,14 +1,12 @@
 import { View, StyleSheet } from 'react-native'
-import { StatusBar } from 'expo-status-bar'
-import Home from './app/pages/home'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
+import Index from './app/index'
 
 export default function App() {
   return (
     <SafeAreaProvider>
       <View style={styles.container}>
-        <StatusBar style="light" />
-        <Home />
+        <Index />
       </View>
     </SafeAreaProvider>
   )
