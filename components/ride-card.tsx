@@ -1,51 +1,65 @@
-import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native'
+import { View, Text, StyleSheet, Pressable } from 'react-native'
+import { Ride } from '../types/ride'
+import PassengerAvatar from './passenger-avatar'
+import Avatar from './avatar'
 
-const driverProfilePicture =
-  'https://cdn-images.dzcdn.net/images/artist/03ac3759cf240640d902d9aa5a067632/1900x1900-000000-80-0-0.jpg'
-
-const route = {
-  origin: 'Ciudad Quesada',
-  destination: 'San José',
+interface RideCardProps {
+  ride: Ride
 }
 
-export default function RideCard() {
+const MARGIN_LEFT = -14
+
+export default function RideCard({ ride }: RideCardProps) {
+  const { passengers, driver, availableSeats } = ride
+
+  const remainingSeats = availableSeats - passengers.length
+
   return (
-    <TouchableOpacity style={styles.card}>
+    <Pressable
+      onPress={() => console.log(`Pressed ${ride.id}`)}
+      style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}
+    >
+      {/* Driver and passengers */}
       <View style={styles.pictureContainer}>
-        <Image
-          source={{ uri: driverProfilePicture }}
-          style={styles.driverImage}
-        />
+        <Avatar user={driver} />
         <View style={styles.passengersContainer}>
-          <Image
-            source={{ uri: driverProfilePicture }}
-            style={styles.passengerImage}
-          />
-          <View style={styles.remainingSeatsContainer}>
-            <Text style={styles.remainingSeatsText}>+3</Text>
-          </View>
+          {passengers.map((passenger, index) => (
+            <View
+              key={passenger.id}
+              style={{
+                marginLeft: index === 0 ? 0 : MARGIN_LEFT,
+              }}
+            >
+              <PassengerAvatar user={passenger} />
+            </View>
+          ))}
+          {remainingSeats > 0 && (
+            <View style={styles.remainingSeatsContainer}>
+              <Text style={styles.remainingSeatsText}>+{remainingSeats}</Text>
+            </View>
+          )}
         </View>
       </View>
-
       <View style={styles.detailsContainer}>
+        {/* Route (origin, destination) */}
         <View style={styles.routeContainer}>
-          <Text style={styles.routeText}>{route.origin}</Text>
+          <Text style={styles.routeText}>{ride.origin}</Text>
           <Text style={styles.arrow}>➡️</Text>
-          <Text style={styles.routeText}>{route.destination}</Text>
+          <Text style={styles.routeText}>{ride.destination}</Text>
         </View>
-
+        {/* Info (departure date, price) */}
         <View style={styles.infoContainer}>
           <View style={styles.infoBlock}>
             <Text style={styles.infoTitle}>11:30 am</Text>
             <Text style={styles.infoSubtitle}>16/12/2024</Text>
           </View>
           <View style={styles.infoBlock}>
-            <Text style={styles.infoTitle}>₡5000</Text>
+            <Text style={styles.infoTitle}>₡{ride.price}</Text>
             <Text style={styles.infoSubtitle}>{'⛽️'}</Text>
           </View>
         </View>
       </View>
-    </TouchableOpacity>
+    </Pressable>
   )
 }
 
@@ -65,54 +79,18 @@ const styles = StyleSheet.create({
     minHeight: 128,
     marginBottom: 8,
   },
+  cardPressed: {
+    backgroundColor: '#374151',
+  },
   pictureContainer: {
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'column',
     paddingHorizontal: 8,
   },
-  driverImage: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    resizeMode: 'cover',
-  },
-  placeholderContainer: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    backgroundColor: '#4B5563',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 8,
-  },
-  placeholderText: {
-    fontSize: 16,
-    color: '#D1D5DB',
-  },
   passengersContainer: {
     flexDirection: 'row',
-  },
-  passengerImage: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    borderWidth: 2,
-    borderColor: '#1F2937',
-    marginLeft: -8,
-  },
-  passengerPlaceholderContainer: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: '#4B5563',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginLeft: -8,
-  },
-  passengerPlaceholderText: {
-    fontSize: 12,
-    color: '#D1D5DB',
+    marginTop: -8,
   },
   remainingSeatsContainer: {
     width: 32,
@@ -123,7 +101,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderWidth: 2,
     borderColor: '#FFFFFF',
-    marginLeft: -8,
+    marginLeft: MARGIN_LEFT,
   },
   remainingSeatsText: {
     fontSize: 12,
@@ -136,12 +114,15 @@ const styles = StyleSheet.create({
   routeContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'flex-start',
     marginBottom: 8,
+    marginHorizontal: 2,
+    flex: 1,
   },
   routeText: {
-    fontSize: 14,
+    fontSize: 16,
     color: '#FFFFFF',
-    maxWidth: 72,
+    maxWidth: 110,
   },
   arrow: {
     fontSize: 18,
