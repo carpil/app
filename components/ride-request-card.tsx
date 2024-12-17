@@ -1,19 +1,16 @@
 import { View, Text, StyleSheet, Pressable } from 'react-native'
-import { Ride } from '../types/ride'
-import PassengerAvatar from './passenger-avatar'
+import { RideRequest } from '../types/ride-request'
 import Avatar from './avatar'
 import { formatDate } from '../utils/format-date'
 
-interface RideCardProps {
-  ride: Ride
+interface RideRequestCardProps {
+  ride: RideRequest
 }
 
 const MARGIN_LEFT = -14
 
-export default function RideCard({ ride }: RideCardProps) {
-  const { passengers, driver, availableSeats, departureDate } = ride
-
-  const remainingSeats = availableSeats - passengers.length
+export default function RideRequestCard({ ride }: RideRequestCardProps) {
+  const { spaces, creator, origin, destination, departureDate } = ride
 
   const { hour, date } = formatDate(departureDate)
 
@@ -24,31 +21,14 @@ export default function RideCard({ ride }: RideCardProps) {
     >
       {/* Driver and passengers */}
       <View style={styles.pictureContainer}>
-        <Avatar user={driver} />
-        <View style={styles.passengersContainer}>
-          {passengers.map((passenger, index) => (
-            <View
-              key={passenger.id}
-              style={{
-                marginLeft: index === 0 ? 0 : MARGIN_LEFT,
-              }}
-            >
-              <PassengerAvatar user={passenger} />
-            </View>
-          ))}
-          {remainingSeats > 0 && (
-            <View style={styles.remainingSeatsContainer}>
-              <Text style={styles.remainingSeatsText}>+{remainingSeats}</Text>
-            </View>
-          )}
-        </View>
+        <Avatar user={creator} />
       </View>
       <View style={styles.detailsContainer}>
         {/* Route (origin, destination) */}
         <View style={styles.routeContainer}>
-          <Text style={styles.routeText}>{ride.origin}</Text>
+          <Text style={styles.routeText}>{origin}</Text>
           <Text style={styles.arrow}>➡️</Text>
-          <Text style={styles.routeText}>{ride.destination}</Text>
+          <Text style={styles.routeText}>{destination}</Text>
         </View>
         {/* Info (departure date, price) */}
         <View style={styles.infoContainer}>
@@ -57,8 +37,8 @@ export default function RideCard({ ride }: RideCardProps) {
             <Text style={styles.infoSubtitle}>{date}</Text>
           </View>
           <View style={styles.infoBlock}>
-            <Text style={styles.infoTitle}>₡{ride.price}</Text>
-            <Text style={styles.infoSubtitle}>{'⛽️'}</Text>
+            <Text style={styles.infoTitle}>{spaces}</Text>
+            <Text style={styles.infoSubtitle}>Espacios</Text>
           </View>
         </View>
       </View>
@@ -129,7 +109,7 @@ const styles = StyleSheet.create({
   },
   arrow: {
     fontSize: 18,
-    marginHorizontal: 8,
+    marginHorizontal: 10,
   },
   infoContainer: {
     flexDirection: 'row',
