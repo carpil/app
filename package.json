@@ -1,7 +1,7 @@
 {
   "name": "carpil",
   "version": "1.0.0",
-  "main": "index.ts",
+  "main": "expo-router/entry.js",
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
@@ -15,7 +15,10 @@
     "expo-status-bar": "~2.0.0",
     "react": "18.3.1",
     "react-native": "0.76.5",
-    "react-native-safe-area-context": "4.12.0"
+    "react-native-safe-area-context": "4.12.0",
+    "expo-router": "~4.0.13",
+    "react-native-screens": "~4.1.0",
+    "expo-linking": "~7.0.3"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
