@@ -2,6 +2,7 @@ import { View, Text, StyleSheet, Pressable } from 'react-native'
 import { RideRequest } from '../types/ride-request'
 import Avatar from './avatar'
 import { formatDate } from '../utils/format-date'
+import { Link } from 'expo-router'
 
 interface RideRequestCardProps {
   ride: RideRequest
@@ -15,34 +16,36 @@ export default function RideRequestCard({ ride }: RideRequestCardProps) {
   const { hour, date } = formatDate(departureDate)
 
   return (
-    <Pressable
-      onPress={() => console.log(`Pressed ${ride.id}`)}
-      style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}
-    >
-      {/* Driver and passengers */}
-      <View style={styles.pictureContainer}>
-        <Avatar user={creator} />
-      </View>
-      <View style={styles.detailsContainer}>
-        {/* Route (origin, destination) */}
-        <View style={styles.routeContainer}>
-          <Text style={styles.routeText}>{origin}</Text>
-          <Text style={styles.arrow}>➡️</Text>
-          <Text style={styles.routeText}>{destination}</Text>
+    <Link href={`/ride-request/${ride.id}`} asChild style={styles.card}>
+      <Pressable
+        onPress={() => console.log(`Pressed ${ride.id}`)}
+        style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}
+      >
+        {/* Driver and passengers */}
+        <View style={styles.pictureContainer}>
+          <Avatar user={creator} />
         </View>
-        {/* Info (departure date, price) */}
-        <View style={styles.infoContainer}>
-          <View style={styles.infoBlock}>
-            <Text style={styles.infoTitle}>{hour}</Text>
-            <Text style={styles.infoSubtitle}>{date}</Text>
+        <View style={styles.detailsContainer}>
+          {/* Route (origin, destination) */}
+          <View style={styles.routeContainer}>
+            <Text style={styles.routeText}>{origin}</Text>
+            <Text style={styles.arrow}>➡️</Text>
+            <Text style={styles.routeText}>{destination}</Text>
           </View>
-          <View style={styles.infoBlock}>
-            <Text style={styles.infoTitle}>{spaces}</Text>
-            <Text style={styles.infoSubtitle}>Espacios</Text>
+          {/* Info (departure date, price) */}
+          <View style={styles.infoContainer}>
+            <View style={styles.infoBlock}>
+              <Text style={styles.infoTitle}>{hour}</Text>
+              <Text style={styles.infoSubtitle}>{date}</Text>
+            </View>
+            <View style={styles.infoBlock}>
+              <Text style={styles.infoTitle}>{spaces}</Text>
+              <Text style={styles.infoSubtitle}>Espacios</Text>
+            </View>
           </View>
         </View>
-      </View>
-    </Pressable>
+      </Pressable>
+    </Link>
   )
 }
 
