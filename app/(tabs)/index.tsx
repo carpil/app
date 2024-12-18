@@ -1,9 +1,9 @@
 import { ScrollView } from 'react-native'
-import { rideRequests } from '../utils/mocks/ride-requests'
-import { rides } from '../utils/mocks/rides'
-import RideCard from '../components/ride-card'
-import RideRequestCard from '../components/ride-request-card'
-import Screen from '../components/screen'
+import { rideRequests } from '../../utils/mocks/ride-requests'
+import { rides } from '../../utils/mocks/rides'
+import RideCard from '../../components/ride-card'
+import RideRequestCard from '../../components/ride-request-card'
+import Screen from '../../components/screen'
 
 export default function Index() {
   return (
