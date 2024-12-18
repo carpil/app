@@ -1,6 +1,6 @@
 import { View, StyleSheet } from 'react-native'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
-import Index from './app/index'
+import Index from './app/(tabs)'
 
 export default function App() {
   return (
