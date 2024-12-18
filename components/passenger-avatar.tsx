@@ -3,6 +3,7 @@ import { User } from '../types/user'
 
 interface PassengerAvatarProps {
   user: User
+  size?: number
 }
 export default function PassengerAvatar({ user }: PassengerAvatarProps) {
   const { profilePicture, name } = user

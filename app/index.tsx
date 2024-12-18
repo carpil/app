@@ -1,20 +1,13 @@
-import { ScrollView, View } from 'react-native'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { ScrollView } from 'react-native'
+import { rideRequests } from '../utils/mocks/ride-requests'
 import { rides } from '../utils/mocks/rides'
 import RideCard from '../components/ride-card'
-import { rideRequests } from '../utils/mocks/ride-requests'
 import RideRequestCard from '../components/ride-request-card'
+import Screen from '../components/screen'
 
 export default function Index() {
-  const insets = useSafeAreaInsets()
   return (
-    <View
-      style={{
-        paddingTop: insets.top,
-        paddingBottom: insets.bottom,
-        paddingHorizontal: 10,
-      }}
-    >
+    <Screen>
       <ScrollView>
         {rides.map((ride) => (
           <RideCard ride={ride} key={ride.id} />
@@ -23,6 +16,6 @@ export default function Index() {
           <RideRequestCard ride={rideRequest} key={rideRequest.id} />
         ))}
       </ScrollView>
-    </View>
+    </Screen>
   )
 }

@@ -3,33 +3,44 @@ import { User } from '../types/user'
 
 interface AvatarProps {
   user: User
+  size?: number
 }
-export default function Avatar({ user }: AvatarProps) {
+
+const DEFAULT_SIZE = 64
+
+export default function Avatar({ user, size = DEFAULT_SIZE }: AvatarProps) {
   const { profilePicture } = user
 
   if (profilePicture === '') {
     const initials = user.name.slice(0, 2).toUpperCase()
     return (
-      <View style={styles.placeholderContainer}>
+      <View
+        style={{ ...styles.placeholderContainer, width: size, height: size }}
+      >
         <Text style={styles.placeholderText}>{initials}</Text>
       </View>
     )
   }
 
-  return <Image source={{ uri: profilePicture }} style={styles.avatar} />
+  return (
+    <Image
+      source={{ uri: profilePicture }}
+      style={{ ...styles.avatar, width: size, height: size }}
+    />
+  )
 }
 
 const styles = StyleSheet.create({
   avatar: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
+    width: DEFAULT_SIZE,
+    height: DEFAULT_SIZE,
+    borderRadius: 100,
     resizeMode: 'cover',
     aspectRatio: 1,
   },
   placeholderContainer: {
-    width: 64,
-    height: 64,
+    width: DEFAULT_SIZE,
+    height: DEFAULT_SIZE,
     borderRadius: 32,
     backgroundColor: '#4B5563',
     alignItems: 'center',

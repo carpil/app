@@ -3,6 +3,7 @@ import { Ride } from '../types/ride'
 import PassengerAvatar from './passenger-avatar'
 import Avatar from './avatar'
 import { formatDate } from '../utils/format-date'
+import { Link } from 'expo-router'
 
 interface RideCardProps {
   ride: Ride
@@ -11,58 +12,60 @@ interface RideCardProps {
 const MARGIN_LEFT = -14
 
 export default function RideCard({ ride }: RideCardProps) {
-  const { passengers, driver, availableSeats, departureDate } = ride
+  const { passengers, driver, availableSeats, departureDate, id } = ride
 
   const remainingSeats = availableSeats - passengers.length
 
   const { hour, date } = formatDate(departureDate)
 
   return (
-    <Pressable
-      onPress={() => console.log(`Pressed ${ride.id}`)}
-      style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}
-    >
-      {/* Driver and passengers */}
-      <View style={styles.pictureContainer}>
-        <Avatar user={driver} />
-        <View style={styles.passengersContainer}>
-          {passengers.map((passenger, index) => (
-            <View
-              key={passenger.id}
-              style={{
-                marginLeft: index === 0 ? 0 : MARGIN_LEFT,
-              }}
-            >
-              <PassengerAvatar user={passenger} />
-            </View>
-          ))}
-          {remainingSeats > 0 && (
-            <View style={styles.remainingSeatsContainer}>
-              <Text style={styles.remainingSeatsText}>+{remainingSeats}</Text>
-            </View>
-          )}
-        </View>
-      </View>
-      <View style={styles.detailsContainer}>
-        {/* Route (origin, destination) */}
-        <View style={styles.routeContainer}>
-          <Text style={styles.routeText}>{ride.origin}</Text>
-          <Text style={styles.arrow}>➡️</Text>
-          <Text style={styles.routeText}>{ride.destination}</Text>
-        </View>
-        {/* Info (departure date, price) */}
-        <View style={styles.infoContainer}>
-          <View style={styles.infoBlock}>
-            <Text style={styles.infoTitle}>{hour}</Text>
-            <Text style={styles.infoSubtitle}>{date}</Text>
-          </View>
-          <View style={styles.infoBlock}>
-            <Text style={styles.infoTitle}>₡{ride.price}</Text>
-            <Text style={styles.infoSubtitle}>{'⛽️'}</Text>
+    <Link href={`/ride/${id}`} asChild style={styles.card}>
+      <Pressable
+        onPress={() => console.log(`Pressed ${ride.id}`)}
+        style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}
+      >
+        {/* Driver and passengers */}
+        <View style={styles.pictureContainer}>
+          <Avatar user={driver} />
+          <View style={styles.passengersContainer}>
+            {passengers.map((passenger, index) => (
+              <View
+                key={passenger.id}
+                style={{
+                  marginLeft: index === 0 ? 0 : MARGIN_LEFT,
+                }}
+              >
+                <PassengerAvatar user={passenger} />
+              </View>
+            ))}
+            {remainingSeats > 0 && (
+              <View style={styles.remainingSeatsContainer}>
+                <Text style={styles.remainingSeatsText}>+{remainingSeats}</Text>
+              </View>
+            )}
           </View>
         </View>
-      </View>
-    </Pressable>
+        <View style={styles.detailsContainer}>
+          {/* Route (origin, destination) */}
+          <View style={styles.routeContainer}>
+            <Text style={styles.routeText}>{ride.origin}</Text>
+            <Text style={styles.arrow}>➡️</Text>
+            <Text style={styles.routeText}>{ride.destination}</Text>
+          </View>
+          {/* Info (departure date, price) */}
+          <View style={styles.infoContainer}>
+            <View style={styles.infoBlock}>
+              <Text style={styles.infoTitle}>{hour}</Text>
+              <Text style={styles.infoSubtitle}>{date}</Text>
+            </View>
+            <View style={styles.infoBlock}>
+              <Text style={styles.infoTitle}>₡{ride.price}</Text>
+              <Text style={styles.infoSubtitle}>{'⛽️'}</Text>
+            </View>
+          </View>
+        </View>
+      </Pressable>
+    </Link>
   )
 }
 
