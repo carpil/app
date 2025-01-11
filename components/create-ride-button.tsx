@@ -4,7 +4,7 @@ import { Link } from 'expo-router'
 
 export default function CreateRideButton() {
   return (
-    <Link href="/create-ride/select-location" asChild>
+    <Link href="/create-ride/select-origin" asChild>
       <Pressable style={styles.container}>
         <AddIcon color="white" />
       </Pressable>

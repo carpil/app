@@ -4,23 +4,26 @@ import {
   SafeAreaProvider,
   useSafeAreaInsets,
 } from 'react-native-safe-area-context'
+import LocationProvider from './context/select-location'
 
 export default function Layout() {
   const insets = useSafeAreaInsets()
   return (
     <SafeAreaProvider>
-      <View
-        style={{
-          ...styles.container,
-          paddingTop: insets.top,
-        }}
-      >
-        <Stack
-          screenOptions={{
-            headerShown: false,
+      <LocationProvider>
+        <View
+          style={{
+            ...styles.container,
+            paddingTop: insets.top,
           }}
-        />
-      </View>
+        >
+          <Stack
+            screenOptions={{
+              headerShown: false,
+            }}
+          />
+        </View>
+      </LocationProvider>
     </SafeAreaProvider>
   )
 }
