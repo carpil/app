@@ -4,6 +4,7 @@ import { rides } from '../../utils/mocks/rides'
 import RideCard from '../../components/ride-card'
 import RideRequestCard from '../../components/ride-request-card'
 import Screen from '../../components/screen'
+import CreateRideButton from '../../components/create-ride-button'
 
 export default function Index() {
   return (
@@ -16,6 +17,7 @@ export default function Index() {
           <RideRequestCard ride={rideRequest} key={rideRequest.id} />
         ))}
       </ScrollView>
+      <CreateRideButton />
     </Screen>
   )
 }

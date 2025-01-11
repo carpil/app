@@ -14,3 +14,7 @@ export const MessagesIcon = ({ color }: IconProps) => (
 export const ProfileIcon = ({ color }: IconProps) => (
   <Ionicons name="person" size={24} color={color} />
 )
+
+export const AddIcon = ({ color }: IconProps) => (
+  <Ionicons name="add" size={24} color={color} />
+)
