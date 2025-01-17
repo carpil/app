@@ -4,7 +4,7 @@ import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplet
 import 'react-native-get-random-values'
 import { Location } from '../../types/location'
 import { useContext } from 'react'
-import { SelectLocationContext } from '../context/select-location'
+import { SelectLocationContext } from '../../context/select-location'
 
 const GOOGLE_MAPS_API_KEY = process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY
 
