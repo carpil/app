@@ -4,7 +4,7 @@ import {
   SafeAreaProvider,
   useSafeAreaInsets,
 } from 'react-native-safe-area-context'
-import LocationProvider from './context/select-location'
+import LocationProvider from '../context/select-location'
 
 export default function Layout() {
   const insets = useSafeAreaInsets()
