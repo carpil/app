@@ -1,7 +1,19 @@
 import { View, Text, StyleSheet, Pressable } from 'react-native'
 import { MinusIcon, PlusIcon, UsersIcon } from '../icons'
 
-export default function PassengersPill() {
+interface PassengersProps {
+  passengers: number
+  handleMinus: () => void
+  handlePlus: () => void
+}
+
+export default function PassengersPill({
+  passengers,
+  handleMinus,
+  handlePlus,
+}: PassengersProps) {
+  const passengerText = passengers === 1 ? 'pasajero' : 'pasajeros'
+
   return (
     <View style={styles.container}>
       <Pressable
@@ -12,6 +24,7 @@ export default function PassengersPill() {
           justifyContent: 'center',
           alignItems: 'center',
         }}
+        onPress={handleMinus}
       >
         <MinusIcon color="white" />
       </Pressable>
@@ -30,7 +43,7 @@ export default function PassengersPill() {
             marginRight: 4,
           }}
         >
-          3 Pasajeros
+          {`${passengers} ${passengerText}`}
         </Text>
         <UsersIcon color="#A0ABC0" />
       </View>
@@ -42,6 +55,7 @@ export default function PassengersPill() {
           justifyContent: 'center',
           alignItems: 'center',
         }}
+        onPress={handlePlus}
       >
         <PlusIcon color="white" />
       </Pressable>
