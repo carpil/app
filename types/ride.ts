@@ -1,10 +1,11 @@
+import { Location } from './location'
 import { User } from './user'
 
 export type Ride = {
   id: string
-  origin: string
-  destination: string
-  meetingPoint: string
+  origin: Location | null
+  destination: Location | null
+  meetingPoint: Location | null
   availableSeats: number
   price: number
   departureDate: Date
