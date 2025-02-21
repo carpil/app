@@ -1,10 +1,10 @@
 import { Text } from 'react-native'
-import Screen from '../../components/screen'
+import SafeScreen from '../../components/safe-screen'
 
 export default function Profile() {
   return (
-    <Screen>
+    <SafeScreen>
       <Text>Profile</Text>
-    </Screen>
+    </SafeScreen>
   )
 }

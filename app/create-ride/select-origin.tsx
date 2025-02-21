@@ -1,18 +1,20 @@
 import { Tabs, useRouter } from 'expo-router'
-import { View, StyleSheet, Text } from 'react-native'
+import { View, Text } from 'react-native'
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete'
 import 'react-native-get-random-values'
 import { Location } from '../../types/location'
 import { useContext } from 'react'
 import { SelectLocationContext } from '../../context/select-location'
+import SafeScreen from '../../components/safe-screen'
 
-const GOOGLE_MAPS_API_KEY = process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY
+const GOOGLE_MAPS_API_KEY = process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY ?? ''
 
 export default function SelectOrigin() {
   const router = useRouter()
   const { setOrigin } = useContext(SelectLocationContext)
+
   return (
-    <View style={styles.container}>
+    <SafeScreen backgroundColor={'#111827'}>
       <Tabs.Screen
         options={{
           tabBarActiveBackgroundColor: '#1F2937',
@@ -91,16 +93,6 @@ export default function SelectOrigin() {
           )}
         />
       </View>
-    </View>
+    </SafeScreen>
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingHorizontal: 15,
-    backgroundColor: '#111827',
-    paddingTop: 12,
-    paddingBottom: 30,
-  },
-})
