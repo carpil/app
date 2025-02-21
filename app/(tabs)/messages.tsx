@@ -1,10 +1,10 @@
 import { Text } from 'react-native'
-import Screen from '../../components/screen'
+import SafeScreen from '../../components/safe-screen'
 
 export default function Messages() {
   return (
-    <Screen>
+    <SafeScreen>
       <Text>Messages</Text>
-    </Screen>
+    </SafeScreen>
   )
 }
