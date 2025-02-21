@@ -13,8 +13,16 @@ export const formatDate = (dateTime: Date) => {
     tz: 'America/Costa_Rica',
   })
 
+  const dateText = format({
+    date: dateTime,
+    format: 'D MMM YYYY', // 23 ene 2023
+    locale: 'es',
+    tz: 'America/Costa_Rica',
+  })
+
   return {
     date,
     hour,
+    dateText,
   }
 }
