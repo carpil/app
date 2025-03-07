@@ -1,4 +1,5 @@
 import { View, StyleSheet, TextInput, Text } from 'react-native'
+import { COLORS } from '../../utils/constansts/colors'
 
 interface PriceProps {
   price: string
@@ -26,7 +27,7 @@ export default function PricePill({
         value={price}
         placeholder="5000"
         keyboardType="numeric"
-        placeholderTextColor={'#6C768A'}
+        placeholderTextColor={COLORS.secondary_gray_dark}
       />
     </View>
   )
@@ -35,7 +36,7 @@ export default function PricePill({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#111827',
+    backgroundColor: COLORS.dark_gray,
     borderRadius: 10,
     padding: 12,
     gap: 10,
@@ -44,7 +45,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   input: {
-    backgroundColor: '#23252F',
+    backgroundColor: COLORS.raisin_black,
     borderRadius: 10,
     paddingHorizontal: 14,
     paddingVertical: 10,
@@ -54,7 +55,7 @@ const styles = StyleSheet.create({
     minWidth: 150,
   },
   inputInvalid: {
-    backgroundColor: '#23252F',
+    backgroundColor: COLORS.raisin_black,
     borderRadius: 10,
     paddingHorizontal: 14,
     paddingVertical: 10,

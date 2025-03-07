@@ -1,4 +1,17 @@
 export const COLORS = {
+  black: '#000000',
+  dark_gray: '#111827',
+  gray_400: '#9CA3AF',
+  gray_600: '#4B5563',
+  inactive_gray: '#1F2937',
+  light_gray: '#1F2937',
   primary: '#6F52EA',
+  raisin_black: '#23252F',
+  secondary_dark: '#18C5C5',
   secondary: '#2AADAD',
+  white_gray: '#D1D5DB',
+  white: '#FFFFFF',
+  secondary_gray: '#A0ABC0',
+  secondary_gray_dark: '#6C768A',
+  border_gray: '#374151',
 }

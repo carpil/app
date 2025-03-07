@@ -13,6 +13,7 @@ import PricePill from '../../components/create-ride-modal/price'
 import CreateRide from '../../components/create-ride-modal/create-button'
 import { Ride } from '../../types/ride'
 import { isAfter } from '@formkit/tempo'
+import { COLORS } from '../../utils/constansts/colors'
 
 const MAX_PASSENGERS = 15
 const TODAY = new Date()
@@ -107,7 +108,7 @@ export default function RideOverview() {
             }}
             apikey={GOOGLE_MAPS_API_KEY}
             strokeWidth={5}
-            strokeColor={'#6F52EA'}
+            strokeColor={COLORS.primary}
           />
           <Marker
             coordinate={{
@@ -181,6 +182,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     justifyContent: 'center',
     alignItems: 'center',
-    color: '#111827',
+    color: COLORS.dark_gray,
   },
 })

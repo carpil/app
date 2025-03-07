@@ -3,9 +3,39 @@ import { Ride } from '../../types/ride'
 export const rides: Ride[] = [
   {
     id: 'ride1',
-    origin: 'San Pedro Montes de Oca',
-    destination: 'Cartago',
-    meetingPoint: 'Parque Central de San José',
+    origin: {
+      id: 'origin1',
+      name: {
+        primary: 'San José',
+        secondary: 'San José',
+      },
+      location: {
+        lat: 9.9281,
+        lng: -84.0907,
+      },
+    },
+    destination: {
+      id: 'destination1',
+      name: {
+        primary: 'Tamarindo',
+        secondary: 'Tamarindo',
+      },
+      location: {
+        lat: 10.2993,
+        lng: -85.8371,
+      },
+    },
+    meetingPoint: {
+      id: 'meetingPoint1',
+      name: {
+        primary: 'Parque Central de San José',
+        secondary: 'Parque Central de San José',
+      },
+      location: {
+        lat: 9.9333,
+        lng: -84.0833,
+      },
+    },
     availableSeats: 4,
     price: 2500,
     departureDate: new Date('2024-12-20T09:00:00Z'),
@@ -41,9 +71,39 @@ export const rides: Ride[] = [
   },
   {
     id: 'ride2',
-    origin: 'Liberia',
-    destination: 'Santa Cruz',
-    meetingPoint: 'Parque Mario Cañas Ruiz',
+    origin: {
+      id: 'origin2',
+      name: {
+        primary: 'Liberia',
+        secondary: 'Liberia',
+      },
+      location: {
+        lat: 10.6346,
+        lng: -85.44,
+      },
+    },
+    destination: {
+      id: 'destination2',
+      name: {
+        primary: 'Monteverde',
+        secondary: 'Monteverde',
+      },
+      location: {
+        lat: 10.2725,
+        lng: -84.8255,
+      },
+    },
+    meetingPoint: {
+      id: 'meetingPoint2',
+      name: {
+        primary: 'Parque Central de Liberia',
+        secondary: 'Parque Central de Liberia',
+      },
+      location: {
+        lat: 10.6331,
+        lng: -85.433,
+      },
+    },
     availableSeats: 2,
     price: 3000,
     departureDate: new Date('2024-12-21T08:00:00Z'),
@@ -67,9 +127,39 @@ export const rides: Ride[] = [
   },
   {
     id: 'ride3',
-    origin: 'Quepos',
-    destination: 'Jacó',
-    meetingPoint: 'Parque Nacional Manuel Antonio',
+    origin: {
+      id: 'origin3',
+      name: {
+        primary: 'Quepos',
+        secondary: 'Quepos',
+      },
+      location: {
+        lat: 9.4311,
+        lng: -84.1617,
+      },
+    },
+    destination: {
+      id: 'destination3',
+      name: {
+        primary: 'Jacó',
+        secondary: 'Jacó',
+      },
+      location: {
+        lat: 9.6145,
+        lng: -84.633,
+      },
+    },
+    meetingPoint: {
+      id: 'meetingPoint3',
+      name: {
+        primary: 'Parque Central de Quepos',
+        secondary: 'Parque Central de Quepos',
+      },
+      location: {
+        lat: 9.431,
+        lng: -84.1615,
+      },
+    },
     availableSeats: 4,
     price: 5000,
     departureDate: new Date('2024-12-22T10:00:00Z'),
@@ -86,9 +176,39 @@ export const rides: Ride[] = [
   },
   {
     id: 'ride4',
-    origin: 'Heredia',
-    destination: 'Alajuela',
-    meetingPoint: 'Parque Central de Heredia',
+    origin: {
+      id: 'origin4',
+      name: {
+        primary: 'Alajuela',
+        secondary: 'Alajuela',
+      },
+      location: {
+        lat: 10.0162,
+        lng: -84.2116,
+      },
+    },
+    destination: {
+      id: 'destination4',
+      name: {
+        primary: 'La Fortuna',
+        secondary: 'La Fortuna',
+      },
+      location: {
+        lat: 10.471,
+        lng: -84.6453,
+      },
+    },
+    meetingPoint: {
+      id: 'meetingPoint4',
+      name: {
+        primary: 'Parque Central de Alajuela',
+        secondary: 'Parque Central de Alajuela',
+      },
+      location: {
+        lat: 10.0162,
+        lng: -84.2116,
+      },
+    },
     availableSeats: 1,
     price: 1500,
     departureDate: new Date('2024-12-23T11:00:00Z'),
@@ -112,9 +232,39 @@ export const rides: Ride[] = [
   },
   {
     id: 'ride5',
-    origin: 'Tamarindo',
-    destination: 'Playa Hermosa',
-    meetingPoint: 'Plaza Tamarindo',
+    origin: {
+      id: 'origin5',
+      name: {
+        primary: 'Heredia',
+        secondary: 'Heredia',
+      },
+      location: {
+        lat: 9.9987,
+        lng: -84.1165,
+      },
+    },
+    destination: {
+      id: 'destination5',
+      name: {
+        primary: 'Puerto Viejo de Talamanca',
+        secondary: 'Puerto Viejo de Talamanca',
+      },
+      location: {
+        lat: 9.656,
+        lng: -82.754,
+      },
+    },
+    meetingPoint: {
+      id: 'meetingPoint5',
+      name: {
+        primary: 'Parque Central de Heredia',
+        secondary: 'Parque Central de Heredia',
+      },
+      location: {
+        lat: 9.9987,
+        lng: -84.1165,
+      },
+    },
     availableSeats: 2,
     price: 7000,
     departureDate: new Date('2024-12-24T07:30:00Z'),

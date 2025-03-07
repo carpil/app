@@ -32,7 +32,7 @@ export default function RideLocationsPill({
             <Text
               style={{
                 fontSize: 12,
-                color: '#A0ABC0',
+                color: COLORS.secondary_gray,
               }}
             >
               {origin.name.secondary}
@@ -54,7 +54,7 @@ export default function RideLocationsPill({
             <Text
               style={{
                 fontSize: 12,
-                color: '#A0ABC0',
+                color: COLORS.secondary_gray,
               }}
             >
               {destination.name.secondary}
@@ -62,14 +62,14 @@ export default function RideLocationsPill({
           </View>
         </View>
       </View>
-      <EditIcon color={'#A0ABC0'} />
+      <EditIcon color={COLORS.secondary_gray} />
     </View>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#111827',
+    backgroundColor: COLORS.dark_gray,
     borderRadius: 10,
     padding: 12,
     gap: 10,

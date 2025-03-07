@@ -4,6 +4,7 @@ import PassengerAvatar from './passenger-avatar'
 import Avatar from './avatar'
 import { formatDate } from '../utils/format-date'
 import { Link } from 'expo-router'
+import { COLORS } from '../utils/constansts/colors'
 
 interface RideCardProps {
   ride: Ride
@@ -12,11 +13,22 @@ interface RideCardProps {
 const MARGIN_LEFT = -14
 
 export default function RideCard({ ride }: RideCardProps) {
-  const { passengers, driver, availableSeats, departureDate, id } = ride
+  const {
+    passengers,
+    driver,
+    availableSeats,
+    departureDate,
+    id,
+    origin,
+    destination,
+  } = ride
 
   const remainingSeats = availableSeats - passengers.length
 
   const { hour, date } = formatDate(departureDate)
+
+  const originName = origin?.name.primary || ''
+  const destinationName = destination?.name.primary || ''
 
   return (
     <Link href={`/ride/${id}`} asChild style={styles.card}>
@@ -48,9 +60,9 @@ export default function RideCard({ ride }: RideCardProps) {
         <View style={styles.detailsContainer}>
           {/* Route (origin, destination) */}
           <View style={styles.routeContainer}>
-            <Text style={styles.routeText}>{ride.origin}</Text>
+            <Text style={styles.routeText}>{originName}</Text>
             <Text style={styles.arrow}>➡️</Text>
-            <Text style={styles.routeText}>{ride.destination}</Text>
+            <Text style={styles.routeText}>{destinationName}</Text>
           </View>
           {/* Info (departure date, price) */}
           <View style={styles.infoContainer}>
@@ -74,19 +86,19 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     borderWidth: 1,
     borderRadius: 8,
-    shadowColor: '#000',
+    shadowColor: COLORS.black,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4,
     elevation: 3,
-    borderColor: '#374151',
-    backgroundColor: '#1F2937',
+    borderColor: COLORS.border_gray,
+    backgroundColor: COLORS.inactive_gray,
     paddingVertical: 12,
     minHeight: 128,
     marginBottom: 8,
   },
   cardPressed: {
-    backgroundColor: '#374151',
+    backgroundColor: COLORS.border_gray,
   },
   pictureContainer: {
     alignItems: 'center',
@@ -102,16 +114,16 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: '#2AADAD',
+    backgroundColor: COLORS.secondary,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 2,
-    borderColor: '#FFFFFF',
+    borderColor: COLORS.white,
     marginLeft: MARGIN_LEFT,
   },
   remainingSeatsText: {
     fontSize: 12,
-    color: '#FFFFFF',
+    color: COLORS.white,
   },
   detailsContainer: {
     flex: 1,
@@ -127,7 +139,7 @@ const styles = StyleSheet.create({
   },
   routeText: {
     fontSize: 16,
-    color: '#FFFFFF',
+    color: COLORS.white,
     maxWidth: 110,
   },
   arrow: {
@@ -145,11 +157,11 @@ const styles = StyleSheet.create({
   },
   infoTitle: {
     fontSize: 18,
-    color: '#FFFFFF',
+    color: COLORS.white,
     fontWeight: 'bold',
   },
   infoSubtitle: {
     fontSize: 14,
-    color: '#9CA3AF',
+    color: COLORS.gray_400,
   },
 })

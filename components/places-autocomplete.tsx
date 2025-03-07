@@ -4,6 +4,7 @@ import {
   GooglePlacesAutocomplete,
 } from 'react-native-google-places-autocomplete'
 import { Location } from '../types/location'
+import { COLORS } from '../utils/constansts/colors'
 
 const GOOGLE_MAPS_API_KEY = process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY ?? ''
 
@@ -16,7 +17,7 @@ export const PlaceRow = ({ data }: { data: GooglePlaceData }) => {
     >
       <Text
         style={{
-          color: 'white',
+          color: COLORS.white,
           fontSize: 22,
         }}
       >
@@ -24,7 +25,7 @@ export const PlaceRow = ({ data }: { data: GooglePlaceData }) => {
       </Text>
       <Text
         style={{
-          color: '#A0ABC0',
+          color: COLORS.secondary_gray,
           fontSize: 12,
         }}
       >
@@ -79,18 +80,18 @@ export default function PlacesAutocomplete({
       onFail={onFail}
       styles={{
         textInput: {
-          backgroundColor: '#1F2937',
+          backgroundColor: COLORS.inactive_gray,
           color: 'white',
           fontSize: 18,
         },
         row: {
-          backgroundColor: '#111827',
+          backgroundColor: COLORS.dark_gray,
         },
       }}
       textInputProps={{
-        placeholderTextColor: '#6C768A',
+        placeholderTextColor: COLORS.secondary_gray_dark,
       }}
-      listUnderlayColor={'#1F2937'}
+      listUnderlayColor={COLORS.inactive_gray}
       renderRow={(data) => <PlaceRow data={data} key={data.place_id} />}
     />
   )

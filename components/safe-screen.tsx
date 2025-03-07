@@ -3,6 +3,7 @@ import {
   SafeAreaProvider,
   useSafeAreaInsets,
 } from 'react-native-safe-area-context'
+import { COLORS } from '../utils/constansts/colors'
 
 interface Props {
   backgroundColor?: string
@@ -10,7 +11,7 @@ interface Props {
 }
 
 export default function SafeScreen({
-  backgroundColor = '#6F52EA',
+  backgroundColor = COLORS.primary,
   children,
 }: Props) {
   const insets = useSafeAreaInsets()

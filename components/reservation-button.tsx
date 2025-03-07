@@ -1,4 +1,5 @@
 import { Pressable, Text, StyleSheet } from 'react-native'
+import { COLORS } from '../utils/constansts/colors'
 
 interface ReservationButtonProps {
   onPress: () => void
@@ -27,7 +28,7 @@ export default function ReservationButton({
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: '#2AADAD', // secondary color
+    backgroundColor: COLORS.secondary, // secondary color
     borderRadius: 8,
     padding: 12,
     marginTop: 20,
@@ -37,19 +38,19 @@ const styles = StyleSheet.create({
     transform: [{ scale: 1 }],
   },
   text: {
-    color: '#000',
+    color: COLORS.black,
     fontSize: 20,
     fontWeight: 'bold',
   },
   pressedButton: {
     borderRadius: 8,
-    backgroundColor: '#18C5C5', // secondary-dark
+    backgroundColor: COLORS.secondary_dark, // secondary-dark
   },
   disabledButton: {
-    backgroundColor: '#4B5563', // gray-600
+    backgroundColor: COLORS.gray_600, // gray-600
     transform: [{ scale: 1 }],
   },
   disabledText: {
-    color: '#9CA3AF', // gray-400
+    color: COLORS.gray_400, // gray-400
   },
 })

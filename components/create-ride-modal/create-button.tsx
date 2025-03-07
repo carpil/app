@@ -36,18 +36,18 @@ const styles = StyleSheet.create({
     transform: [{ scale: 1 }],
   },
   text: {
-    color: '#fff',
+    color: COLORS.white,
     fontSize: 20,
   },
   pressedButton: {
     borderRadius: 8,
-    backgroundColor: '#18C5C5', // secondary-dark
+    backgroundColor: COLORS.secondary_dark,
   },
   disabledButton: {
-    backgroundColor: '#4B5563', // gray-600
+    backgroundColor: COLORS.gray_600,
     transform: [{ scale: 1 }],
   },
   disabledText: {
-    color: '#9CA3AF', // gray-400
+    color: COLORS.gray_400,
   },
 })
