@@ -5,16 +5,17 @@ import { useContext } from 'react'
 import { SelectLocationContext } from '../../context/select-location'
 import SafeScreen from '../../components/safe-screen'
 import PlacesAutocomplete from '../../components/places-autocomplete'
+import { COLORS } from '../../utils/constansts/colors'
 
 export default function SelectOrigin() {
   const router = useRouter()
   const { setOrigin } = useContext(SelectLocationContext)
 
   return (
-    <SafeScreen backgroundColor={'#111827'}>
+    <SafeScreen backgroundColor={COLORS.dark_gray}>
       <Tabs.Screen
         options={{
-          tabBarActiveBackgroundColor: '#1F2937',
+          tabBarActiveBackgroundColor: COLORS.inactive_gray,
         }}
       />
       <View style={{ flex: 1, paddingBottom: 10 }}>

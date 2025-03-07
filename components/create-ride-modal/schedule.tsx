@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { View, StyleSheet, Pressable, Text, Platform } from 'react-native'
 import DateTimePicker from '@react-native-community/datetimepicker'
 import { formatDate } from '../../utils/format-date'
+import { COLORS } from '../../utils/constansts/colors'
 
 interface ScheduleProps {
   date: Date
@@ -86,7 +87,7 @@ export default function SchedulePill({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#111827',
+    backgroundColor: COLORS.dark_gray,
     borderRadius: 10,
     padding: 12,
     gap: 10,
@@ -95,13 +96,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   input: {
-    backgroundColor: '#23252F',
+    backgroundColor: COLORS.raisin_black,
     borderRadius: 10,
     paddingHorizontal: 10,
     paddingVertical: 5,
   },
   inputInvalid: {
-    backgroundColor: '#23252F',
+    backgroundColor: COLORS.raisin_black,
     borderRadius: 10,
     paddingHorizontal: 14,
     paddingVertical: 10,
@@ -109,11 +110,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   text: {
-    color: 'white',
+    color: COLORS.white,
     fontSize: 18,
   },
   textInvalid: {
-    color: '#6C768A',
+    color: COLORS.secondary_gray_dark,
     fontSize: 18,
   },
 })

@@ -1,4 +1,5 @@
 import { View } from 'react-native'
+import { COLORS } from '../utils/constansts/colors'
 
 export default function Screen({ children }: { children: React.ReactNode }) {
   return (
@@ -6,7 +7,7 @@ export default function Screen({ children }: { children: React.ReactNode }) {
       style={{
         flex: 1,
         paddingHorizontal: 12,
-        backgroundColor: '#6F52EA',
+        backgroundColor: COLORS.primary,
         paddingTop: 12,
       }}
     >

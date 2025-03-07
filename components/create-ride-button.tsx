@@ -1,6 +1,7 @@
 import { StyleSheet, Pressable } from 'react-native'
 import { AddIcon } from './icons'
 import { Link } from 'expo-router'
+import { COLORS } from '../utils/constansts/colors'
 
 export default function CreateRideButton() {
   return (
@@ -17,7 +18,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 15,
     right: 10,
-    backgroundColor: '#2AADAD',
+    backgroundColor: COLORS.secondary,
     borderRadius: 100,
     borderWidth: 3,
     borderColor: 'white',

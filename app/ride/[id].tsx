@@ -5,6 +5,7 @@ import { rides } from '../../utils/mocks/rides'
 import Avatar from '../../components/avatar'
 import { formatDate } from '../../utils/format-date'
 import ReservationButton from '../../components/reservation-button'
+import { COLORS } from '../../utils/constansts/colors'
 
 export default function RideDetails() {
   const { id } = useLocalSearchParams()
@@ -36,9 +37,9 @@ export default function RideDetails() {
       <Stack.Screen
         options={{
           headerShown: true,
-          headerTintColor: '#fff',
+          headerTintColor: COLORS.white,
           headerStyle: {
-            backgroundColor: '#6F52EA',
+            backgroundColor: COLORS.primary,
           },
           headerTitle: 'Carpil',
           headerBackTitle: 'Volver',
@@ -140,7 +141,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   card: {
-    backgroundColor: '#1F2937',
+    backgroundColor: COLORS.inactive_gray,
     borderRadius: 8,
     paddingVertical: 16,
     paddingHorizontal: 12,
@@ -153,7 +154,7 @@ const styles = StyleSheet.create({
     minHeight: 64,
   },
   routeText: {
-    color: '#FFFFFF',
+    color: COLORS.white,
     fontWeight: 'bold',
     textAlign: 'center',
     flex: 1,
@@ -168,13 +169,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
   },
   meetingPointText: {
-    color: '#FFFFFF',
+    color: COLORS.white,
     fontWeight: 'bold',
     textAlign: 'center',
     fontSize: 16,
   },
   meetingPointSubtitle: {
-    color: '#9CA3AF',
+    color: COLORS.gray_400,
     fontSize: 14,
     textAlign: 'center',
   },
@@ -191,12 +192,12 @@ const styles = StyleSheet.create({
   },
   infoTitle: {
     fontSize: 24,
-    color: '#FFFFFF',
+    color: COLORS.white,
     fontWeight: 'bold',
   },
   infoSubtitle: {
     fontSize: 14,
-    color: '#9CA3AF',
+    color: COLORS.gray_400,
     textAlign: 'center',
   },
   passengerRowBetween: {
@@ -224,17 +225,17 @@ const styles = StyleSheet.create({
   },
   remainingSeatsText: {
     fontSize: 24,
-    color: '#FFFFFF',
+    color: COLORS.white,
     fontWeight: 'bold',
   },
   remainingSeatsSubtitle: {
     fontSize: 14,
-    color: '#9CA3AF',
+    color: COLORS.gray_400,
     textAlign: 'center',
   },
   deletedText: {
     fontSize: 14,
-    color: '#1F2937',
+    color: COLORS.inactive_gray,
     marginTop: 20,
     textAlign: 'center',
   },

@@ -1,5 +1,6 @@
 import { Tabs } from 'expo-router'
 import { CarIcon, MessagesIcon, ProfileIcon } from '../../components/icons'
+import { COLORS } from '../../utils/constansts/colors'
 
 export default function TabsLayout() {
   return (
@@ -7,10 +8,10 @@ export default function TabsLayout() {
       screenOptions={{
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: '#1F2937',
+          backgroundColor: COLORS.light_gray,
           borderWidth: 0,
         },
-        tabBarActiveTintColor: '#2AADAD',
+        tabBarActiveTintColor: COLORS.secondary,
       }}
     >
       <Tabs.Screen

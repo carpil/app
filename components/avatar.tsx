@@ -1,5 +1,6 @@
 import { View, Text, Image, StyleSheet } from 'react-native'
 import { User } from '../types/user'
+import { COLORS } from '../utils/constansts/colors'
 
 interface AvatarProps {
   user: User
@@ -42,13 +43,13 @@ const styles = StyleSheet.create({
     width: DEFAULT_SIZE,
     height: DEFAULT_SIZE,
     borderRadius: 32,
-    backgroundColor: '#4B5563',
+    backgroundColor: COLORS.gray_600,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 8,
   },
   placeholderText: {
     fontSize: 16,
-    color: '#D1D5DB',
+    color: COLORS.white_gray,
   },
 })

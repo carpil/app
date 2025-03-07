@@ -1,5 +1,6 @@
 import { View, Text, StyleSheet, Pressable } from 'react-native'
 import { MinusIcon, PlusIcon, UsersIcon } from '../icons'
+import { COLORS } from '../../utils/constansts/colors'
 
 interface PassengersProps {
   passengers: number
@@ -18,7 +19,7 @@ export default function PassengersPill({
     <View style={styles.container}>
       <Pressable
         style={{
-          backgroundColor: '#23252F',
+          backgroundColor: COLORS.raisin_black,
           padding: 12,
           borderRadius: 200,
           justifyContent: 'center',
@@ -38,18 +39,18 @@ export default function PassengersPill({
       >
         <Text
           style={{
-            color: 'white',
+            color: COLORS.white,
             fontSize: 16,
             marginRight: 4,
           }}
         >
           {`${passengers} ${passengerText}`}
         </Text>
-        <UsersIcon color="#A0ABC0" />
+        <UsersIcon color={COLORS.secondary_gray} />
       </View>
       <Pressable
         style={{
-          backgroundColor: '#23252F',
+          backgroundColor: COLORS.raisin_black,
           padding: 12,
           borderRadius: 200,
           justifyContent: 'center',
@@ -65,7 +66,7 @@ export default function PassengersPill({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#111827',
+    backgroundColor: COLORS.dark_gray,
     borderRadius: 10,
     padding: 12,
     gap: 10,

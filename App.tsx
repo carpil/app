@@ -1,6 +1,7 @@
 import { View, StyleSheet } from 'react-native'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import Index from './app/(tabs)'
+import { COLORS } from './utils/constansts/colors'
 
 export default function App() {
   return (
@@ -15,6 +16,6 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#6F52EA',
+    backgroundColor: COLORS.primary,
   },
 })
