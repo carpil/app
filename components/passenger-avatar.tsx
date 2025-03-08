@@ -1,6 +1,6 @@
 import { View, StyleSheet, Text, Image } from 'react-native'
-import { User } from '../types/user'
-import { COLORS } from '../utils/constansts/colors'
+import { User } from '@types/user'
+import { COLORS } from '@utils/constansts/colors'
 
 interface PassengerAvatarProps {
   user: User

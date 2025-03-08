@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, Pressable } from 'react-native'
-import { MinusIcon, PlusIcon, UsersIcon } from '../icons'
-import { COLORS } from '../../utils/constansts/colors'
+import { MinusIcon, PlusIcon, UsersIcon } from '@components/icons'
+import { COLORS } from '@utils/constansts/colors'
 
 interface PassengersProps {
   passengers: number

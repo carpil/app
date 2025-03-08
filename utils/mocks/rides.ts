@@ -1,4 +1,4 @@
-import { Ride } from '../../types/ride'
+import { Ride } from '@types/ride'
 
 export const rides: Ride[] = [
   {

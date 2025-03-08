@@ -1,7 +1,7 @@
 import { View, StyleSheet } from 'react-native'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import Index from './app/(tabs)'
-import { COLORS } from './utils/constansts/colors'
+import { COLORS } from '@utils/constansts/colors'
 
 export default function App() {
   return (

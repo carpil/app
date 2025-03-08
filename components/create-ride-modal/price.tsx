@@ -1,5 +1,5 @@
 import { View, StyleSheet, TextInput, Text } from 'react-native'
-import { COLORS } from '../../utils/constansts/colors'
+import { COLORS } from '@utils/constansts/colors'
 
 interface PriceProps {
   price: string

@@ -1,5 +1,5 @@
 import { View } from 'react-native'
-import { COLORS } from '../utils/constansts/colors'
+import { COLORS } from '@utils/constansts/colors'
 
 export default function Screen({ children }: { children: React.ReactNode }) {
   return (

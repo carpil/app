@@ -1,6 +1,6 @@
 import { Tabs } from 'expo-router'
-import { CarIcon, MessagesIcon, ProfileIcon } from '../../components/icons'
-import { COLORS } from '../../utils/constansts/colors'
+import { CarIcon, MessagesIcon, ProfileIcon } from '@components/icons'
+import { COLORS } from '@utils/constansts/colors'
 
 export default function TabsLayout() {
   return (
