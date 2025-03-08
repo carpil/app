@@ -1,9 +1,9 @@
 import { View, Text, StyleSheet, Pressable } from 'react-native'
 import { RideRequest } from '../types/ride-request'
-import Avatar from './avatar'
-import { formatDate } from '../utils/format-date'
+import Avatar from '@components/avatar'
+import { formatDate } from '@utils/format-date'
 import { Link } from 'expo-router'
-import { COLORS } from '../utils/constansts/colors'
+import { COLORS } from '@utils/constansts/colors'
 
 interface RideRequestCardProps {
   ride: RideRequest

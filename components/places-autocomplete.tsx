@@ -3,8 +3,8 @@ import {
   GooglePlaceData,
   GooglePlacesAutocomplete,
 } from 'react-native-google-places-autocomplete'
-import { Location } from '../types/location'
-import { COLORS } from '../utils/constansts/colors'
+import { Location } from '~types/location'
+import { COLORS } from '@utils/constansts/colors'
 
 const GOOGLE_MAPS_API_KEY = process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY ?? ''
 

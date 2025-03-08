@@ -1,4 +1,4 @@
-import LocationProvider from '../../context/select-location'
+import LocationProvider from '@context/select-location'
 
 interface Props {
   children: React.ReactNode

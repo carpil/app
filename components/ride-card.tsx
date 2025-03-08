@@ -1,10 +1,10 @@
 import { View, Text, StyleSheet, Pressable } from 'react-native'
-import { Ride } from '../types/ride'
-import PassengerAvatar from './passenger-avatar'
-import Avatar from './avatar'
-import { formatDate } from '../utils/format-date'
+import { Ride } from '~types/ride'
+import PassengerAvatar from '@components/passenger-avatar'
+import Avatar from '@components/avatar'
+import { formatDate } from '@utils/format-date'
 import { Link } from 'expo-router'
-import { COLORS } from '../utils/constansts/colors'
+import { COLORS } from '@utils/constansts/colors'
 
 interface RideCardProps {
   ride: Ride

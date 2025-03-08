@@ -1,5 +1,5 @@
 import { Pressable, Text, StyleSheet } from 'react-native'
-import { COLORS } from '../utils/constansts/colors'
+import { COLORS } from '@utils/constansts/colors'
 
 interface ReservationButtonProps {
   onPress: () => void

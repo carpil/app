@@ -3,7 +3,7 @@ import {
   SafeAreaProvider,
   useSafeAreaInsets,
 } from 'react-native-safe-area-context'
-import { COLORS } from '../utils/constansts/colors'
+import { COLORS } from '@utils/constansts/colors'
 
 interface Props {
   backgroundColor?: string

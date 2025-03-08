@@ -1,11 +1,11 @@
 import { Text, ScrollView, View, StyleSheet } from 'react-native'
 import { Stack, useLocalSearchParams } from 'expo-router'
-import Screen from '../../components/screen'
-import { rides } from '../../utils/mocks/rides'
-import Avatar from '../../components/avatar'
-import { formatDate } from '../../utils/format-date'
-import ReservationButton from '../../components/reservation-button'
-import { COLORS } from '../../utils/constansts/colors'
+import Screen from '@components/screen'
+import { rides } from '@utils/mocks/rides'
+import Avatar from '@components/avatar'
+import { formatDate } from '@utils/format-date'
+import ReservationButton from '@components/reservation-button'
+import { COLORS } from '@utils/constansts/colors'
 
 export default function RideDetails() {
   const { id } = useLocalSearchParams()
@@ -54,9 +54,9 @@ export default function RideDetails() {
         <View style={styles.detailsContainer}>
           <View style={styles.card}>
             <View style={styles.routeContainer}>
-              <Text style={styles.routeText}>{origin}</Text>
+              <Text style={styles.routeText}>{origin?.name.primary}</Text>
               <Text style={styles.arrow}>➡️</Text>
-              <Text style={styles.routeText}>{destination}</Text>
+              <Text style={styles.routeText}>{destination?.name.primary}</Text>
             </View>
           </View>
 
@@ -64,7 +64,7 @@ export default function RideDetails() {
             <View style={styles.meetingPointContainer}>
               <Text
                 style={styles.meetingPointText}
-              >{`📍 ${meetingPoint}`}</Text>
+              >{`📍 ${meetingPoint?.name.primary}`}</Text>
               <Text style={styles.meetingPointSubtitle}>
                 Punto de encuentro
               </Text>

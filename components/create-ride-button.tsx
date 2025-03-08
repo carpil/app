@@ -1,7 +1,7 @@
 import { StyleSheet, Pressable } from 'react-native'
-import { AddIcon } from './icons'
+import { AddIcon } from '@components/icons'
 import { Link } from 'expo-router'
-import { COLORS } from '../utils/constansts/colors'
+import { COLORS } from '@utils/constansts/colors'
 
 export default function CreateRideButton() {
   return (

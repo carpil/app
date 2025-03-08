@@ -2,10 +2,10 @@ import { Tabs, useRouter } from 'expo-router'
 import { View } from 'react-native'
 import 'react-native-get-random-values'
 import { useContext } from 'react'
-import { SelectLocationContext } from '../../context/select-location'
-import SafeScreen from '../../components/safe-screen'
-import PlacesAutocomplete from '../../components/places-autocomplete'
-import { COLORS } from '../../utils/constansts/colors'
+import { SelectLocationContext } from '@context/select-location'
+import SafeScreen from '@components/safe-screen'
+import PlacesAutocomplete from '@components/places-autocomplete'
+import { COLORS } from '@utils/constansts/colors'
 
 export default function SelectOrigin() {
   const router = useRouter()

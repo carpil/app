@@ -1,4 +1,4 @@
-import { RideRequest } from '../../types/ride-request'
+import { RideRequest } from '@types/ride-request'
 
 export const rideRequests: RideRequest[] = [
   {

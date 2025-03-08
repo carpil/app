@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet, Pressable } from 'react-native'
 import { Location } from '../../types/location'
-import { EditIcon, LocationIcon, MoreIcon } from '../icons'
-import { COLORS } from '../../utils/constansts/colors'
+import { EditIcon, LocationIcon, MoreIcon } from '@components/icons'
+import { COLORS } from '@utils/constansts/colors'
 import { Link } from 'expo-router'
 
 interface RideLocationsPillProps {

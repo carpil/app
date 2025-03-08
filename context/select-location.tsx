@@ -1,5 +1,5 @@
 import { createContext, useState } from 'react'
-import { Location } from '../types/location'
+import { Location } from '~types/location'
 
 interface SelectLocation {
   origin: Location | null

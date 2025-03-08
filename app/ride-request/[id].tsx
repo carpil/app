@@ -1,11 +1,11 @@
 import { Text, View, StyleSheet, ScrollView } from 'react-native'
-import { formatDate } from '../../utils/format-date'
-import { rideRequests } from '../../utils/mocks/ride-requests'
+import { formatDate } from '@utils/format-date'
+import { rideRequests } from '@utils/mocks/ride-requests'
 import { Stack, useLocalSearchParams } from 'expo-router'
-import Avatar from '../../components/avatar'
-import ReservationButton from '../../components/reservation-button'
-import Screen from '../../components/screen'
-import { COLORS } from '../../utils/constansts/colors'
+import Avatar from '@components/avatar'
+import ReservationButton from '@components/reservation-button'
+import Screen from '@components/screen'
+import { COLORS } from '@utils/constansts/colors'
 
 export default function RideRequestDetails() {
   const { id } = useLocalSearchParams()

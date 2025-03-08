@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { View, StyleSheet, Pressable, Text, Platform } from 'react-native'
 import DateTimePicker from '@react-native-community/datetimepicker'
-import { formatDate } from '../../utils/format-date'
-import { COLORS } from '../../utils/constansts/colors'
+import { formatDate } from '@utils/format-date'
+import { COLORS } from '@utils/constansts/colors'
 
 interface ScheduleProps {
   date: Date
