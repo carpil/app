@@ -1,7 +1,8 @@
-import { View, Text, StyleSheet } from 'react-native'
+import { View, Text, StyleSheet, Pressable } from 'react-native'
 import { Location } from '../../types/location'
 import { EditIcon, LocationIcon, MoreIcon } from '../icons'
 import { COLORS } from '../../utils/constansts/colors'
+import { Link } from 'expo-router'
 
 interface RideLocationsPillProps {
   origin: Location
@@ -62,7 +63,11 @@ export default function RideLocationsPill({
           </View>
         </View>
       </View>
-      <EditIcon color={COLORS.secondary_gray} />
+      <Link href={'/create-ride/select-origin'} asChild>
+        <Pressable>
+          <EditIcon color={COLORS.secondary_gray} />
+        </Pressable>
+      </Link>
     </View>
   )
 }
