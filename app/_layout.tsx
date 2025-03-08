@@ -1,18 +1,22 @@
 import { Stack } from 'expo-router'
-import { View, StyleSheet } from 'react-native'
+import { StyleSheet } from 'react-native'
 import AppProviders from '../components/providers/app-providers'
+import { GestureHandlerRootView } from 'react-native-gesture-handler'
+import { SafeAreaProvider } from 'react-native-safe-area-context'
 
-export default function Layout() {
+export default function RootLayout() {
   return (
-    <AppProviders>
-      <View style={styles.container}>
-        <Stack
-          screenOptions={{
-            headerShown: false,
-          }}
-        />
-      </View>
-    </AppProviders>
+    <GestureHandlerRootView style={styles.container}>
+      <SafeAreaProvider>
+        <AppProviders>
+          <Stack
+            screenOptions={{
+              headerShown: false,
+            }}
+          />
+        </AppProviders>
+      </SafeAreaProvider>
+    </GestureHandlerRootView>
   )
 }
 
