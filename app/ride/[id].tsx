@@ -7,7 +7,7 @@ import ReservationButton from '@components/reservation-button'
 import { COLORS } from '@utils/constansts/colors'
 import { useEffect, useState } from 'react'
 import { Ride } from '~types/ride'
-import { getRide } from 'services/api/rides'
+import { getRide, joinRide } from 'services/api/rides'
 
 export default function RideDetails() {
   const { id } = useLocalSearchParams()
@@ -37,6 +37,11 @@ export default function RideDetails() {
   const fullSeats = availableSeats === passengers.length
 
   const { hour, date } = formatDate(departureDate)
+
+  const handleJoinRide = async () => {
+    const message = await joinRide(rideId)
+    console.log({ message })
+  }
 
   return (
     <Screen>
@@ -118,7 +123,7 @@ export default function RideDetails() {
           </View>
         </View>
 
-        <ReservationButton onPress={() => console.log('reservar')} />
+        <ReservationButton onPress={handleJoinRide} />
       </ScrollView>
     </Screen>
   )
