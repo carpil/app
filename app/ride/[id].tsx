@@ -1,16 +1,22 @@
 import { Text, ScrollView, View, StyleSheet } from 'react-native'
 import { Stack, useLocalSearchParams } from 'expo-router'
 import Screen from '@components/screen'
-import { rides } from '@utils/mocks/rides'
 import Avatar from '@components/avatar'
 import { formatDate } from '@utils/format-date'
 import ReservationButton from '@components/reservation-button'
 import { COLORS } from '@utils/constansts/colors'
+import { useEffect, useState } from 'react'
+import { Ride } from '~types/ride'
+import { getRide, joinRide } from 'services/api/rides'
 
 export default function RideDetails() {
   const { id } = useLocalSearchParams()
+  const [ride, setRide] = useState<Ride | null>(null)
+  const rideId = id as string
 
-  const ride = rides.find((ride) => ride.id === id)
+  useEffect(() => {
+    getRide(rideId).then(setRide)
+  }, [rideId])
 
   if (!ride) {
     return <Text>No se encontró el ride</Text>
@@ -31,6 +37,11 @@ export default function RideDetails() {
   const fullSeats = availableSeats === passengers.length
 
   const { hour, date } = formatDate(departureDate)
+
+  const handleJoinRide = async () => {
+    const message = await joinRide(rideId)
+    console.log({ message })
+  }
 
   return (
     <Screen>
@@ -112,7 +123,7 @@ export default function RideDetails() {
           </View>
         </View>
 
-        <ReservationButton onPress={() => console.log('reservar')} />
+        <ReservationButton onPress={handleJoinRide} />
       </ScrollView>
     </Screen>
   )

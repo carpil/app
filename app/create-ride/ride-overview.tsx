@@ -1,22 +1,21 @@
 import { useContext, useEffect, useRef, useState } from 'react'
-import { View, StyleSheet, Platform, Text } from 'react-native'
-import { SelectLocationContext } from '@context/select-location'
-import MapView, { Marker, Region, PROVIDER_GOOGLE } from 'react-native-maps'
-import MapViewDirections from 'react-native-maps-directions'
-import { googleMapsTheme } from '@utils/constansts/google-maps-theme'
-import { Modalize } from 'react-native-modalize'
-import { GestureHandlerRootView } from 'react-native-gesture-handler'
-import RideLocationsPill from '@components/create-ride-modal/locations'
-import PassengersPill from '@components/create-ride-modal/passengers'
-import SchedulePill from '@components/create-ride-modal/schedule'
-import PricePill from '@components/create-ride-modal/price'
-import CreateRide from '@components/create-ride-modal/create-button'
-import { Ride } from '@types/ride'
-import { isAfter } from '@formkit/tempo'
 import { COLORS } from '@utils/constansts/colors'
-import { Stack, useRouter } from 'expo-router'
-import { StatusBar } from 'expo-status-bar'
-import { SafeAreaView } from 'react-native-safe-area-context'
+import { createRide } from 'services/api/rides'
+import { CreateRideRequest } from '~types/requests/ride'
+import { GestureHandlerRootView } from 'react-native-gesture-handler'
+import { googleMapsTheme } from '@utils/constansts/google-maps-theme'
+import { isAfter } from '@formkit/tempo'
+import { Modalize } from 'react-native-modalize'
+import { router } from 'expo-router'
+import { SelectLocationContext } from '@context/select-location'
+import { View, StyleSheet, Platform, Text } from 'react-native'
+import CreateRide from '@components/create-ride-modal/create-button'
+import MapView, { Marker, Region } from 'react-native-maps'
+import MapViewDirections from 'react-native-maps-directions'
+import PassengersPill from '@components/create-ride-modal/passengers'
+import PricePill from '@components/create-ride-modal/price'
+import RideLocationsPill from '@components/create-ride-modal/locations'
+import SchedulePill from '@components/create-ride-modal/schedule'
 
 const MAX_PASSENGERS = 15
 const TODAY = new Date()
@@ -52,28 +51,36 @@ export default function RideOverview() {
     }
   }
 
-  const onCreateRide = () => {
-    const ride: Ride = {
-      id: 'ride1',
+  const onCreateRide = async () => {
+    if (!origin || !destination) {
+      return
+    }
+
+    // TODO: Add meeting point
+    const rideRequest: CreateRideRequest = {
       origin,
       destination,
-      meetingPoint: null,
+      meetingPoint: {
+        id: 'meet789',
+        name: {
+          primary: 'San Jose',
+          secondary: 'SJ',
+        },
+        location: {
+          lat: 37.3382,
+          lng: -121.8863,
+        },
+      },
       availableSeats: passengers,
       price: parseInt(price),
       departureDate: date,
-      passengers: [],
-      driver: {
-        id: 'driver1',
-        name: 'Leonardo DiCaprio',
-        profilePicture:
-          'https://m.media-amazon.com/images/M/MV5BMjI0MTg3MzI0M15BMl5BanBnXkFtZTcwMzQyODU2Mw@@._V1_FMjpg_UX1000_.jpg',
-      },
-      deletedAt: null,
-      status: 'active',
-      chatId: 'chat1',
     }
 
-    console.log(ride)
+    const ride = await createRide(rideRequest)
+    if (!ride) {
+      return
+    }
+    router.push(`/`)
   }
 
   useEffect(() => {
