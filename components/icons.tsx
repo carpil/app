@@ -43,3 +43,11 @@ export const MinusIcon = ({ color }: IconProps) => (
 export const PlusIcon = ({ color }: IconProps) => (
   <Feather name="plus" size={24} color={color} />
 )
+
+export const GoogleIcon = ({ color }: IconProps) => (
+  <Ionicons name="logo-google" size={24} color={color} />
+)
+
+export const AppleIcon = ({ color }: IconProps) => (
+  <Ionicons name="logo-apple" size={24} color={color} />
+)
