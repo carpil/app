@@ -1,13 +1,21 @@
 import { View } from 'react-native'
 import { COLORS } from '@utils/constansts/colors'
 
-export default function Screen({ children }: { children: React.ReactNode }) {
+interface ScreenProps {
+  children: React.ReactNode
+  backgroundColor?: string
+}
+
+export default function Screen({
+  children,
+  backgroundColor = COLORS.primary,
+}: ScreenProps) {
   return (
     <View
       style={{
         flex: 1,
         paddingHorizontal: 12,
-        backgroundColor: COLORS.primary,
+        backgroundColor,
         paddingTop: 12,
       }}
     >
