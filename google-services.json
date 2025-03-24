@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "991234506580",
+    "project_id": "carpil-ef6b9",
+    "storage_bucket": "carpil-ef6b9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:991234506580:android:d6f79f9f37a29d2803d2c1",
+        "android_client_info": {
+          "package_name": "com.carpil.carpil"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "991234506580-4efrdn5impu019h4qsr6i5hv2uoea6qe.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.carpil.carpil",
+            "certificate_hash": "72bd94bbddb757245b5b1e69a59e0bb448ce9a57"
+          }
+        },
+        {
+          "client_id": "991234506580-cn5omi259nclgfosg69t47jradafhdv9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA9-5Ez-tS9X6JufyA56iO5Zu64EL4qsXw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "991234506580-cn5omi259nclgfosg69t47jradafhdv9.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "991234506580-g0eidihn9mf62tv1vf30dabmkr5v6tcc.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "org.reactjs.native.example.carpil"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

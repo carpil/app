@@ -1,13 +1,47 @@
+import { useEffect } from 'react'
 import { Text, StyleSheet, Pressable, View, Image } from 'react-native'
 import { COLORS } from '@utils/constansts/colors'
 import SafeScreen from '@components/safe-screen'
 import { GoogleIcon, AppleIcon } from '@components/icons'
 import SocialButton from '@components/buttons/social'
+import {
+  GoogleOneTapSignIn,
+  isErrorWithCode,
+  statusCodes,
+} from '@react-native-google-signin/google-signin'
 const logo = require('../../assets/logo.png')
 
 export default function Login() {
-  const handleGoogleLogin = () => {
-    console.log('Google login')
+  const handleGoogleLogin = async () => {
+    try {
+      console.log('Starting Google Sign In process...')
+
+      // Check if Google Play Services are available
+      const checkPlayServices = await GoogleOneTapSignIn.checkPlayServices()
+      console.log('Play Services check result:', checkPlayServices)
+      const response = await GoogleOneTapSignIn.signIn()
+
+      console.log('Successfully signed in:', response)
+    } catch (error) {
+      console.error('Google Sign In Error:', error)
+      if (isErrorWithCode(error)) {
+        switch (error.code) {
+          case statusCodes.ONE_TAP_START_FAILED:
+            console.log('One tap start failed')
+            break
+          case statusCodes.PLAY_SERVICES_NOT_AVAILABLE:
+            console.log('Play services not available')
+            break
+          case 'NO_SAVED_CREDENTIAL':
+            console.log('No saved credential found')
+            break
+          default:
+            console.log('Other Google Sign In error:', error.code)
+        }
+      } else {
+        console.log('An error that is not related to google sign in occurred')
+      }
+    }
   }
 
   const handleEmailLogin = () => {
@@ -17,6 +51,17 @@ export default function Login() {
   const handleAppleLogin = () => {
     console.log('Apple login')
   }
+
+  useEffect(() => {
+    console.log('Configuring Google Sign In...')
+    GoogleOneTapSignIn.configure({
+      webClientId:
+        '991234506580-gq74ort2o25p5b5ms8bv06v1s6khq9gg.apps.googleusercontent.com',
+      offlineAccess: true,
+      scopes: ['profile', 'email'],
+    })
+    console.log('Google Sign In configured')
+  }, [])
 
   return (
     <SafeScreen backgroundColor={COLORS.dark_gray}>

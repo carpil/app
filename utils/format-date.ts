@@ -6,6 +6,7 @@ export const formatDate = (dateTime: Date) => {
     format: 'hh:mm a',
     tz: 'America/Costa_Rica',
   })
+
   const date = format({
     date: dateTime,
     format: 'short',
