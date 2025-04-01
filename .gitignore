@@ -1,38 +1,59 @@
-# Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
-
-# dependencies
+# React Native
 node_modules/
+package-lock.json
+yarn.lock
+
+# iOS
+ios/Pods/
+ios/*.xcodeproj/
+ios/*.xcworkspace/
+ios/DerivedData/
+ios/build/
+ios/.last_build/
+
+# Android
+android/.gradle/
+android/app/build/
+android/build/
+android/.idea/
+android/app/.cxx/
+android/app/src/debug/
+android/app/src/release/
+android/local.properties
 
 # Expo
 .expo/
-dist/
-web-build/
+.expo-shared/
 
-# Native
-*.orig.*
-*.jks
-*.p8
-*.p12
-*.key
-*.mobileprovision
-/android
-/ios
-
-# Metro
-.metro-health-check*
-
-# debug
-npm-debug.*
-yarn-debug.*
-yarn-error.*
-
-# macOS
-.DS_Store
-*.pem
-
-# local env files
+# Miscellaneous
+*.log
+*.DS_Store
 .env
-.env*.local
 
-# typescript
-*.tsbuildinfo
+# Metro bundler
+metro-cache/
+
+# Temporary files
+.tmp/
+*.swp
+
+# VS Code
+.vscode/
+
+# Firebase
+firebase-debug.log
+google-services.json
+GoogleService-Info.plist
+
+# Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots
+fastlane/test_output
+
+# Xcode
+*.pbxproj
+*.xcworkspace
+*.xcuserdata
+*.xcuserdatad/
+
