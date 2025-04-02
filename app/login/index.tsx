@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { Text, StyleSheet, Pressable, View, Image } from 'react-native'
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native'
 import { COLORS } from '@utils/constansts/colors'
 import SafeScreen from '@components/safe-screen'
 import { GoogleIcon, AppleIcon } from '@components/icons'
@@ -14,26 +14,26 @@ const logo = require('../../assets/logo.png')
 export default function Login() {
   const handleGoogleLogin = async () => {
     try {
-      console.log('Starting Google Sign In process...')
+      await GoogleOneTapSignIn.checkPlayServices()
 
-      // Check if Google Play Services are available
-      const checkPlayServices = await GoogleOneTapSignIn.checkPlayServices()
-      console.log('Play Services check result:', checkPlayServices)
-      const response = await GoogleOneTapSignIn.signIn()
-
-      console.log('Successfully signed in:', response)
+      const userInfo = await GoogleOneTapSignIn.signIn()
+      if (userInfo.type !== 'success') {
+        throw new Error('Google Sign In Error')
+      }
+      const { idToken, user } = userInfo.data
+      console.log({ idToken, user })
     } catch (error) {
       console.error('Google Sign In Error:', error)
       if (isErrorWithCode(error)) {
         switch (error.code) {
           case statusCodes.ONE_TAP_START_FAILED:
-            console.log('One tap start failed')
+            console.log('User cancelled the sign-in flow')
+            break
+          case statusCodes.IN_PROGRESS:
+            console.log('Sign in is in progress already')
             break
           case statusCodes.PLAY_SERVICES_NOT_AVAILABLE:
-            console.log('Play services not available')
-            break
-          case 'NO_SAVED_CREDENTIAL':
-            console.log('No saved credential found')
+            console.log('Play services not available or outdated')
             break
           default:
             console.log('Other Google Sign In error:', error.code)
@@ -53,14 +53,10 @@ export default function Login() {
   }
 
   useEffect(() => {
-    console.log('Configuring Google Sign In...')
     GoogleOneTapSignIn.configure({
-      webClientId:
-        '991234506580-gq74ort2o25p5b5ms8bv06v1s6khq9gg.apps.googleusercontent.com',
+      webClientId: 'autoDetect',
       offlineAccess: true,
-      scopes: ['profile', 'email'],
     })
-    console.log('Google Sign In configured')
   }, [])
 
   return (
@@ -106,40 +102,40 @@ export default function Login() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'flex-start',
     alignItems: 'center',
+    justifyContent: 'center',
     padding: 20,
+  },
+  logo: {
+    width: 250,
+    height: 250,
+    resizeMode: 'contain',
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     color: COLORS.white,
+    marginTop: 20,
+    textAlign: 'center',
   },
   subtitle: {
+    fontSize: 16,
     color: COLORS.white,
     marginTop: 10,
-  },
-  button: {
-    backgroundColor: COLORS.primary,
-    padding: 10,
-    borderRadius: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 10,
+    textAlign: 'center',
   },
   link: {
-    color: COLORS.white,
-    textDecorationLine: 'underline',
-  },
-  logo: {
-    width: 250,
-    height: 250,
+    color: COLORS.primary,
   },
   buttons: {
-    marginTop: 40,
-    flexDirection: 'column',
-    gap: 10,
+    width: '100%',
+    marginTop: 30,
+    gap: 20,
+  },
+  button: {
+    backgroundColor: COLORS.black,
+    padding: 15,
+    borderRadius: 5,
     width: '100%',
   },
 })
