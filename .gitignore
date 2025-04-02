@@ -4,22 +4,10 @@ package-lock.json
 yarn.lock
 
 # iOS
-ios/Pods/
-ios/*.xcodeproj/
-ios/*.xcworkspace/
-ios/DerivedData/
-ios/build/
-ios/.last_build/
+ios/
 
 # Android
-android/.gradle/
-android/app/build/
-android/build/
-android/.idea/
-android/app/.cxx/
-android/app/src/debug/
-android/app/src/release/
-android/local.properties
+android/
 
 # Expo
 .expo/
@@ -42,8 +30,6 @@ metro-cache/
 
 # Firebase
 firebase-debug.log
-google-services.json
-GoogleService-Info.plist
 
 # Fastlane
 fastlane/report.xml
@@ -57,3 +43,6 @@ fastlane/test_output
 *.xcuserdata
 *.xcuserdatad/
 
+# Google Services
+google-services.json
+GoogleService-Info.plist
