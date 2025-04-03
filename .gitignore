@@ -3,8 +3,16 @@ node_modules/
 package-lock.json
 yarn.lock
 
-# iOS
-ios/
+# iOS (archivos específicos a excluir en lugar de todo el directorio)
+ios/Pods/
+ios/build/
+ios/*.xcworkspace/
+ios/Podfile.lock
+ios/*.xcuserstate
+ios/.xcode.env.local
+ios/DerivedData/
+ios/*.ipa
+ios/*.xcarchive
 
 # Android
 android/
@@ -37,12 +45,11 @@ fastlane/Preview.html
 fastlane/screenshots
 fastlane/test_output
 
-# Xcode
-*.pbxproj
-*.xcworkspace
-*.xcuserdata
-*.xcuserdatad/
+# Xcode (excluir archivos específicos en lugar de todos)
+**/xcuserdata/
+**/xcshareddata/
+**/*.xcuserdatad/
 
-# Google Services
+# Google Services (archivos con claves API y configuraciones sensibles)
 google-services.json
 GoogleService-Info.plist

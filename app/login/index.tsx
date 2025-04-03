@@ -1,46 +1,36 @@
 import { useEffect } from 'react'
-import { Image, Pressable, StyleSheet, Text, View } from 'react-native'
+import {
+  Image,
+  Platform,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native'
 import { COLORS } from '@utils/constansts/colors'
 import SafeScreen from '@components/safe-screen'
 import { GoogleIcon, AppleIcon } from '@components/icons'
 import SocialButton from '@components/buttons/social'
-import {
-  GoogleOneTapSignIn,
-  isErrorWithCode,
-  statusCodes,
-} from '@react-native-google-signin/google-signin'
+import { GoogleOneTapSignIn } from '@react-native-google-signin/google-signin'
 const logo = require('../../assets/logo.png')
 
 export default function Login() {
   const handleGoogleLogin = async () => {
     try {
       await GoogleOneTapSignIn.checkPlayServices()
+      let userInfo = null
 
-      const userInfo = await GoogleOneTapSignIn.signIn()
-      if (userInfo.type !== 'success') {
-        throw new Error('Google Sign In Error')
-      }
-      const { idToken, user } = userInfo.data
-      console.log({ idToken, user })
-    } catch (error) {
-      console.error('Google Sign In Error:', error)
-      if (isErrorWithCode(error)) {
-        switch (error.code) {
-          case statusCodes.ONE_TAP_START_FAILED:
-            console.log('User cancelled the sign-in flow')
-            break
-          case statusCodes.IN_PROGRESS:
-            console.log('Sign in is in progress already')
-            break
-          case statusCodes.PLAY_SERVICES_NOT_AVAILABLE:
-            console.log('Play services not available or outdated')
-            break
-          default:
-            console.log('Other Google Sign In error:', error.code)
-        }
+      if (Platform.OS === 'ios') {
+        userInfo = await GoogleOneTapSignIn.presentExplicitSignIn()
       } else {
-        console.log('An error that is not related to google sign in occurred')
+        userInfo = await GoogleOneTapSignIn.signIn()
       }
+
+      // Access user details properly
+      console.log(userInfo)
+    } catch (error) {
+      console.log(error)
+      console.error('Google Sign In Error:', error)
     }
   }
 
@@ -54,8 +44,12 @@ export default function Login() {
 
   useEffect(() => {
     GoogleOneTapSignIn.configure({
-      webClientId: 'autoDetect',
+      webClientId:
+        '991234506580-gq74ort2o25p5b5ms8bv06v1s6khq9gg.apps.googleusercontent.com',
+      iosClientId:
+        '991234506580-gq74ort2o25p5b5ms8bv06v1s6khq9gg.apps.googleusercontent.com',
       offlineAccess: true,
+      scopes: ['profile', 'email'],
     })
   }, [])
 
