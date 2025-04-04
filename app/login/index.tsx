@@ -11,29 +11,18 @@ import { COLORS } from '@utils/constansts/colors'
 import SafeScreen from '@components/safe-screen'
 import { GoogleIcon, AppleIcon } from '@components/icons'
 import SocialButton from '@components/buttons/social'
-import { GoogleOneTapSignIn } from '@react-native-google-signin/google-signin'
+import {
+  GoogleOneTapSignIn,
+  statusCodes,
+  isErrorWithCode,
+  isSuccessResponse,
+  isNoSavedCredentialFoundResponse,
+} from '@react-native-google-signin/google-signin'
+import auth from '@react-native-firebase/auth'
+
 const logo = require('../../assets/logo.png')
 
 export default function Login() {
-  const handleGoogleLogin = async () => {
-    try {
-      await GoogleOneTapSignIn.checkPlayServices()
-      let userInfo = null
-
-      if (Platform.OS === 'ios') {
-        userInfo = await GoogleOneTapSignIn.presentExplicitSignIn()
-      } else {
-        userInfo = await GoogleOneTapSignIn.signIn()
-      }
-
-      // Access user details properly
-      console.log(userInfo)
-    } catch (error) {
-      console.log(error)
-      console.error('Google Sign In Error:', error)
-    }
-  }
-
   const handleEmailLogin = () => {
     console.log('Email login')
   }
@@ -42,14 +31,55 @@ export default function Login() {
     console.log('Apple login')
   }
 
+  const handleGoogleLogin = async () => {
+    try {
+      console.log('Google login')
+      await GoogleOneTapSignIn.checkPlayServices()
+      const response = await GoogleOneTapSignIn.signIn()
+
+      if (isSuccessResponse(response)) {
+        const { idToken } = response.data
+
+        const googleCredential = auth.GoogleAuthProvider.credential(idToken)
+        await auth().signInWithCredential(googleCredential)
+
+        const firebaseUser = auth().currentUser
+        const firebaseIdToken = await firebaseUser?.getIdToken()
+
+        console.log(firebaseIdToken)
+      } else if (isNoSavedCredentialFoundResponse(response)) {
+        console.log('No saved credential found')
+      }
+    } catch (error) {
+      if (isErrorWithCode(error)) {
+        switch (error.code) {
+          case statusCodes.ONE_TAP_START_FAILED:
+            // Android-only, you probably have hit rate limiting.
+            // You can still call `presentExplicitSignIn` in this case.
+            break
+          case statusCodes.PLAY_SERVICES_NOT_AVAILABLE:
+            // Android: play services not available or outdated.
+            // Get more details from `error.userInfo`.
+            // Web: when calling an unimplemented api (requestAuthorization)
+            // or when the Google Client Library is not loaded yet.
+            break
+          default:
+          // something else happened
+        }
+      } else {
+        // an error that's not related to google sign in occurred
+      }
+    }
+  }
+
   useEffect(() => {
     GoogleOneTapSignIn.configure({
       webClientId:
-        '991234506580-gq74ort2o25p5b5ms8bv06v1s6khq9gg.apps.googleusercontent.com',
-      iosClientId:
-        '991234506580-gq74ort2o25p5b5ms8bv06v1s6khq9gg.apps.googleusercontent.com',
+        Platform.OS === 'ios'
+          ? '991234506580-gq74ort2o25p5b5ms8bv06v1s6khq9gg.apps.googleusercontent.com'
+          : 'autoDetect',
       offlineAccess: true,
-      scopes: ['profile', 'email'],
+      scopes: ['email', 'profile'],
     })
   }, [])
 
