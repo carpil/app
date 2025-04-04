@@ -17,10 +17,14 @@ import {
   isErrorWithCode,
   isSuccessResponse,
   isNoSavedCredentialFoundResponse,
+  OneTapResponse,
 } from '@react-native-google-signin/google-signin'
 import auth from '@react-native-firebase/auth'
+import { IOS_GOOGLE_CLIENT_ID } from '@utils/constansts/api'
 
 const logo = require('../../assets/logo.png')
+
+const webClientId = Platform.OS === 'ios' ? IOS_GOOGLE_CLIENT_ID : 'autoDetect'
 
 export default function Login() {
   const handleEmailLogin = () => {
@@ -33,9 +37,13 @@ export default function Login() {
 
   const handleGoogleLogin = async () => {
     try {
-      console.log('Google login')
       await GoogleOneTapSignIn.checkPlayServices()
-      const response = await GoogleOneTapSignIn.signIn()
+      let response: OneTapResponse
+      if (Platform.OS === 'ios') {
+        response = await GoogleOneTapSignIn.presentExplicitSignIn()
+      } else {
+        response = await GoogleOneTapSignIn.signIn()
+      }
 
       if (isSuccessResponse(response)) {
         const { idToken } = response.data
@@ -74,10 +82,7 @@ export default function Login() {
 
   useEffect(() => {
     GoogleOneTapSignIn.configure({
-      webClientId:
-        Platform.OS === 'ios'
-          ? '991234506580-gq74ort2o25p5b5ms8bv06v1s6khq9gg.apps.googleusercontent.com'
-          : 'autoDetect',
+      webClientId,
       offlineAccess: true,
       scopes: ['email', 'profile'],
     })
