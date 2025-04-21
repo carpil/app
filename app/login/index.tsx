@@ -1,15 +1,32 @@
-import { Text, StyleSheet, Pressable, View, Image } from 'react-native'
+import { useEffect } from 'react'
+import {
+  Image,
+  Platform,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native'
 import { COLORS } from '@utils/constansts/colors'
 import SafeScreen from '@components/safe-screen'
 import { GoogleIcon, AppleIcon } from '@components/icons'
 import SocialButton from '@components/buttons/social'
+import {
+  GoogleOneTapSignIn,
+  statusCodes,
+  isErrorWithCode,
+  isSuccessResponse,
+  isNoSavedCredentialFoundResponse,
+  OneTapResponse,
+} from '@react-native-google-signin/google-signin'
+import auth from '@react-native-firebase/auth'
+import { IOS_GOOGLE_CLIENT_ID } from '@utils/constansts/api'
+
 const logo = require('../../assets/logo.png')
 
-export default function Login() {
-  const handleGoogleLogin = () => {
-    console.log('Google login')
-  }
+const webClientId = Platform.OS === 'ios' ? IOS_GOOGLE_CLIENT_ID : 'autoDetect'
 
+export default function Login() {
   const handleEmailLogin = () => {
     console.log('Email login')
   }
@@ -17,6 +34,59 @@ export default function Login() {
   const handleAppleLogin = () => {
     console.log('Apple login')
   }
+
+  const handleGoogleLogin = async () => {
+    try {
+      await GoogleOneTapSignIn.checkPlayServices()
+      let response: OneTapResponse
+      if (Platform.OS === 'ios') {
+        response = await GoogleOneTapSignIn.presentExplicitSignIn()
+      } else {
+        response = await GoogleOneTapSignIn.signIn()
+      }
+
+      if (isSuccessResponse(response)) {
+        const { idToken } = response.data
+
+        const googleCredential = auth.GoogleAuthProvider.credential(idToken)
+        await auth().signInWithCredential(googleCredential)
+
+        const firebaseUser = auth().currentUser
+        const firebaseIdToken = await firebaseUser?.getIdToken()
+
+        console.log(firebaseIdToken)
+      } else if (isNoSavedCredentialFoundResponse(response)) {
+        console.log('No saved credential found')
+      }
+    } catch (error) {
+      if (isErrorWithCode(error)) {
+        switch (error.code) {
+          case statusCodes.ONE_TAP_START_FAILED:
+            // Android-only, you probably have hit rate limiting.
+            // You can still call `presentExplicitSignIn` in this case.
+            break
+          case statusCodes.PLAY_SERVICES_NOT_AVAILABLE:
+            // Android: play services not available or outdated.
+            // Get more details from `error.userInfo`.
+            // Web: when calling an unimplemented api (requestAuthorization)
+            // or when the Google Client Library is not loaded yet.
+            break
+          default:
+          // something else happened
+        }
+      } else {
+        // an error that's not related to google sign in occurred
+      }
+    }
+  }
+
+  useEffect(() => {
+    GoogleOneTapSignIn.configure({
+      webClientId,
+      offlineAccess: true,
+      scopes: ['email', 'profile'],
+    })
+  }, [])
 
   return (
     <SafeScreen backgroundColor={COLORS.dark_gray}>
@@ -61,40 +131,40 @@ export default function Login() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'flex-start',
     alignItems: 'center',
+    justifyContent: 'center',
     padding: 20,
+  },
+  logo: {
+    width: 250,
+    height: 250,
+    resizeMode: 'contain',
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     color: COLORS.white,
+    marginTop: 20,
+    textAlign: 'center',
   },
   subtitle: {
+    fontSize: 16,
     color: COLORS.white,
     marginTop: 10,
-  },
-  button: {
-    backgroundColor: COLORS.primary,
-    padding: 10,
-    borderRadius: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 10,
+    textAlign: 'center',
   },
   link: {
-    color: COLORS.white,
-    textDecorationLine: 'underline',
-  },
-  logo: {
-    width: 250,
-    height: 250,
+    color: COLORS.primary,
   },
   buttons: {
-    marginTop: 40,
-    flexDirection: 'column',
-    gap: 10,
+    width: '100%',
+    marginTop: 30,
+    gap: 20,
+  },
+  button: {
+    backgroundColor: COLORS.black,
+    padding: 15,
+    borderRadius: 5,
     width: '100%',
   },
 })

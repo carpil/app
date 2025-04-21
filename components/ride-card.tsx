@@ -25,7 +25,7 @@ export default function RideCard({ ride }: RideCardProps) {
 
   const remainingSeats = availableSeats - passengers.length
 
-  const { hour, date } = formatDate(departureDate)
+  // const { hour, date } = formatDate(departureDate)
 
   const originName = origin?.name.primary || ''
   const destinationName = destination?.name.primary || ''
@@ -67,8 +67,8 @@ export default function RideCard({ ride }: RideCardProps) {
           {/* Info (departure date, price) */}
           <View style={styles.infoContainer}>
             <View style={styles.infoBlock}>
-              <Text style={styles.infoTitle}>{hour}</Text>
-              <Text style={styles.infoSubtitle}>{date}</Text>
+              <Text style={styles.infoTitle}>{'12:00pm'}</Text>
+              <Text style={styles.infoSubtitle}>{'23 ene 2023'}</Text>
             </View>
             <View style={styles.infoBlock}>
               <Text style={styles.infoTitle}>₡{ride.price}</Text>

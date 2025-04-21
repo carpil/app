@@ -1,36 +1,55 @@
-# Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
-
-# dependencies
+# React Native
 node_modules/
+package-lock.json
+yarn.lock
+
+# iOS (archivos específicos a excluir en lugar de todo el directorio)
+ios/Pods/
+ios/build/
+ios/*.xcworkspace/
+ios/Podfile.lock
+ios/*.xcuserstate
+ios/.xcode.env.local
+ios/DerivedData/
+ios/*.ipa
+ios/*.xcarchive
+
+# Android
+android/
 
 # Expo
 .expo/
-dist/
-web-build/
+.expo-shared/
 
-# Native
-*.orig.*
-*.jks
-*.p8
-*.p12
-*.key
-*.mobileprovision
-
-# Metro
-.metro-health-check*
-
-# debug
-npm-debug.*
-yarn-debug.*
-yarn-error.*
-
-# macOS
-.DS_Store
-*.pem
-
-# local env files
+# Miscellaneous
+*.log
+*.DS_Store
 .env
-.env*.local
 
-# typescript
-*.tsbuildinfo
+# Metro bundler
+metro-cache/
+
+# Temporary files
+.tmp/
+*.swp
+
+# VS Code
+.vscode/
+
+# Firebase
+firebase-debug.log
+
+# Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots
+fastlane/test_output
+
+# Xcode (excluir archivos específicos en lugar de todos)
+**/xcuserdata/
+**/xcshareddata/
+**/*.xcuserdatad/
+
+# Google Services (archivos con claves API y configuraciones sensibles)
+google-services.json
+GoogleService-Info.plist
