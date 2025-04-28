@@ -1974,6 +1974,11 @@
   resolved "https://registry.yarnpkg.com/@humanwhocodes/object-schema/-/object-schema-2.0.3.tgz#4a2868d75d6d6963e423bcf90b7fd1be343409d3"
   integrity sha512-93zYdMES/c1D69yZiKDBj0V24vqNzB/koF26KPaagAfd3P/4gUlh3Dys5ogAK+Exi9QyzlD8x/08Zt7wIKcDcA==
 
+"@invertase/react-native-apple-authentication@^2.4.1":
+  version "2.4.1"
+  resolved "https://registry.yarnpkg.com/@invertase/react-native-apple-authentication/-/react-native-apple-authentication-2.4.1.tgz#166cc923a6424e19791d20f47d08ad648499db15"
+  integrity sha512-SzWXS/T6H62ScTX+jMLJFLAcBp2p8P30J5uQEimpLMUolqnv/iAljfpwTvZYaniVmMSUXjG0/N95ScUIcmsYRQ==
+
 "@isaacs/cliui@^8.0.2":
   version "8.0.2"
   resolved "https://registry.yarnpkg.com/@isaacs/cliui/-/cliui-8.0.2.tgz#b37667b7bc181c168782259bab42474fbf52b550"
@@ -2243,21 +2248,21 @@
   dependencies:
     invariant "^2.2.4"
 
-"@react-native-firebase/app@^21.13.0":
-  version "21.13.0"
-  resolved "https://registry.yarnpkg.com/@react-native-firebase/app/-/app-21.13.0.tgz#25247c0a8200fbfcf7dd22a5b627af20bea7c352"
-  integrity sha512-UjM+yTTuBTQkGQHSTmJtKoXumgWxN+G90q6TCBqf2fQzAGhWpeMQSKOpD3arW+gmmO2eNIb1P8wyMYQk9GeGVA==
+"@react-native-firebase/app@^21.14.0":
+  version "21.14.0"
+  resolved "https://registry.yarnpkg.com/@react-native-firebase/app/-/app-21.14.0.tgz#5061c94f37331b89fb50d20d3c71c6120978b4f8"
+  integrity sha512-vBNfn7PoQrZfANLJnJiWZSHVu7WG6hjM5w3MDfmG8DLdr8VsAVBUgsn8lGpqobSuno1vTgwDIhR8PYZjMGsuvg==
   dependencies:
     firebase "11.3.1"
 
-"@react-native-firebase/auth@^21.13.0":
-  version "21.13.0"
-  resolved "https://registry.yarnpkg.com/@react-native-firebase/auth/-/auth-21.13.0.tgz#685146588bc537e1e6de5adbfcdf1972c4d09e1f"
-  integrity sha512-oM4PgOmh5xSB+pDQil5ATbEZ48AxBU2lC6EJCDCcSf5LqdWwOm8LA3Ew1ffJnCQJ0RafH7eSrYpFgnxR2y2sPg==
+"@react-native-firebase/auth@^21.14.0":
+  version "21.14.0"
+  resolved "https://registry.yarnpkg.com/@react-native-firebase/auth/-/auth-21.14.0.tgz#d5ba902567dfd94ba995815bdcf34da90be9e744"
+  integrity sha512-m4BFrq/pC4OlPPLZJjDu0n/3QHM+pE5KlYc7dvnE8zavtlqKclvZ6cchcfm4DsPVqmuQOJ1QQqrYdOfRm3hsHA==
   dependencies:
     plist "^3.1.0"
 
-"@react-native-google-signin/google-signin@^19.1.1":
+"@react-native-google-signin/google-signin@19.1.1":
   version "19.1.1"
   resolved "https://npm.pkg.github.com/download/@react-native-google-signin/google-signin/19.1.1/eac174fac5adaaa95d26f1a95b947bb598b9c312#eac174fac5adaaa95d26f1a95b947bb598b9c312"
   integrity sha512-XMAQ5ZjXUybQ0+vk+5eQvHRWNT8OXhs9bSSN83jFVrP2OMJPfLtAM0k8gmh2rfxrXDFN0GesU2EsHJcqb+DGHQ==
@@ -2887,7 +2892,7 @@ ajv@^6.12.4:
     json-schema-traverse "^0.4.1"
     uri-js "^4.2.2"
 
-ajv@^8.0.0, ajv@^8.9.0:
+ajv@^8.0.0, ajv@^8.11.0, ajv@^8.9.0:
   version "8.17.1"
   resolved "https://registry.yarnpkg.com/ajv/-/ajv-8.17.1.tgz#37d9a5c776af6bc92d7f4f9510eba4c0a60d11a6"
   integrity sha512-B/gBuNg5SiMTrPkC+A2+cW0RszwxYmn6VYxB/inlBStS5nx6xHIt/ehKRhIMhqusl7a8LjQoZnjCs5vhwxOQ1g==
@@ -4470,6 +4475,14 @@ expo-asset@~11.0.5:
     expo-constants "~17.0.8"
     invariant "^2.2.4"
     md5-file "^3.2.3"
+
+expo-build-properties@~0.13.2:
+  version "0.13.2"
+  resolved "https://registry.yarnpkg.com/expo-build-properties/-/expo-build-properties-0.13.2.tgz#c9cef927fc8236551d940da4fd8dc1332e2d052d"
+  integrity sha512-ML2GwBgn0Bo4yPgnSGb7h3XVxCigS/KFdid3xPC2HldEioTP3UewB/2Qa4WBsam9Fb7lAuRyVHAfRoA3swpDzg==
+  dependencies:
+    ajv "^8.11.0"
+    semver "^7.6.0"
 
 expo-constants@^17.0.8, expo-constants@~17.0.5, expo-constants@~17.0.8:
   version "17.0.8"
