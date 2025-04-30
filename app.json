@@ -45,6 +45,7 @@
       "@react-native-firebase/app",
       "@react-native-firebase/auth",
       "expo-build-properties",
+      "expo-apple-authentication",
       [
         "expo-build-properties",
         {

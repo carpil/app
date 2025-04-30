@@ -30,6 +30,8 @@ import {
   appleAuth,
 } from '@invertase/react-native-apple-authentication'
 
+import * as AppleAuthentication from 'expo-apple-authentication'
+
 const logo = require('../../assets/logo.png')
 
 const webClientId = Platform.OS === 'ios' ? IOS_GOOGLE_CLIENT_ID : 'autoDetect'
@@ -153,14 +155,50 @@ export default function Login() {
             icon={<GoogleIcon color={COLORS.white} />}
             onPress={handleGoogleLogin}
           />
-          <AppleButton
-            buttonStyle={AppleButton.Style.WHITE}
-            buttonType={AppleButton.Type.SIGN_IN}
-            style={{
-              width: 160,
-              height: 45,
+          <AppleAuthentication.AppleAuthenticationButton
+            buttonType={
+              AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN
+            }
+            buttonStyle={
+              AppleAuthentication.AppleAuthenticationButtonStyle.BLACK
+            }
+            cornerRadius={5}
+            style={styles.button}
+            onPress={async () => {
+              try {
+                const credential = await AppleAuthentication.signInAsync({
+                  requestedScopes: [
+                    AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+                    AppleAuthentication.AppleAuthenticationScope.EMAIL,
+                  ],
+                })
+
+                console.log('credential', credential)
+
+                const { identityToken } = credential
+
+                const appleCredential =
+                  firebase.auth.AppleAuthProvider.credential(identityToken)
+                try {
+                  console.log('im here')
+                  const userCredential = await signInWithCredential(
+                    getAuth(),
+                    appleCredential,
+                  )
+
+                  console.log('userCredential', userCredential)
+                } catch (error) {
+                  console.log('error', error)
+                }
+                // signed in
+              } catch (e: any) {
+                if (e.code === 'ERR_REQUEST_CANCELED') {
+                  // handle that the user canceled the sign-in flow
+                } else {
+                  // handle other errors
+                }
+              }
             }}
-            onPress={() => handleAppleLogin()}
           />
         </View>
         <Text style={styles.subtitle}>
