@@ -20,6 +20,7 @@ DerivedData
 *.hmap
 *.ipa
 *.xcuserstate
+project.xcworkspace
 .xcode.env.local
 
 # Bundle artifacts
@@ -27,8 +28,3 @@ DerivedData
 
 # CocoaPods
 /Pods/
-
-# No excluir archivos importantes
-!Podfile
-!Podfile.properties.json
-!.xcode.env

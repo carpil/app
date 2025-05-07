@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import {
   Image,
   Platform,
@@ -9,7 +9,7 @@ import {
 } from 'react-native'
 import { COLORS } from '@utils/constansts/colors'
 import SafeScreen from '@components/safe-screen'
-import { GoogleIcon, AppleIcon } from '@components/icons'
+import { AppleIcon, GoogleIcon } from '@components/icons'
 import SocialButton from '@components/buttons/social'
 import {
   GoogleOneTapSignIn,
@@ -19,8 +19,14 @@ import {
   isNoSavedCredentialFoundResponse,
   OneTapResponse,
 } from '@react-native-google-signin/google-signin'
-import auth from '@react-native-firebase/auth'
+import auth, {
+  firebase,
+  getAuth,
+  signInWithCredential,
+} from '@react-native-firebase/auth'
 import { IOS_GOOGLE_CLIENT_ID } from '@utils/constansts/api'
+
+import * as AppleAuthentication from 'expo-apple-authentication'
 
 const logo = require('../../assets/logo.png')
 
@@ -29,10 +35,6 @@ const webClientId = Platform.OS === 'ios' ? IOS_GOOGLE_CLIENT_ID : 'autoDetect'
 export default function Login() {
   const handleEmailLogin = () => {
     console.log('Email login')
-  }
-
-  const handleAppleLogin = () => {
-    console.log('Apple login')
   }
 
   const handleGoogleLogin = async () => {
@@ -76,6 +78,39 @@ export default function Login() {
         }
       } else {
         // an error that's not related to google sign in occurred
+        console.error('Google Sign-In Error:', error)
+      }
+    }
+  }
+
+  const handleAppleLogin = async () => {
+    try {
+      const credential = await AppleAuthentication.signInAsync({
+        requestedScopes: [
+          AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+          AppleAuthentication.AppleAuthenticationScope.EMAIL,
+        ],
+      })
+      const { identityToken } = credential
+
+      const appleCredential =
+        firebase.auth.AppleAuthProvider.credential(identityToken)
+      try {
+        const userCredential = await signInWithCredential(
+          getAuth(),
+          appleCredential,
+        )
+
+        console.log('userCredential', userCredential)
+      } catch (error) {
+        console.log('error', error)
+      }
+      // signed in
+    } catch (e: any) {
+      if (e.code === 'ERR_REQUEST_CANCELED') {
+        // handle that the user canceled the sign-in flow
+      } else {
+        // handle other errors
       }
     }
   }
@@ -114,11 +149,13 @@ export default function Login() {
             icon={<GoogleIcon color={COLORS.white} />}
             onPress={handleGoogleLogin}
           />
-          <SocialButton
-            text="Continuar con Apple"
-            icon={<AppleIcon color={COLORS.white} />}
-            onPress={handleAppleLogin}
-          />
+          {Platform.OS === 'ios' && (
+            <SocialButton
+              text="Continuar con Apple"
+              icon={<AppleIcon color={COLORS.white} />}
+              onPress={handleAppleLogin}
+            />
+          )}
         </View>
         <Text style={styles.subtitle}>
           ¿No tienes una cuenta? <Text style={styles.link}>Regístrate</Text>
@@ -159,7 +196,7 @@ const styles = StyleSheet.create({
   buttons: {
     width: '100%',
     marginTop: 30,
-    gap: 20,
+    gap: 10,
   },
   button: {
     backgroundColor: COLORS.black,

@@ -13,13 +13,8 @@ install! 'cocoapods',
 
 prepare_react_native_project!
 
-use_modular_headers!
-
 target 'carpil' do
   use_expo_modules!
-
-  # Enable Swift support
-  use_frameworks! :linkage => :static
 
   if ENV['EXPO_USE_COMMUNITY_AUTOLINKING'] == '1'
     config_command = ['node', '-e', "process.argv=['', '', 'config'];require('@react-native-community/cli').run()"];
