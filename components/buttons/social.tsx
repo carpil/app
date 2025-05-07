@@ -22,9 +22,10 @@ export default function SocialButton({
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: COLORS.primary,
-    padding: 10,
-    borderRadius: 10,
+    backgroundColor: COLORS.black,
+    padding: 15,
+    borderRadius: 5,
+    width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
