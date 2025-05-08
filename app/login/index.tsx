@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import {
   Image,
   Platform,
@@ -27,16 +27,13 @@ import auth, {
 import { IOS_GOOGLE_CLIENT_ID } from '@utils/constansts/api'
 
 import * as AppleAuthentication from 'expo-apple-authentication'
+import { Link } from 'expo-router'
 
 const logo = require('../../assets/logo.png')
 
 const webClientId = Platform.OS === 'ios' ? IOS_GOOGLE_CLIENT_ID : 'autoDetect'
 
 export default function Login() {
-  const handleEmailLogin = () => {
-    console.log('Email login')
-  }
-
   const handleGoogleLogin = async () => {
     try {
       await GoogleOneTapSignIn.checkPlayServices()
@@ -132,18 +129,20 @@ export default function Login() {
           Inicia sesión o crea una cuenta para continuar
         </Text>
         <View style={styles.buttons}>
-          <Pressable style={styles.button} onPress={handleEmailLogin}>
-            <Text
-              style={{
-                color: COLORS.white,
-                fontSize: 16,
-                padding: 5,
-                textAlign: 'center',
-              }}
-            >
-              Continuar con correo electrónico
-            </Text>
-          </Pressable>
+          <Link href={`/login/login-email`} asChild>
+            <Pressable style={styles.button}>
+              <Text
+                style={{
+                  color: COLORS.white,
+                  fontSize: 16,
+                  padding: 5,
+                  textAlign: 'center',
+                }}
+              >
+                Continuar con correo electrónico
+              </Text>
+            </Pressable>
+          </Link>
           <SocialButton
             text="Continuar con Google"
             icon={<GoogleIcon color={COLORS.white} />}
