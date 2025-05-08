@@ -51,3 +51,11 @@ export const GoogleIcon = ({ color }: IconProps) => (
 export const AppleIcon = ({ color }: IconProps) => (
   <Ionicons name="logo-apple" size={24} color={color} />
 )
+
+export const EyeOnIcon = ({ color }: IconProps) => (
+  <Ionicons name="eye" size={24} color={color} />
+)
+
+export const EyeOffIcon = ({ color }: IconProps) => (
+  <Ionicons name="eye-off-outline" size={24} color={color} />
+)
