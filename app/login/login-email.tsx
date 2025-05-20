@@ -65,14 +65,6 @@ export default function LoginEmail() {
           )
           console.log('User created successfully:', createUserResponse)
 
-          // sign in with the new user
-          // const signInResponse = await signInWithEmailAndPassword(
-          //   auth,
-          //   data.email,
-          //   data.password,
-          // )
-          // console.log('Sign in successful:', signInResponse)
-
           // get user token
           const userToken = await getAuth().currentUser?.getIdToken()
           console.log('User token:', userToken)
