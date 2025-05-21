@@ -53,7 +53,8 @@ export default function LoginEmail() {
       )
       console.log('Login successful:', response)
       // get user token
-      const userToken = await getAuth().currentUser?.getIdToken()
+      const currentUser = getAuth().currentUser
+      const userToken = await currentUser?.getIdToken()
       console.log('User token:', userToken)
     } catch (error: any) {
       if (error.code === 'auth/invalid-credential') {
@@ -66,7 +67,8 @@ export default function LoginEmail() {
           console.log('User created successfully:', createUserResponse)
 
           // get user token
-          const userToken = await getAuth().currentUser?.getIdToken()
+          const currentUser = getAuth().currentUser
+          const userToken = await currentUser?.getIdToken()
           console.log('User token:', userToken)
         } catch (createError: any) {
           console.error('Error creating user:', createError)
