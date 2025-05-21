@@ -17,6 +17,7 @@ import { EyeOffIcon, EyeOnIcon } from '@components/icons'
 import PrimaryButton from '@components/buttons/primary'
 import { User } from '~types/user'
 import { login, signUp } from 'services/api/auth'
+import { useAuthStore } from 'store/useAuthStore'
 
 const loginSchema = yup.object().shape({
   email: yup
@@ -43,6 +44,8 @@ export default function LoginEmail() {
     },
   })
 
+  const loginStore = useAuthStore((state) => state.login)
+
   const [showPassword, setShowPassword] = useState(false)
 
   const handleLogin = async (data: LoginForm) => {
@@ -64,8 +67,9 @@ export default function LoginEmail() {
       }
 
       const userResponse = await login({ user, token: userToken })
-
-      console.log({ userResponse })
+      if (userResponse != null) {
+        loginStore(userResponse, userToken)
+      }
     } catch (error: any) {
       if (error.code === 'auth/invalid-credential') {
         try {

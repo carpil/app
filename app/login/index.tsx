@@ -7,142 +7,21 @@ import {
   Text,
   View,
 } from 'react-native'
-import { COLORS } from '@utils/constansts/colors'
-import SafeScreen from '@components/safe-screen'
 import { AppleIcon, GoogleIcon } from '@components/icons'
-import SocialButton from '@components/buttons/social'
-import {
-  GoogleOneTapSignIn,
-  statusCodes,
-  isErrorWithCode,
-  isSuccessResponse,
-  isNoSavedCredentialFoundResponse,
-  OneTapResponse,
-} from '@react-native-google-signin/google-signin'
-import auth, {
-  firebase,
-  getAuth,
-  signInWithCredential,
-} from '@react-native-firebase/auth'
+import { COLORS } from '@utils/constansts/colors'
+import { GoogleOneTapSignIn } from '@react-native-google-signin/google-signin'
 import { IOS_GOOGLE_CLIENT_ID } from '@utils/constansts/api'
-
-import * as AppleAuthentication from 'expo-apple-authentication'
 import { Link } from 'expo-router'
-import { User } from '~types/user'
-import { login } from 'services/api/auth'
+import SafeScreen from '@components/safe-screen'
+import SocialButton from '@components/buttons/social'
+import { handleGoogleLogin } from 'services/auth/google'
+import { handleAppleLogin } from 'services/auth/apple'
 
 const logo = require('../../assets/logo.png')
 
 const webClientId = Platform.OS === 'ios' ? IOS_GOOGLE_CLIENT_ID : 'autoDetect'
 
 export default function Login() {
-  const handleGoogleLogin = async () => {
-    try {
-      await GoogleOneTapSignIn.checkPlayServices()
-      let response: OneTapResponse
-      if (Platform.OS === 'ios') {
-        response = await GoogleOneTapSignIn.presentExplicitSignIn()
-      } else {
-        response = await GoogleOneTapSignIn.signIn()
-      }
-
-      if (isSuccessResponse(response)) {
-        const { idToken } = response.data
-
-        const googleCredential = auth.GoogleAuthProvider.credential(idToken)
-        await auth().signInWithCredential(googleCredential)
-
-        const firebaseUser = auth().currentUser
-        const firebaseIdToken = await firebaseUser?.getIdToken()
-
-        if (!firebaseIdToken) {
-          throw new Error('No id token found')
-        }
-
-        const user: User = {
-          id: firebaseUser?.uid || '',
-          name: firebaseUser?.displayName || '',
-          profilePicture: firebaseUser?.photoURL || '',
-          email: firebaseUser?.email || '',
-        }
-
-        const userResponse = await login({ user, token: firebaseIdToken })
-
-        console.log({ userResponse })
-      } else if (isNoSavedCredentialFoundResponse(response)) {
-        console.log('No saved credential found')
-      }
-    } catch (error) {
-      if (isErrorWithCode(error)) {
-        switch (error.code) {
-          case statusCodes.ONE_TAP_START_FAILED:
-            // Android-only, you probably have hit rate limiting.
-            // You can still call `presentExplicitSignIn` in this case.
-            break
-          case statusCodes.PLAY_SERVICES_NOT_AVAILABLE:
-            // Android: play services not available or outdated.
-            // Get more details from `error.userInfo`.
-            // Web: when calling an unimplemented api (requestAuthorization)
-            // or when the Google Client Library is not loaded yet.
-            break
-          default:
-          // something else happened
-        }
-      } else {
-        // an error that's not related to google sign in occurred
-        console.error('Google Sign-In Error:', error)
-      }
-    }
-  }
-
-  const handleAppleLogin = async () => {
-    try {
-      const credential = await AppleAuthentication.signInAsync({
-        requestedScopes: [
-          AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
-          AppleAuthentication.AppleAuthenticationScope.EMAIL,
-        ],
-      })
-      const { identityToken } = credential
-
-      const appleCredential =
-        firebase.auth.AppleAuthProvider.credential(identityToken)
-      try {
-        const userCredential = await signInWithCredential(
-          getAuth(),
-          appleCredential,
-        )
-
-        console.log('userCredential', userCredential)
-        const firebaseIdToken = await userCredential.user?.getIdToken()
-
-        if (!firebaseIdToken) {
-          throw new Error('No id token found')
-        }
-
-        const user: User = {
-          id: userCredential.user?.uid || '',
-          name: userCredential.user?.displayName || '',
-          profilePicture: userCredential.user?.photoURL || '',
-          email: userCredential.user?.email || '',
-        }
-
-        const userResponse = await login({ user, token: firebaseIdToken })
-
-        console.log({ userResponse })
-      } catch (error) {
-        console.log('error', error)
-      }
-      // signed in
-    } catch (e: any) {
-      if (e.code === 'ERR_REQUEST_CANCELED') {
-        // handle that the user canceled the sign-in flow
-      } else {
-        // handle other errors
-      }
-    }
-  }
-
   useEffect(() => {
     GoogleOneTapSignIn.configure({
       webClientId,
