@@ -7,4 +7,6 @@ export interface User {
   lastName?: string
   phoneNumber?: string
   profileCompleted?: boolean
+  createdAt?: string
+  updatedAt?: string
 }
