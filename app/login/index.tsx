@@ -28,6 +28,8 @@ import { IOS_GOOGLE_CLIENT_ID } from '@utils/constansts/api'
 
 import * as AppleAuthentication from 'expo-apple-authentication'
 import { Link } from 'expo-router'
+import { User } from '~types/user'
+import { login } from 'services/api/auth'
 
 const logo = require('../../assets/logo.png')
 
@@ -53,7 +55,20 @@ export default function Login() {
         const firebaseUser = auth().currentUser
         const firebaseIdToken = await firebaseUser?.getIdToken()
 
-        console.log(firebaseIdToken)
+        if (!firebaseIdToken) {
+          throw new Error('No id token found')
+        }
+
+        const user: User = {
+          id: firebaseUser?.uid || '',
+          name: firebaseUser?.displayName || '',
+          profilePicture: firebaseUser?.photoURL || '',
+          email: firebaseUser?.email || '',
+        }
+
+        const userResponse = await login({ user, token: firebaseIdToken })
+
+        console.log({ userResponse })
       } else if (isNoSavedCredentialFoundResponse(response)) {
         console.log('No saved credential found')
       }
@@ -99,6 +114,22 @@ export default function Login() {
         )
 
         console.log('userCredential', userCredential)
+        const firebaseIdToken = await userCredential.user?.getIdToken()
+
+        if (!firebaseIdToken) {
+          throw new Error('No id token found')
+        }
+
+        const user: User = {
+          id: userCredential.user?.uid || '',
+          name: userCredential.user?.displayName || '',
+          profilePicture: userCredential.user?.photoURL || '',
+          email: userCredential.user?.email || '',
+        }
+
+        const userResponse = await login({ user, token: firebaseIdToken })
+
+        console.log({ userResponse })
       } catch (error) {
         console.log('error', error)
       }
