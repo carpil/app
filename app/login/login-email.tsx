@@ -15,6 +15,8 @@ import { LoginForm } from '~types/form/login'
 import React from 'react'
 import { EyeOffIcon, EyeOnIcon } from '@components/icons'
 import PrimaryButton from '@components/buttons/primary'
+import { User } from '~types/user'
+import { login, signUp } from 'services/api/auth'
 
 const loginSchema = yup.object().shape({
   email: yup
@@ -46,16 +48,24 @@ export default function LoginEmail() {
   const handleLogin = async (data: LoginForm) => {
     const auth = getAuth()
     try {
-      const response = await signInWithEmailAndPassword(
-        auth,
-        data.email,
-        data.password,
-      )
-      console.log('Login successful:', response)
+      await signInWithEmailAndPassword(auth, data.email, data.password)
       // get user token
       const currentUser = getAuth().currentUser
       const userToken = await currentUser?.getIdToken()
-      console.log('User token:', userToken)
+
+      if (!userToken) {
+        throw new Error('No user token found')
+      }
+      const user: User = {
+        id: currentUser?.uid || '',
+        name: currentUser?.displayName || '',
+        profilePicture: currentUser?.photoURL || '',
+        email: currentUser?.email || '',
+      }
+
+      const userResponse = await login({ user, token: userToken })
+
+      console.log({ userResponse })
     } catch (error: any) {
       if (error.code === 'auth/invalid-credential') {
         try {
@@ -70,6 +80,21 @@ export default function LoginEmail() {
           const currentUser = getAuth().currentUser
           const userToken = await currentUser?.getIdToken()
           console.log('User token:', userToken)
+
+          const user: User = {
+            id: currentUser?.uid || '',
+            name: currentUser?.displayName || '',
+            profilePicture: currentUser?.photoURL || '',
+            email: currentUser?.email || '',
+          }
+
+          if (!userToken) {
+            throw new Error('No user token found')
+          }
+
+          const userResponse = await signUp({ user, token: userToken })
+
+          console.log({ userResponse })
         } catch (createError: any) {
           console.error('Error creating user:', createError)
           if (createError.code === 'auth/email-already-in-use') {
