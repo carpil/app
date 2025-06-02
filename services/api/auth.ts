@@ -1,14 +1,10 @@
 import { API_URL } from '@utils/constansts/api'
+import { useAuthStore } from 'store/useAuthStore'
 import { SignUpResponse } from '~types/responses/auth'
 import { User } from '~types/user'
 
-export const signUp = async ({
-  user,
-  token,
-}: {
-  user: User
-  token: string
-}) => {
+export const signUp = async ({ user }: { user: User }) => {
+  const token = useAuthStore.getState().token
   const response = await fetch(`${API_URL}/signup`, {
     method: 'POST',
     body: JSON.stringify(user),
@@ -31,7 +27,8 @@ export const signUp = async ({
   return userResponse
 }
 
-export const login = async ({ user, token }: { user: User; token: string }) => {
+export const login = async ({ user }: { user: User }) => {
+  const token = useAuthStore.getState().token
   const response = await fetch(`${API_URL}/login`, {
     method: 'POST',
     headers: {
