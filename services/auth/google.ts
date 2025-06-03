@@ -45,7 +45,10 @@ export const handleGoogleLogin = async () => {
         email: firebaseUser?.email || '',
       }
 
-      const userResponse = await login({ user, token: firebaseIdToken })
+      const setToken = useAuthStore.getState().setToken
+      setToken(firebaseIdToken)
+
+      const userResponse = await login({ user })
 
       if (userResponse != null) {
         loginStore(userResponse, firebaseIdToken)

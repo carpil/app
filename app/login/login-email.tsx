@@ -66,7 +66,10 @@ export default function LoginEmail() {
         email: currentUser?.email || '',
       }
 
-      const userResponse = await login({ user, token: userToken })
+      const setToken = useAuthStore.getState().setToken
+      setToken(userToken)
+
+      const userResponse = await login({ user })
       if (userResponse != null) {
         loginStore(userResponse, userToken)
       }
@@ -96,9 +99,14 @@ export default function LoginEmail() {
             throw new Error('No user token found')
           }
 
-          const userResponse = await signUp({ user, token: userToken })
+          const setToken = useAuthStore.getState().setToken
+          setToken(userToken)
 
-          console.log({ userResponse })
+          const userResponse = await signUp({ user })
+
+          if (userResponse != null) {
+            loginStore(userResponse, userToken)
+          }
         } catch (createError: any) {
           console.error('Error creating user:', createError)
           if (createError.code === 'auth/email-already-in-use') {

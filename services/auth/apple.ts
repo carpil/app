@@ -6,8 +6,10 @@ import {
 import { login } from 'services/api/auth'
 import { User } from '~types/user'
 import * as AppleAuthentication from 'expo-apple-authentication'
+import { useAuthStore } from 'store/useAuthStore'
 
 export const handleAppleLogin = async () => {
+  const loginStore = useAuthStore.getState().login
   try {
     const credential = await AppleAuthentication.signInAsync({
       requestedScopes: [
@@ -39,9 +41,14 @@ export const handleAppleLogin = async () => {
         email: userCredential.user?.email || '',
       }
 
-      const userResponse = await login({ user, token: firebaseIdToken })
+      const setToken = useAuthStore.getState().setToken
+      setToken(firebaseIdToken)
 
-      console.log({ userResponse })
+      const userResponse = await login({ user })
+
+      if (userResponse != null) {
+        loginStore(userResponse, firebaseIdToken)
+      }
     } catch (error) {
       console.log('error', error)
     }
