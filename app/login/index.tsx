@@ -11,7 +11,7 @@ import { AppleIcon, GoogleIcon } from '@components/icons'
 import { COLORS } from '@utils/constansts/colors'
 import { GoogleOneTapSignIn } from '@react-native-google-signin/google-signin'
 import { IOS_GOOGLE_CLIENT_ID } from '@utils/constansts/api'
-import { Link } from 'expo-router'
+import { Link, router } from 'expo-router'
 import SafeScreen from '@components/safe-screen'
 import SocialButton from '@components/buttons/social'
 import { handleGoogleLogin } from 'services/auth/google'
@@ -29,6 +29,10 @@ export default function Login() {
       scopes: ['email', 'profile'],
     })
   }, [])
+
+  const goToHome = () => {
+    router.replace('/')
+  }
 
   return (
     <SafeScreen backgroundColor={COLORS.dark_gray}>
@@ -56,13 +60,19 @@ export default function Login() {
           <SocialButton
             text="Continuar con Google"
             icon={<GoogleIcon color={COLORS.white} />}
-            onPress={handleGoogleLogin}
+            onPress={async () => {
+              await handleGoogleLogin()
+              goToHome()
+            }}
           />
           {Platform.OS === 'ios' && (
             <SocialButton
               text="Continuar con Apple"
               icon={<AppleIcon color={COLORS.white} />}
-              onPress={handleAppleLogin}
+              onPress={async () => {
+                await handleAppleLogin()
+                goToHome()
+              }}
             />
           )}
         </View>

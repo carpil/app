@@ -18,6 +18,7 @@ import PrimaryButton from '@components/buttons/primary'
 import { User } from '~types/user'
 import { login, signUp } from 'services/api/auth'
 import { useAuthStore } from 'store/useAuthStore'
+import { router } from 'expo-router'
 
 const loginSchema = yup.object().shape({
   email: yup
@@ -138,6 +139,7 @@ export default function LoginEmail() {
       }
     } finally {
       reset()
+      router.replace('/')
     }
   }
 
