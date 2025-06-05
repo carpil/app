@@ -3,7 +3,7 @@ import {
   getAuth,
   signInWithCredential,
 } from '@react-native-firebase/auth'
-import { login } from 'services/api/auth'
+import { socialLogin } from 'services/api/auth'
 import { User } from '~types/user'
 import * as AppleAuthentication from 'expo-apple-authentication'
 import { useAuthStore } from 'store/useAuthStore'
@@ -44,7 +44,7 @@ export const handleAppleLogin = async () => {
       const setToken = useAuthStore.getState().setToken
       setToken(firebaseIdToken)
 
-      const userResponse = await login({ user })
+      const userResponse = await socialLogin({ user })
 
       if (userResponse != null) {
         loginStore(userResponse, firebaseIdToken)
