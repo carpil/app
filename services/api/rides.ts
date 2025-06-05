@@ -1,4 +1,5 @@
-import { API_KEY, API_URL } from '@utils/constansts/api'
+import { API_URL } from '@utils/constansts/api'
+import { useAuthStore } from 'store/useAuthStore'
 import { CreateRideRequest } from '~types/requests/ride'
 import { DefaultResponse } from '~types/responses/default'
 import { RideResponse, RidesResponse } from '~types/responses/rides'
@@ -15,9 +16,10 @@ export const getRides = async () => {
 }
 
 export const getRide = async (id: string) => {
+  const token = useAuthStore.getState().token
   const response = await fetch(`${API_URL}/rides/drivers/${id}`, {
     headers: {
-      Authorization: `Bearer ${API_KEY}`,
+      Authorization: `Bearer ${token}`,
     },
   })
   if (!response.ok) {
@@ -30,10 +32,11 @@ export const getRide = async (id: string) => {
 }
 
 export const createRide = async (request: CreateRideRequest) => {
+  const token = useAuthStore.getState().token
   const response = await fetch(`${API_URL}/rides`, {
     method: 'POST',
     headers: {
-      Authorization: `Bearer ${API_KEY}`,
+      Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
@@ -54,10 +57,11 @@ export const createRide = async (request: CreateRideRequest) => {
 }
 
 export const joinRide = async (id: string) => {
+  const token = useAuthStore.getState().token
   const response = await fetch(`${API_URL}/rides/${id}/join`, {
     method: 'POST',
     headers: {
-      Authorization: `Bearer ${API_KEY}`,
+      Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json',
     },
   })

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { StyleSheet, Text } from 'react-native'
 import { COLORS } from '@utils/constansts/colors'
 import { Controller, useForm } from 'react-hook-form'
@@ -18,6 +18,7 @@ import PrimaryButton from '@components/buttons/primary'
 import { User } from '~types/user'
 import { login, signUp } from 'services/api/auth'
 import { useAuthStore } from 'store/useAuthStore'
+import { router } from 'expo-router'
 
 const loginSchema = yup.object().shape({
   email: yup
@@ -48,6 +49,8 @@ export default function LoginEmail() {
 
   const [showPassword, setShowPassword] = useState(false)
 
+  const passwordRef = useRef<TextInput>(null)
+
   const handleLogin = async (data: LoginForm) => {
     const auth = getAuth()
     try {
@@ -66,7 +69,10 @@ export default function LoginEmail() {
         email: currentUser?.email || '',
       }
 
-      const userResponse = await login({ user, token: userToken })
+      const setToken = useAuthStore.getState().setToken
+      setToken(userToken)
+
+      const userResponse = await login({ user })
       if (userResponse != null) {
         loginStore(userResponse, userToken)
       }
@@ -96,9 +102,14 @@ export default function LoginEmail() {
             throw new Error('No user token found')
           }
 
-          const userResponse = await signUp({ user, token: userToken })
+          const setToken = useAuthStore.getState().setToken
+          setToken(userToken)
 
-          console.log({ userResponse })
+          const userResponse = await signUp({ user })
+
+          if (userResponse != null) {
+            loginStore(userResponse, userToken)
+          }
         } catch (createError: any) {
           console.error('Error creating user:', createError)
           if (createError.code === 'auth/email-already-in-use') {
@@ -130,6 +141,7 @@ export default function LoginEmail() {
       }
     } finally {
       reset()
+      router.replace('/')
     }
   }
 
@@ -157,6 +169,7 @@ export default function LoginEmail() {
                 keyboardType="email-address"
                 value={value}
                 onChangeText={onChange}
+                onSubmitEditing={() => passwordRef.current?.focus()}
               />
               {errors.email && (
                 <Text style={styles.errorText}>{errors.email.message}</Text>
@@ -182,6 +195,8 @@ export default function LoginEmail() {
                 onChangeText={onChange}
                 secureTextEntry={!showPassword}
                 textContentType="password"
+                ref={passwordRef}
+                // onSubmitEditing={handleSubmit(handleLogin)}
               />
               <Pressable
                 style={styles.eyeIcon}

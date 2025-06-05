@@ -12,7 +12,7 @@ import { GoogleOneTapSignIn } from '@react-native-google-signin/google-signin'
 import auth from '@react-native-firebase/auth'
 import { User } from '~types/user'
 import { useAuthStore } from 'store/useAuthStore'
-import { login } from 'services/api/auth'
+import { socialLogin } from 'services/api/auth'
 
 export const handleGoogleLogin = async () => {
   const loginStore = useAuthStore.getState().login
@@ -45,7 +45,10 @@ export const handleGoogleLogin = async () => {
         email: firebaseUser?.email || '',
       }
 
-      const userResponse = await login({ user, token: firebaseIdToken })
+      const setToken = useAuthStore.getState().setToken
+      setToken(firebaseIdToken)
+
+      const userResponse = await socialLogin({ user })
 
       if (userResponse != null) {
         loginStore(userResponse, firebaseIdToken)
