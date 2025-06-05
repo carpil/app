@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { StyleSheet, Text } from 'react-native'
 import { COLORS } from '@utils/constansts/colors'
 import { Controller, useForm } from 'react-hook-form'
@@ -48,6 +48,8 @@ export default function LoginEmail() {
   const loginStore = useAuthStore((state) => state.login)
 
   const [showPassword, setShowPassword] = useState(false)
+
+  const passwordRef = useRef<TextInput>(null)
 
   const handleLogin = async (data: LoginForm) => {
     const auth = getAuth()
@@ -167,6 +169,7 @@ export default function LoginEmail() {
                 keyboardType="email-address"
                 value={value}
                 onChangeText={onChange}
+                onSubmitEditing={() => passwordRef.current?.focus()}
               />
               {errors.email && (
                 <Text style={styles.errorText}>{errors.email.message}</Text>
@@ -192,6 +195,8 @@ export default function LoginEmail() {
                 onChangeText={onChange}
                 secureTextEntry={!showPassword}
                 textContentType="password"
+                ref={passwordRef}
+                // onSubmitEditing={handleSubmit(handleLogin)}
               />
               <Pressable
                 style={styles.eyeIcon}
