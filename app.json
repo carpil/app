@@ -18,10 +18,14 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.carpil.carpil",
       "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "UIBackgroundModes": ["remote-notification"]
       },
       "googleServicesFile": "./GoogleService-Info.plist",
-      "usesAppleSignIn": true
+      "usesAppleSignIn": true,
+      "entitlements": {
+        "com.apple.developer.apns-environment": "development"
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -53,6 +57,14 @@
             "useFrameworks": "static"
           }
         }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/notification-icon.png",
+          "color": "#ffffff",
+          "sounds": ["./assets/notification-sound.wav"]
+        }
       ]
     ],
     "extra": {
@@ -60,7 +72,7 @@
         "origin": false
       },
       "eas": {
-        "projectId": "6c2c4840-a78c-4794-bc81-e9de301247b4"
+        "projectId": "9abf5b0c-6e77-4c03-8b56-a09e64fb244e"
       }
     }
   }

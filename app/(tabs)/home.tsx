@@ -4,6 +4,7 @@ import SafeScreen from '@components/safe-screen'
 import { getAuth, signOut } from '@react-native-firebase/auth'
 import { useAuthStore } from 'store/useAuthStore'
 import { router } from 'expo-router'
+import { useNotification } from '@context/notifications'
 
 export default function Home() {
   const logout = useAuthStore((state) => state.logout)
@@ -13,10 +14,20 @@ export default function Home() {
     logout()
     router.replace('/login')
   }
+
+  const { expoPushToken, notification, error } = useNotification()
+
+  console.log('expoPushToken', expoPushToken)
+  console.log(notification)
+  console.log(error)
+
   return (
     <SafeScreen>
       <Text>Home</Text>
       <PrimaryButton text="Logout" onPress={onLogout} />
+      <Text>{expoPushToken}</Text>
+      <Text>{notification?.request.content.title}</Text>
+      <Text>{error?.message}</Text>
     </SafeScreen>
   )
 }

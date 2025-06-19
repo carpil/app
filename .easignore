@@ -1,0 +1,51 @@
+# React Native
+node_modules/
+package-lock.json
+yarn.lock
+
+# iOS (archivos específicos a excluir en lugar de todo el directorio)
+ios/Pods/
+ios/build/
+ios/*.xcworkspace/
+ios/Podfile.lock
+ios/*.xcuserstate
+ios/.xcode.env.local
+ios/DerivedData/
+ios/*.ipa
+ios/*.xcarchive
+
+# Android
+android/
+
+# Expo
+.expo/
+.expo-shared/
+
+# Miscellaneous
+*.log
+*.DS_Store
+.env
+
+# Metro bundler
+metro-cache/
+
+# Temporary files
+.tmp/
+*.swp
+
+# VS Code
+.vscode/
+
+# Firebase
+firebase-debug.log
+
+# Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots
+fastlane/test_output
+
+# Xcode (excluir archivos específicos en lugar de todos)
+**/xcuserdata/
+**/xcshareddata/
+**/*.xcuserdatad/
