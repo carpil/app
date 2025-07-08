@@ -22,10 +22,7 @@
         "UIBackgroundModes": ["remote-notification"]
       },
       "googleServicesFile": "./GoogleService-Info.plist",
-      "usesAppleSignIn": true,
-      "entitlements": {
-        "com.apple.developer.apns-environment": "development"
-      }
+      "usesAppleSignIn": true
     },
     "android": {
       "adaptiveIcon": {
@@ -50,20 +47,13 @@
       "@react-native-firebase/auth",
       "expo-build-properties",
       "expo-apple-authentication",
+      "expo-notifications",
       [
         "expo-build-properties",
         {
           "ios": {
             "useFrameworks": "static"
           }
-        }
-      ],
-      [
-        "expo-notifications",
-        {
-          "icon": "./assets/notification-icon.png",
-          "color": "#ffffff",
-          "sounds": ["./assets/notification-sound.wav"]
         }
       ]
     ],
