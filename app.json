@@ -18,7 +18,8 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.carpil.carpil",
       "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "UIBackgroundModes": ["remote-notification"]
       },
       "googleServicesFile": "./GoogleService-Info.plist",
       "usesAppleSignIn": true
@@ -46,6 +47,7 @@
       "@react-native-firebase/auth",
       "expo-build-properties",
       "expo-apple-authentication",
+      "expo-notifications",
       [
         "expo-build-properties",
         {
@@ -60,7 +62,7 @@
         "origin": false
       },
       "eas": {
-        "projectId": "6c2c4840-a78c-4794-bc81-e9de301247b4"
+        "projectId": "9abf5b0c-6e77-4c03-8b56-a09e64fb244e"
       }
     }
   }
