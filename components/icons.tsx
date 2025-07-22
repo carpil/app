@@ -3,6 +3,7 @@ import Feather from '@expo/vector-icons/Feather'
 
 interface IconProps {
   color: string
+  size?: number
 }
 export const CarIcon = ({ color }: IconProps) => (
   <Ionicons name="car" size={24} color={color} />
@@ -58,4 +59,12 @@ export const EyeOnIcon = ({ color }: IconProps) => (
 
 export const EyeOffIcon = ({ color }: IconProps) => (
   <Ionicons name="eye-off-outline" size={24} color={color} />
+)
+
+export const BackIcon = ({ color }: IconProps) => (
+  <Ionicons name="arrow-back" size={24} color={color} />
+)
+
+export const SendIcon = ({ color, size }: IconProps) => (
+  <Ionicons name="send" size={size || 18} color={color} />
 )
