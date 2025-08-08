@@ -1,12 +1,4 @@
-import Avatar from '@components/avatar'
-import MessageBubble from '@components/chats/message-bubble'
-import { BackIcon, SendIcon } from '@components/icons'
-import SafeScreen from '@components/safe-screen'
-import { COLORS } from '@utils/constansts/colors'
-import { formatDate } from '@utils/format-date'
-import { chats } from '@utils/mocks/chats'
-import { Link, useLocalSearchParams } from 'expo-router'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   View,
   StyleSheet,
@@ -14,14 +6,96 @@ import {
   TextInput,
   Platform,
   TouchableOpacity,
+  Alert,
 } from 'react-native'
+import { BackIcon, SendIcon } from '@components/icons'
 import { ChatResponse } from '~types/responses/chat'
+import { COLORS } from '@utils/constansts/colors'
+import { formatDate } from '@utils/format-date'
+import { getChat, sendMessage } from 'services/api/chats'
+import { Link, useLocalSearchParams } from 'expo-router'
+import Avatar from '@components/avatar'
+import SafeScreen from '@components/safe-screen'
+import {
+  getFirestore,
+  collection,
+  doc,
+  onSnapshot,
+  updateDoc,
+} from '@react-native-firebase/firestore'
+import { Message, MessageBubble } from '~types/message'
+import { useAuthStore } from 'store/useAuthStore'
+import { decryptMessage } from '@utils/decrypt-message'
+import MessageBubbleComponent from '@components/chats/message-bubble'
 
 export default function Messages() {
-  const { chatId } = useLocalSearchParams()
+  const [chat, setChat] = useState<ChatResponse | null>(null)
   const [message, setMessage] = useState('')
+  const [messages, setMessages] = useState<MessageBubble[]>([])
+  const { chatId } = useLocalSearchParams()
 
-  const chat = chats.find((c) => c.id === chatId) as ChatResponse
+  const { user } = useAuthStore()
+
+  const userId = user?.id ?? ''
+
+  useEffect(() => {
+    const fetchChatAndSetupListener = async () => {
+      // First, fetch the chat data to get participants
+      const chat = await getChat(chatId as string)
+      setChat(chat)
+
+      // Only set up the Firestore listener after we have the chat data
+      const db = getFirestore()
+      const unsubscribe = onSnapshot(
+        collection(doc(db, 'chats', chatId as string), 'messages'),
+        async (snapshot) => {
+          const newMessages = await Promise.all(
+            snapshot.docs.map(async (doc: any) => {
+              const data = doc.data() as Message
+
+              if (data.seenBy?.includes(userId)) {
+                await updateDoc(
+                  doc(db, 'chats', chatId as string, 'messages', doc.id),
+                  {
+                    seenBy: [...(data.seenBy ?? []), userId],
+                  },
+                )
+              }
+
+              const user = chat?.participants?.find(
+                (participant) => participant.id === data.userId,
+              )
+
+              if (!user) {
+                return null
+              }
+
+              const message: MessageBubble = {
+                id: doc.id,
+                content: decryptMessage(data.content),
+                createdAt: data.createdAt,
+                user,
+                isMe: data.userId === userId,
+              }
+
+              return message
+            }),
+          )
+          setMessages(newMessages)
+        },
+      )
+
+      return unsubscribe
+    }
+
+    const unsubscribePromise = fetchChatAndSetupListener()
+
+    return () => {
+      unsubscribePromise.then((unsubscribe) => {
+        if (unsubscribe) unsubscribe()
+      })
+    }
+  }, [chatId, userId])
 
   if (!chat) {
     return <Text>Chat not found</Text>
@@ -33,6 +107,16 @@ export default function Messages() {
     chat.ride?.destination?.name.primary
 
   const departureTime = formatDate(chat.ride?.departureDate ?? new Date())
+
+  const handleSendMessage = async () => {
+    const data = await sendMessage(chatId as string, message)
+    if (data == null) {
+      Alert.alert('Error', 'Error al enviar el mensaje')
+      return
+    }
+
+    setMessage('')
+  }
 
   return (
     <SafeScreen backgroundColor={COLORS.dark_gray}>
@@ -59,26 +143,14 @@ export default function Messages() {
 
         {/* messages */}
         <View style={styles.messagesContainer}>
-          <MessageBubble
-            user={chat.participants[0]}
-            message="Hola soy el conductor, mucho gusto de conocerte, espero que te guste el ride, me voy a quedar un rato en el parking, si quieres 🦅"
-            isDriver={false}
-          />
-          <MessageBubble
-            user={chat.participants[3]}
-            message="A qué hora sale el ride?"
-            isDriver={false}
-          />
-          <MessageBubble
-            user={chat.participants[2]}
-            message="A las 10:00"
-            isDriver={true}
-          />
-          <MessageBubble
-            user={chat.participants[3]}
-            message="Nos vemossss😎"
-            isDriver={false}
-          />
+          {messages.map((message) => (
+            <MessageBubbleComponent
+              key={message.id}
+              user={message.user}
+              message={message.content}
+              isDriver={message.isMe}
+            />
+          ))}
         </View>
         <View style={styles.inputContainer}>
           <TextInput
@@ -95,10 +167,7 @@ export default function Messages() {
               backgroundColor:
                 message.length > 0 ? COLORS.primary : COLORS.inactive_gray,
             }}
-            onPress={() => {
-              console.log('send message', message)
-              setMessage('')
-            }}
+            onPress={handleSendMessage}
           >
             <SendIcon
               color={message.length > 0 ? COLORS.white : COLORS.gray_600}
