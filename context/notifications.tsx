@@ -8,6 +8,7 @@ import React, {
 } from 'react'
 import * as Notifications from 'expo-notifications'
 import { registerForPushNotificationsAsync } from 'services/push-notifications/register-push-notifications'
+import { setPushNotificationToken } from 'services/api/notifications'
 
 interface NotificationContextType {
   expoPushToken: string | null
@@ -46,7 +47,10 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
 
   useEffect(() => {
     registerForPushNotificationsAsync()
-      .then((token) => setExpoPushToken(token))
+      .then(async (token) => {
+        await setPushNotificationToken(token)
+        setExpoPushToken(token)
+      })
       .catch((error) => setError(error))
 
     notificationListener.current =
@@ -62,7 +66,6 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
           JSON.stringify(response, null, 2),
           JSON.stringify(response.notification.request.content.data, null, 2),
         )
-        // Handle the notification response here
       })
 
     return () => {
