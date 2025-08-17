@@ -17,10 +17,6 @@ export default function Home() {
 
   const { expoPushToken, notification, error } = useNotification()
 
-  console.log('expoPushToken', expoPushToken)
-  console.log(notification)
-  console.log(error)
-
   return (
     <SafeScreen>
       <Text>Home</Text>
