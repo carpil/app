@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
   logo: {
     width: 250,
     height: 250,
-    resizeMode: 'contain',
+    marginLeft: 15,
   },
   title: {
     fontSize: 24,
@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 16,
     color: COLORS.white,
-    marginTop: 10,
+    marginTop: 20,
     textAlign: 'center',
   },
   link: {
