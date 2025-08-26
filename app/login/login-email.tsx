@@ -48,10 +48,12 @@ export default function LoginEmail() {
   const loginStore = useAuthStore((state) => state.login)
 
   const [showPassword, setShowPassword] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
   const passwordRef = useRef<TextInput>(null)
 
   const handleLogin = async (data: LoginForm) => {
+    setIsLoading(true)
     const auth = getAuth()
     try {
       await signInWithEmailAndPassword(auth, data.email, data.password)
@@ -142,6 +144,7 @@ export default function LoginEmail() {
     } finally {
       reset()
       router.replace('/')
+      setIsLoading(false)
     }
   }
 
@@ -196,7 +199,6 @@ export default function LoginEmail() {
                 secureTextEntry={!showPassword}
                 textContentType="password"
                 ref={passwordRef}
-                // onSubmitEditing={handleSubmit(handleLogin)}
               />
               <Pressable
                 style={styles.eyeIcon}
@@ -217,6 +219,7 @@ export default function LoginEmail() {
         <PrimaryButton
           text="Iniciar sesión"
           onPress={handleSubmit(handleLogin)}
+          disabled={isLoading}
         />
       </View>
     </SafeScreen>
