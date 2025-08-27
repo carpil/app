@@ -1,4 +1,10 @@
-import { Text, ScrollView, View, StyleSheet } from 'react-native'
+import {
+  Text,
+  ScrollView,
+  View,
+  StyleSheet,
+  ActivityIndicator,
+} from 'react-native'
 import { Stack, useLocalSearchParams } from 'expo-router'
 import Screen from '@components/screen'
 import Avatar from '@components/avatar'
@@ -12,14 +18,73 @@ import { getRide, joinRide } from 'services/api/rides'
 export default function RideDetails() {
   const { id } = useLocalSearchParams()
   const [ride, setRide] = useState<Ride | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const rideId = id as string
 
   useEffect(() => {
-    getRide(rideId).then(setRide)
+    const fetchRide = async () => {
+      try {
+        setLoading(true)
+        setError(null)
+        const rideData = await getRide(rideId)
+        setRide(rideData)
+      } catch (err) {
+        setError('No se encontró el ride')
+        console.error('Error fetching ride:', err)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchRide()
   }, [rideId])
 
-  if (!ride) {
-    return <Text>No se encontró el ride</Text>
+  if (loading) {
+    return (
+      <Screen>
+        <Stack.Screen
+          options={{
+            headerShown: true,
+            headerTintColor: COLORS.white,
+            headerStyle: {
+              backgroundColor: COLORS.primary,
+            },
+            headerTitle: 'Carpil',
+            headerBackTitle: 'Volver',
+          }}
+        />
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={COLORS.primary} />
+          <Text style={styles.loadingText}>Cargando detalles del ride...</Text>
+        </View>
+      </Screen>
+    )
+  }
+
+  if (error || !ride) {
+    return (
+      <Screen>
+        <Stack.Screen
+          options={{
+            headerShown: true,
+            headerTintColor: COLORS.white,
+            headerStyle: {
+              backgroundColor: COLORS.primary,
+            },
+            headerTitle: 'Carpil',
+            headerBackTitle: 'Volver',
+          }}
+        />
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorIcon}>🚗</Text>
+          <Text style={styles.errorTitle}>Ride no encontrado</Text>
+          <Text style={styles.errorMessage}>
+            {error || 'El ride que buscas no existe o ya no está disponible.'}
+          </Text>
+        </View>
+      </Screen>
+    )
   }
 
   const {
@@ -249,5 +314,38 @@ const styles = StyleSheet.create({
     color: COLORS.inactive_gray,
     marginTop: 20,
     textAlign: 'center',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  loadingText: {
+    marginTop: 10,
+    color: COLORS.gray_400,
+    textAlign: 'center',
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  errorIcon: {
+    fontSize: 50,
+    marginBottom: 10,
+  },
+  errorTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: COLORS.white,
+    marginBottom: 5,
+  },
+  errorMessage: {
+    fontSize: 16,
+    color: COLORS.gray_400,
+    textAlign: 'center',
+    marginTop: 5,
   },
 })
