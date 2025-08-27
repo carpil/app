@@ -7,6 +7,7 @@ import {
   Platform,
   TouchableOpacity,
   Alert,
+  ActivityIndicator,
 } from 'react-native'
 import { BackIcon, SendIcon } from '@components/icons'
 import { ChatResponse } from '~types/responses/chat'
@@ -32,6 +33,8 @@ export default function Messages() {
   const [chat, setChat] = useState<ChatResponse | null>(null)
   const [message, setMessage] = useState('')
   const [messages, setMessages] = useState<MessageBubble[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const { chatId } = useLocalSearchParams()
 
   const { user } = useAuthStore()
@@ -40,52 +43,63 @@ export default function Messages() {
 
   useEffect(() => {
     const fetchChatAndSetupListener = async () => {
-      // First, fetch the chat data to get participants
-      const chat = await getChat(chatId as string)
-      setChat(chat)
+      try {
+        setLoading(true)
+        setError(null)
 
-      // Only set up the Firestore listener after we have the chat data
-      const db = getFirestore()
-      const unsubscribe = onSnapshot(
-        collection(doc(db, 'chats', chatId as string), 'messages'),
-        async (snapshot) => {
-          const newMessages = await Promise.all(
-            snapshot.docs.map(async (doc: any) => {
-              const data = doc.data() as Message
+        // First, fetch the chat data to get participants
+        const chat = await getChat(chatId as string)
+        setChat(chat)
 
-              if (data.seenBy?.includes(userId)) {
-                await updateDoc(
-                  doc(db, 'chats', chatId as string, 'messages', doc.id),
-                  {
-                    seenBy: [...(data.seenBy ?? []), userId],
-                  },
+        // Only set up the Firestore listener after we have the chat data
+        const db = getFirestore()
+        const unsubscribe = onSnapshot(
+          collection(doc(db, 'chats', chatId as string), 'messages'),
+          async (snapshot) => {
+            const newMessages = await Promise.all(
+              snapshot.docs.map(async (doc: any) => {
+                const data = doc.data() as Message
+
+                if (data.seenBy?.includes(userId)) {
+                  await updateDoc(
+                    doc(db, 'chats', chatId as string, 'messages', doc.id),
+                    {
+                      seenBy: [...(data.seenBy ?? []), userId],
+                    },
+                  )
+                }
+
+                const user = chat?.participants?.find(
+                  (participant) => participant.id === data.userId,
                 )
-              }
 
-              const user = chat?.participants?.find(
-                (participant) => participant.id === data.userId,
-              )
+                if (!user) {
+                  return null
+                }
 
-              if (!user) {
-                return null
-              }
+                const message: MessageBubble = {
+                  id: doc.id,
+                  content: decryptMessage(data.content),
+                  createdAt: data.createdAt,
+                  user,
+                  isMe: data.userId === userId,
+                }
 
-              const message: MessageBubble = {
-                id: doc.id,
-                content: decryptMessage(data.content),
-                createdAt: data.createdAt,
-                user,
-                isMe: data.userId === userId,
-              }
+                return message
+              }),
+            )
+            setMessages(newMessages)
+          },
+        )
 
-              return message
-            }),
-          )
-          setMessages(newMessages)
-        },
-      )
-
-      return unsubscribe
+        return unsubscribe
+      } catch (err) {
+        setError('No se encontró el chat')
+        console.error('Error fetching chat:', err)
+        return null
+      } finally {
+        setLoading(false)
+      }
     }
 
     const unsubscribePromise = fetchChatAndSetupListener()
@@ -97,8 +111,29 @@ export default function Messages() {
     }
   }, [chatId, userId])
 
-  if (!chat) {
-    return <Text>Chat not found</Text>
+  if (loading) {
+    return (
+      <SafeScreen backgroundColor={COLORS.dark_gray}>
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={COLORS.primary} />
+          <Text style={styles.loadingText}>Cargando chat...</Text>
+        </View>
+      </SafeScreen>
+    )
+  }
+
+  if (error || !chat) {
+    return (
+      <SafeScreen backgroundColor={COLORS.dark_gray}>
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorIcon}>💬</Text>
+          <Text style={styles.errorTitle}>Chat no encontrado</Text>
+          <Text style={styles.errorMessage}>
+            {error || 'El chat que buscas no existe o ya no está disponible.'}
+          </Text>
+        </View>
+      </SafeScreen>
+    )
   }
 
   const title =
@@ -265,5 +300,39 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.primary,
     borderRadius: 100,
     marginLeft: 10,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: COLORS.dark_gray,
+  },
+  loadingText: {
+    marginTop: 10,
+    color: COLORS.white,
+    fontSize: 16,
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: COLORS.dark_gray,
+    padding: 20,
+  },
+  errorIcon: {
+    fontSize: 50,
+    marginBottom: 10,
+  },
+  errorTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: COLORS.white,
+    marginBottom: 5,
+  },
+  errorMessage: {
+    fontSize: 16,
+    color: COLORS.gray_400,
+    textAlign: 'center',
+    marginTop: 10,
   },
 })
