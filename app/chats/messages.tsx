@@ -158,7 +158,7 @@ export default function Messages() {
       <View style={styles.container}>
         {/* header */}
         <View style={styles.header}>
-          <Link href="/chats">
+          <Link href="/(tabs)/messages">
             <BackIcon color={COLORS.white} />
           </Link>
           <View style={styles.headerTextContainer}>
