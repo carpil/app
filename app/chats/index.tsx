@@ -6,10 +6,12 @@ import { COLORS } from '@utils/constansts/colors'
 import { ChatResponse } from '~types/responses/chat'
 import { getChats } from 'services/api/chats'
 import { useAuthStore } from 'store/useAuthStore'
+import ChatCardSkeleton from '@components/skeletons/chat-card'
 
 export default function Chats() {
   const [chats, setChats] = useState<ChatResponse[]>([])
   const { user } = useAuthStore()
+  const [loading, setLoading] = useState(true)
 
   const renderChat = ({ item }: { item: ChatResponse }) => (
     <ChatCard chat={item} user={user!} />
@@ -17,11 +19,37 @@ export default function Chats() {
 
   useEffect(() => {
     const fetchChats = async () => {
-      const chats = await getChats()
-      setChats(chats)
+      try {
+        setLoading(true)
+        const chats = await getChats()
+        setChats(chats)
+      } catch (error) {
+        console.error(error)
+      } finally {
+        setLoading(false)
+      }
     }
     fetchChats()
   }, [])
+
+  if (loading) {
+    return (
+      <SafeScreen backgroundColor={COLORS.dark_gray}>
+        <View style={styles.container}>
+          <View style={styles.header}>
+            <Text style={styles.headerText}>Chats</Text>
+          </View>
+          <FlatList
+            data={Array.from({ length: 5 })}
+            renderItem={() => <ChatCardSkeleton />}
+            keyExtractor={(_, index) => index.toString()}
+            contentContainerStyle={styles.listContainer}
+            showsVerticalScrollIndicator={false}
+          />
+        </View>
+      </SafeScreen>
+    )
+  }
 
   return (
     <SafeScreen backgroundColor={COLORS.dark_gray}>
