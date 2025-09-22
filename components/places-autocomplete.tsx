@@ -1,5 +1,6 @@
 import { Text, View } from 'react-native'
 import {
+  AutocompleteRequestType,
   GooglePlaceData,
   GooglePlacesAutocomplete,
 } from 'react-native-google-places-autocomplete'
@@ -37,12 +38,14 @@ export const PlaceRow = ({ data }: { data: GooglePlaceData }) => {
 
 interface Props {
   placeholder: string
+  queryType?: AutocompleteRequestType
   onPress: (location: Location) => void
   onFail?: (error: any) => void
 }
 
 export default function PlacesAutocomplete({
   placeholder,
+  queryType = '(regions)',
   onPress,
   onFail,
 }: Props) {
@@ -57,7 +60,7 @@ export default function PlacesAutocomplete({
         key: GOOGLE_MAPS_API_KEY,
         language: 'es',
         components: 'country:cr',
-        type: '(regions)',
+        type: queryType,
       }}
       renderDescription={(data) => {
         const name = data.structured_formatting.main_text
