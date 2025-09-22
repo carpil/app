@@ -6,6 +6,7 @@ import {
 } from '@react-native-firebase/auth'
 import { Redirect } from 'expo-router'
 import { useEffect, useState } from 'react'
+import { getUser } from 'services/api/user'
 import { useAuthStore } from 'store/useAuthStore'
 import { User } from '~types/user'
 
@@ -32,7 +33,13 @@ export default function Index() {
       if (!token) {
         return
       }
-      login(currentUser, token)
+
+      const userResponse = await getUser(currentUser.id, token)
+      if (!userResponse) {
+        console.log('User not found')
+        return
+      }
+      login(userResponse.user, token)
     })
 
     return () => subscriber()
