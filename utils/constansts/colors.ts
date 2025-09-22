@@ -15,4 +15,5 @@ export const COLORS = {
   secondary_gray: '#A0ABC0',
   secondary_gray_dark: '#6C768A',
   border_gray: '#374151',
+  star_yellow: '#F59E0B',
 }

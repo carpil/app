@@ -10,10 +10,10 @@ interface AvatarProps {
 const DEFAULT_SIZE = 64
 
 export default function Avatar({ user, size = DEFAULT_SIZE }: AvatarProps) {
-  const { profilePicture } = user
+  const { profilePicture, name } = user
 
-  if (profilePicture === '') {
-    const initials = user.name.slice(0, 2).toUpperCase()
+  if (!profilePicture || profilePicture === '') {
+    const initials = (name || 'U').slice(0, 2).toUpperCase()
     return (
       <View
         style={{ ...styles.placeholderContainer, width: size, height: size }}

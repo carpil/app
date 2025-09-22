@@ -68,3 +68,11 @@ export const BackIcon = ({ color }: IconProps) => (
 export const SendIcon = ({ color, size }: IconProps) => (
   <Ionicons name="send" size={size || 18} color={color} />
 )
+
+export const StarOutlineIcon = ({ color, size = 24 }: IconProps) => (
+  <Ionicons name="star-outline" size={size} color={color} />
+)
+
+export const StarFilledIcon = ({ color, size = 24 }: IconProps) => (
+  <Ionicons name="star" size={size} color={color} />
+)
