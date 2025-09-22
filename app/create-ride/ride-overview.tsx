@@ -30,7 +30,9 @@ const COSTA_RICA_REGION: Region = {
 }
 
 export default function RideOverview() {
-  const { origin, destination } = useContext(SelectLocationContext)
+  const { origin, destination, meetingPoint } = useContext(
+    SelectLocationContext,
+  )
   const mapRef = useRef(null)
   const modalizeRef = useRef<Modalize>(null)
 
@@ -52,25 +54,14 @@ export default function RideOverview() {
   }
 
   const onCreateRide = async () => {
-    if (!origin || !destination) {
+    if (!origin || !destination || !meetingPoint) {
       return
     }
 
-    // TODO: Add meeting point
     const rideRequest: CreateRideRequest = {
       origin,
       destination,
-      meetingPoint: {
-        id: 'meet789',
-        name: {
-          primary: 'San Jose',
-          secondary: 'SJ',
-        },
-        location: {
-          lat: 37.3382,
-          lng: -121.8863,
-        },
-      },
+      meetingPoint,
       availableSeats: passengers,
       price: parseInt(price),
       departureDate: date,
@@ -93,7 +84,7 @@ export default function RideOverview() {
 
   const isValid = passengers > 0 && price !== '' && isAfter(date, TODAY)
 
-  if (!origin || !destination) {
+  if (!origin || !destination || !meetingPoint) {
     return <Text>Selecciona tu origen y destino</Text>
   }
 
@@ -135,6 +126,14 @@ export default function RideOverview() {
             }}
             title="Destination"
             description="Destination"
+          />
+          <Marker
+            coordinate={{
+              latitude: meetingPoint.location.lat!,
+              longitude: meetingPoint.location.lng!,
+            }}
+            title="Meeting Point"
+            description="Meeting Point"
           />
         </MapView>
 

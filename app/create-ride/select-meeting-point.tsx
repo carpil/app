@@ -7,9 +7,9 @@ import SafeScreen from '@components/safe-screen'
 import PlacesAutocomplete from '@components/places-autocomplete'
 import { COLORS } from '@utils/constansts/colors'
 
-export default function SelectDestination() {
-  const { setDestination } = useContext(SelectLocationContext)
+export default function SelectMeetingPoint() {
   const router = useRouter()
+  const { setMeetingPoint } = useContext(SelectLocationContext)
 
   return (
     <SafeScreen backgroundColor={COLORS.dark_gray}>
@@ -20,10 +20,11 @@ export default function SelectDestination() {
       />
       <View style={{ flex: 1, paddingBottom: 10 }}>
         <PlacesAutocomplete
-          placeholder={'Busca tu destino'}
+          placeholder={'Busca tu punto de encuentro'}
+          queryType={'establishment'}
           onPress={(location) => {
-            setDestination(location)
-            router.push('/create-ride/select-meeting-point')
+            setMeetingPoint(location)
+            router.push('/create-ride/ride-overview')
           }}
         />
       </View>
