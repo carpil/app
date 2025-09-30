@@ -10,9 +10,13 @@ import Avatar from '@components/avatar'
 import { useAuthStore } from 'store/useAuthStore'
 import StarRating from './star-rating'
 import { useState } from 'react'
+import { Rating } from '~types/rating'
+import { UserInfo } from '~types/user'
 
 interface PassengersRatingProps {
   onComplete?: () => void
+  onSaveRating: (rating: Rating) => void
+  passengers: UserInfo[]
 }
 
 interface RatingComponentProps {
@@ -22,6 +26,8 @@ interface RatingComponentProps {
 
 export default function PassengersRating({
   onComplete,
+  onSaveRating,
+  passengers,
 }: PassengersRatingProps) {
   const user = useAuthStore((state) => state.user)
   const [ratings, setRatings] = useState<RatingComponentProps[]>([])
@@ -32,51 +38,34 @@ export default function PassengersRating({
 
   const handleRatingComplete = () => {
     console.log('ratings', ratings)
-    // Call onComplete when rating is finished
     onComplete?.()
   }
 
   return (
     <>
       <Text style={styles.text}>{'¿Cómo calificarías a los pasajeros?'}</Text>
-      <View style={styles.passengerContainer}>
-        <View style={styles.passengerRatingContainer}>
-          <Avatar user={user} size={48} />
-          <View style={styles.passengersInfo}>
-            <Text style={styles.name}>{user.name || 'Pepillo Figueres'}</Text>
-            <StarRating
-              onRatingChange={(rating) =>
-                setRatings([{ userId: user.id, rating }])
-              }
-            />
-          </View>
-        </View>
-        <View style={styles.passengerRatingContainer}>
-          <Avatar user={user} size={48} />
-          <View style={styles.passengersInfo}>
-            <Text style={styles.name}>{user.name || 'Pepillo Figueres'}</Text>
-            <StarRating
-              onRatingChange={(rating) =>
-                setRatings([{ userId: user.id, rating }])
-              }
-            />
-          </View>
-        </View>
-        {Platform.OS === 'ios' && (
+      {passengers.map((passenger) => (
+        <View style={styles.passengerContainer}>
           <View style={styles.passengerRatingContainer}>
-            <Avatar user={user} size={48} />
+            <Avatar
+              user={{
+                id: passenger.id,
+                name: passenger.name,
+                profilePicture: passenger.profilePicture,
+              }}
+              size={48}
+            />
             <View style={styles.passengersInfo}>
-              <Text style={styles.name}>{'Jose Rodolfo Rojas Guzman'}</Text>
+              <Text style={styles.name}>{passenger.name}</Text>
               <StarRating
                 onRatingChange={(rating) =>
-                  setRatings([{ userId: user.id, rating }])
+                  setRatings([{ userId: passenger.id, rating }])
                 }
               />
             </View>
           </View>
-        )}
-      </View>
-
+        </View>
+      ))}
       <TouchableOpacity
         style={styles.completeButton}
         onPress={handleRatingComplete}

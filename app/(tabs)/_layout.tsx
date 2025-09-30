@@ -3,8 +3,11 @@ import { CarIcon, MessagesIcon, ProfileIcon } from '@components/icons'
 import { COLORS } from '@utils/constansts/colors'
 import RatingsModal from 'app/ratings/modal'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
+import { useBootstrapStore } from 'store/useBootstrapStore'
 
 export default function TabsLayout() {
+  const { pendingReviews } = useBootstrapStore()
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <Tabs
@@ -39,7 +42,9 @@ export default function TabsLayout() {
           }}
         />
       </Tabs>
-      <RatingsModal />
+      {pendingReviews && pendingReviews.length > 0 && (
+        <RatingsModal pendingReviews={pendingReviews} />
+      )}
     </GestureHandlerRootView>
   )
 }

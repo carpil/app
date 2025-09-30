@@ -13,7 +13,9 @@ import ReservationButton from '@components/reservation-button'
 import { COLORS } from '@utils/constansts/colors'
 import { useEffect, useState } from 'react'
 import { Ride } from '~types/ride'
-import { getRide, joinRide } from 'services/api/rides'
+import { getRide, joinRide, startRide } from 'services/api/rides'
+import { useDriver } from 'hooks/useDriver'
+import PrimaryButton from '@components/buttons/primary'
 
 export default function RideDetails() {
   const { id } = useLocalSearchParams()
@@ -21,6 +23,8 @@ export default function RideDetails() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const rideId = id as string
+
+  const { calculateDriver } = useDriver()
 
   useEffect(() => {
     const fetchRide = async () => {
@@ -98,6 +102,8 @@ export default function RideDetails() {
     availableSeats,
   } = ride
 
+  const isDriver = calculateDriver(driver.id)
+
   const remainingSeats = availableSeats - passengers.length
   const fullSeats = availableSeats === passengers.length
 
@@ -105,6 +111,11 @@ export default function RideDetails() {
 
   const handleJoinRide = async () => {
     const message = await joinRide(rideId)
+    console.log({ message })
+  }
+
+  const handleStartRide = async () => {
+    const message = await startRide(rideId)
     console.log({ message })
   }
 
@@ -188,7 +199,11 @@ export default function RideDetails() {
           </View>
         </View>
 
-        <ReservationButton onPress={handleJoinRide} />
+        {isDriver ? (
+          <PrimaryButton onPress={handleStartRide} text="Iniciar viaje" />
+        ) : (
+          <ReservationButton onPress={handleJoinRide} />
+        )}
       </ScrollView>
     </Screen>
   )
