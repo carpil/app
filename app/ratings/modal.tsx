@@ -5,32 +5,69 @@ import { Modalize } from 'react-native-modalize'
 import { useAuthStore } from 'store/useAuthStore'
 import DriverRating from './driver-rating'
 import PassengersRating from './passengers-rating'
+import { PendingReview } from '~types/responses/bootstrap'
+import { Rating } from '~types/rating'
+import { createRating } from 'services/api/ratings'
 
-export default function RatingsModal() {
+interface RatingsModalProps {
+  pendingReviews: PendingReview[]
+}
+
+export default function RatingsModal({ pendingReviews }: RatingsModalProps) {
   const modalizeRef = useRef<Modalize>(null)
   const user = useAuthStore((state) => state.user)
   const [canDismiss, setCanDismiss] = useState(false)
-  const [currentStep, setCurrentStep] = useState(1) // 1 = driver, 2 = passengers
+  const [currentStep, setCurrentStep] = useState(1)
+
+  const driver = pendingReviews.find((review) => review.role === 'driver')
+  const passengers = pendingReviews.filter(
+    (review) => review.role === 'passenger',
+  )
 
   useEffect(() => {
-    // Open modal when component mounts
+    if (driver) {
+      setCurrentStep(1)
+    } else {
+      setCurrentStep(2)
+    }
+  }, [driver, passengers])
+
+  useEffect(() => {
     if (modalizeRef.current) {
       modalizeRef.current.open()
     }
   }, [])
 
   const handleNext = () => {
-    setCurrentStep(2) // Move to passenger ratings
+    if (currentStep === 1 && passengers.length === 0) {
+      handleComplete()
+    }
+    if (currentStep === 1) {
+      setCurrentStep(2)
+    }
+    if (currentStep === 2) {
+      handleComplete()
+    }
   }
 
   const handleComplete = () => {
     setCanDismiss(true)
-    // Close modal after a smooth transition delay
     setTimeout(() => {
       if (modalizeRef.current) {
         modalizeRef.current.close()
       }
-    }, 500) // 500ms delay for smooth transition
+    }, 500)
+  }
+
+  const handleSaveRating = async (rating: Rating) => {
+    try {
+      const response = await createRating(rating)
+      if (response) {
+        console.log('Rating saved successfully')
+      }
+    } catch (error) {
+      console.log('Error saving rating', error)
+    }
   }
 
   if (user == null) {
@@ -50,7 +87,6 @@ export default function RatingsModal() {
       closeOnOverlayTap={canDismiss}
       closeSnapPointStraightEnabled={canDismiss}
       onClosed={() => {
-        // Prevent closing if canDismiss is false
         if (!canDismiss && modalizeRef.current) {
           modalizeRef.current.open()
         }
@@ -62,10 +98,19 @@ export default function RatingsModal() {
           paddingBottom: Platform.OS === 'ios' ? 40 : 20,
         }}
       >
-        {currentStep === 1 ? (
-          <DriverRating user={user} onNext={handleNext} />
-        ) : (
-          <PassengersRating onComplete={handleComplete} />
+        {currentStep === 1 && driver && (
+          <DriverRating
+            user={driver}
+            onNext={handleNext}
+            onSaveRating={handleSaveRating}
+          />
+        )}
+        {currentStep === 2 && passengers.length > 0 && (
+          <PassengersRating
+            onComplete={handleComplete}
+            onSaveRating={handleSaveRating}
+            passengers={passengers}
+          />
         )}
       </View>
     </Modalize>

@@ -7,6 +7,21 @@ export interface User {
   lastName?: string
   phoneNumber?: string
   profileCompleted?: boolean
-  createdAt?: string
-  updatedAt?: string
+  pushToken?: string[]
+  averageRating?: number
+  inRide?: {
+    active: boolean
+    rideId?: string
+    rideStartedAt?: Date
+    pendingToReview?: boolean
+  }
+  createdAt?: Date
+  updatedAt?: Date
+}
+
+export interface UserInfo {
+  id: string
+  name: string
+  profilePicture: string
+  role: 'driver' | 'passenger'
 }
