@@ -1,15 +1,20 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import { BootstrapResponse, PendingReview } from '~types/responses/bootstrap'
+import { BootstrapResponse } from '~types/responses/bootstrap'
 
-type BootstrapState = {
+interface BootstrapState {
   rideId: string | null
   inRide: boolean
-  pendingReviews: PendingReview[]
+  pendingReviews: BootstrapResponse['pendingReviews']
   isDriver: boolean
+  isLoading: boolean
+  lastFetched: number | null
   setBootstrap: (bootstrap: BootstrapResponse) => void
   clearBootstrap: () => void
+  updateBootstrap: (updates: Partial<BootstrapResponse>) => void
+  setLoading: (loading: boolean) => void
+  setLastFetched: (timestamp: number) => void
 }
 
 export const useBootstrapStore = create<BootstrapState>()(
@@ -19,12 +24,15 @@ export const useBootstrapStore = create<BootstrapState>()(
       inRide: false,
       pendingReviews: [],
       isDriver: false,
+      isLoading: false,
+      lastFetched: null,
       setBootstrap: (bootstrap) =>
         set({
           rideId: bootstrap.rideId,
           inRide: bootstrap.inRide,
           pendingReviews: bootstrap.pendingReviews,
           isDriver: bootstrap.isDriver,
+          lastFetched: Date.now(),
         }),
       clearBootstrap: () =>
         set({
@@ -32,7 +40,15 @@ export const useBootstrapStore = create<BootstrapState>()(
           inRide: false,
           pendingReviews: [],
           isDriver: false,
+          lastFetched: null,
         }),
+      updateBootstrap: (updates) =>
+        set((state) => ({
+          ...state,
+          ...updates,
+        })),
+      setLoading: (loading) => set({ isLoading: loading }),
+      setLastFetched: (timestamp) => set({ lastFetched: timestamp }),
     }),
     {
       name: 'bootstrap-storage',

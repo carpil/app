@@ -6,16 +6,19 @@ import {
 } from '@react-native-firebase/auth'
 import { Redirect } from 'expo-router'
 import { useEffect, useState } from 'react'
-import { bootstrapMe, getUser } from 'services/api/user'
+import { getUser } from 'services/api/user'
+import { useRealtimeBootstrap } from 'hooks/useRealtimeBootstrap'
+import { useBootstrap } from 'hooks/useBootstrap'
 import { useAuthStore } from 'store/useAuthStore'
-import { useBootstrapStore } from 'store/useBootstrapStore'
 import { User } from '~types/user'
 
 export default function Index() {
   const [initializing, setInitializing] = useState(true)
   const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null)
-  const { login, user: currentUser } = useAuthStore()
-  const { setBootstrap } = useBootstrapStore()
+  const { login } = useAuthStore()
+  const { inRide, rideId, isLoading } = useBootstrap()
+
+  useRealtimeBootstrap()
 
   useEffect(() => {
     const auth = getAuth()
@@ -38,24 +41,16 @@ export default function Index() {
 
       const userResponse = await getUser(currentUser.id, token)
       if (!userResponse) {
-        console.log('User not found')
-        return
-      }
-
-      const bootstrapResponse = await bootstrapMe()
-      if (!bootstrapResponse) {
-        console.log('Bootstrap failed')
         return
       }
 
       login(userResponse.user, token)
-      setBootstrap(bootstrapResponse)
     })
 
     return () => subscriber()
-  }, [login, setBootstrap])
+  }, [login])
 
-  if (initializing) {
+  if (initializing || isLoading) {
     return null
   }
 
@@ -63,8 +58,7 @@ export default function Index() {
     return <Redirect href="/login" />
   }
 
-  if (currentUser?.inRide?.active) {
-    const rideId = currentUser.inRide.rideId
+  if (inRide && rideId) {
     return <Redirect href={`/ride-navigation/${rideId}`} />
   }
 

@@ -11,38 +11,16 @@ import Avatar from '@components/avatar'
 import { formatDate } from '@utils/format-date'
 import ReservationButton from '@components/reservation-button'
 import { COLORS } from '@utils/constansts/colors'
-import { useEffect, useState } from 'react'
-import { Ride } from '~types/ride'
-import { getRide, joinRide, startRide } from 'services/api/rides'
+import { joinRide, startRide } from 'services/api/rides'
+import { useRealtimeRide } from 'hooks/useRealtimeRide'
 import { useDriver } from 'hooks/useDriver'
 import PrimaryButton from '@components/buttons/primary'
 
 export default function RideDetails() {
   const { id } = useLocalSearchParams()
-  const [ride, setRide] = useState<Ride | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
   const rideId = id as string
-
+  const { ride, loading, error } = useRealtimeRide(rideId)
   const { calculateDriver } = useDriver()
-
-  useEffect(() => {
-    const fetchRide = async () => {
-      try {
-        setLoading(true)
-        setError(null)
-        const rideData = await getRide(rideId)
-        setRide(rideData)
-      } catch (err) {
-        setError('No se encontró el ride')
-        console.error('Error fetching ride:', err)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchRide()
-  }, [rideId])
 
   if (loading) {
     return (
@@ -110,8 +88,16 @@ export default function RideDetails() {
   const { hour, date } = formatDate(departureDate)
 
   const handleJoinRide = async () => {
-    const message = await joinRide(rideId)
-    console.log({ message })
+    try {
+      const message = await joinRide(rideId)
+      if (message) {
+        console.log('Successfully joined ride:', message)
+      } else {
+        console.log('Failed to join ride')
+      }
+    } catch (error) {
+      console.error('Error joining ride:', error)
+    }
   }
 
   const handleStartRide = async () => {

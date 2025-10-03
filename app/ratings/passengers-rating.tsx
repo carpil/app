@@ -1,10 +1,4 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  Platform,
-  TouchableOpacity,
-} from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
 import { COLORS } from '@utils/constansts/colors'
 import Avatar from '@components/avatar'
 import { useAuthStore } from 'store/useAuthStore'
@@ -12,10 +6,11 @@ import StarRating from './star-rating'
 import { useState } from 'react'
 import { Rating } from '~types/rating'
 import { UserInfo } from '~types/user'
+import { useBootstrap } from 'hooks/useBootstrap'
 
 interface PassengersRatingProps {
   onComplete?: () => void
-  onSaveRating: (rating: Rating) => void
+  onSaveRating: (rating: Rating | Rating[]) => void
   passengers: UserInfo[]
 }
 
@@ -30,6 +25,7 @@ export default function PassengersRating({
   passengers,
 }: PassengersRatingProps) {
   const user = useAuthStore((state) => state.user)
+  const { rideId } = useBootstrap()
   const [ratings, setRatings] = useState<RatingComponentProps[]>([])
 
   if (user == null) {
@@ -37,7 +33,25 @@ export default function PassengersRating({
   }
 
   const handleRatingComplete = () => {
-    console.log('ratings', ratings)
+    console.log('📝 Collected ratings:', ratings)
+    console.log('📝 Number of passengers to rate:', passengers.length)
+    console.log('📝 Number of ratings collected:', ratings.length)
+
+    if (ratings.length === 0) {
+      console.log('⚠️ No ratings collected, skipping save')
+      onComplete?.()
+      return
+    }
+
+    const ratingsToSave = ratings.map((rating) => ({
+      targetUserId: rating.userId,
+      rideId: rideId || '',
+      rating: rating.rating,
+      comment: '',
+    }))
+
+    console.log('📝 Ratings to save:', ratingsToSave)
+    onSaveRating(ratingsToSave)
     onComplete?.()
   }
 
@@ -45,7 +59,7 @@ export default function PassengersRating({
     <>
       <Text style={styles.text}>{'¿Cómo calificarías a los pasajeros?'}</Text>
       {passengers.map((passenger) => (
-        <View style={styles.passengerContainer}>
+        <View key={passenger.id} style={styles.passengerContainer}>
           <View style={styles.passengerRatingContainer}>
             <Avatar
               user={{
@@ -58,19 +72,39 @@ export default function PassengersRating({
             <View style={styles.passengersInfo}>
               <Text style={styles.name}>{passenger.name}</Text>
               <StarRating
-                onRatingChange={(rating) =>
-                  setRatings([{ userId: passenger.id, rating }])
-                }
+                onRatingChange={(rating) => {
+                  console.log(`⭐ Rating ${rating} for ${passenger.name}`)
+                  setRatings((prevRatings) => {
+                    // Remove existing rating for this user if it exists
+                    const filteredRatings = prevRatings.filter(
+                      (r) => r.userId !== passenger.id,
+                    )
+                    // Add the new rating
+                    return [
+                      ...filteredRatings,
+                      { userId: passenger.id, rating },
+                    ]
+                  })
+                }}
               />
+              {ratings.some((r) => r.userId === passenger.id) && (
+                <Text style={styles.ratedText}>✅ Rated</Text>
+              )}
             </View>
           </View>
         </View>
       ))}
       <TouchableOpacity
-        style={styles.completeButton}
+        style={[
+          styles.completeButton,
+          ratings.length === 0 && styles.disabledButton,
+        ]}
         onPress={handleRatingComplete}
+        disabled={ratings.length === 0}
       >
-        <Text style={styles.completeButtonText}>Complete Rating</Text>
+        <Text style={styles.completeButtonText}>
+          Complete Rating ({ratings.length}/{passengers.length})
+        </Text>
       </TouchableOpacity>
     </>
   )
@@ -127,5 +161,15 @@ const styles = StyleSheet.create({
     color: COLORS.white,
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  ratedText: {
+    color: COLORS.primary,
+    fontSize: 12,
+    fontWeight: 'bold',
+    marginTop: 4,
+  },
+  disabledButton: {
+    backgroundColor: COLORS.gray_400,
+    opacity: 0.6,
   },
 })

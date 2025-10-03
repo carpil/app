@@ -1,8 +1,24 @@
 import { API_URL } from '@utils/constansts/api'
 import { useAuthStore } from 'store/useAuthStore'
+import { updateUserState } from 'services/firestore/user-state'
 import { CreateRideRequest } from '~types/requests/ride'
 import { DefaultResponse } from '~types/responses/default'
 import { RideResponse, RidesResponse } from '~types/responses/rides'
+
+// Helper function to update Firebase state after API calls
+const updateFirebaseState = async (state: {
+  inRide: boolean
+  rideId: string | null
+  isDriver: boolean
+}) => {
+  const { user } = useAuthStore.getState()
+  if (user) {
+    await updateUserState(user.id, {
+      ...state,
+      rideId: state.rideId || undefined,
+    })
+  }
+}
 
 export const getRides = async () => {
   const response = await fetch(`${API_URL}/rides/drivers`, {
@@ -101,6 +117,15 @@ export const startRide = async (id: string) => {
 
   const data = (await response.json()) as DefaultResponse
   const { message } = data
+
+  // Update Firebase user state when driver starts the ride
+  if (message) {
+    await updateFirebaseState({
+      inRide: true,
+      rideId: id,
+      isDriver: true,
+    })
+  }
 
   return message
 }
