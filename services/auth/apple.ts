@@ -44,7 +44,7 @@ export const handleAppleLogin = async () => {
       const setToken = useAuthStore.getState().setToken
       setToken(firebaseIdToken)
 
-      const userResponse = await socialLogin({ user })
+      const userResponse = await socialLogin({ user, token: firebaseIdToken })
 
       if (userResponse != null) {
         loginStore(userResponse, firebaseIdToken)
