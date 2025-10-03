@@ -48,7 +48,7 @@ export const handleGoogleLogin = async () => {
       const setToken = useAuthStore.getState().setToken
       setToken(firebaseIdToken)
 
-      const userResponse = await socialLogin({ user })
+      const userResponse = await socialLogin({ user, token: firebaseIdToken })
 
       if (userResponse != null) {
         loginStore(userResponse, firebaseIdToken)
@@ -57,6 +57,7 @@ export const handleGoogleLogin = async () => {
       console.log('No saved credential found')
     }
   } catch (error) {
+    console.error('Google Sign-In Error:', error)
     if (isErrorWithCode(error)) {
       switch (error.code) {
         case statusCodes.ONE_TAP_START_FAILED:

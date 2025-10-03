@@ -59,14 +59,37 @@ export default function RatingsModal({ pendingReviews }: RatingsModalProps) {
     }, 500)
   }
 
-  const handleSaveRating = async (rating: Rating) => {
+  const handleSaveRating = async (rating: Rating | Rating[]) => {
     try {
-      const response = await createRating(rating)
-      if (response) {
-        console.log('Rating saved successfully')
+      // Handle both single rating and array of ratings
+      const ratingsToSave = Array.isArray(rating) ? rating : [rating]
+
+      console.log(`Saving ${ratingsToSave.length} rating(s)...`)
+
+      // Use Promise.all to save all ratings concurrently
+      const responses = await Promise.all(
+        ratingsToSave.map(async (ratingItem, index) => {
+          console.log(
+            `Saving rating ${index + 1}/${ratingsToSave.length} for user ${ratingItem.targetUserId}`,
+          )
+          return await createRating(ratingItem)
+        }),
+      )
+
+      // Check if all ratings were saved successfully
+      const successfulSaves = responses.filter((response) => response !== null)
+
+      if (successfulSaves.length === ratingsToSave.length) {
+        console.log(
+          `✅ All ${ratingsToSave.length} rating(s) saved successfully`,
+        )
+      } else {
+        console.log(
+          `⚠️ Only ${successfulSaves.length}/${ratingsToSave.length} ratings saved successfully`,
+        )
       }
     } catch (error) {
-      console.log('Error saving rating', error)
+      console.error('❌ Error saving ratings:', error)
     }
   }
 

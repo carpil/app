@@ -5,7 +5,7 @@ import { useState } from 'react'
 import { UserInfo } from '~types/user'
 import { COLORS } from '@utils/constansts/colors'
 import { Rating } from '~types/rating'
-import { useBootstrapStore } from 'store/useBootstrapStore'
+import { useBootstrap } from 'hooks/useBootstrap'
 
 interface DriverRatingProps {
   user: UserInfo
@@ -20,7 +20,7 @@ export default function DriverRating({
 }: DriverRatingProps) {
   const [rating, setRating] = useState(0)
 
-  const { rideId } = useBootstrapStore()
+  const { rideId } = useBootstrap()
 
   return (
     <View style={styles.container}>

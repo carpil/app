@@ -2,6 +2,7 @@ import { API_URL } from '@utils/constansts/api'
 import { useAuthStore } from 'store/useAuthStore'
 import { SignUpResponse } from '~types/responses/auth'
 import { User } from '~types/user'
+import { debugApiRequest, debugApiResponse } from '@utils/debug-api'
 
 export const signUp = async ({ user }: { user: User }) => {
   const token = useAuthStore.getState().token
@@ -54,20 +55,55 @@ export const login = async ({ user }: { user: User }) => {
   return userResponse
 }
 
-export const socialLogin = async ({ user }: { user: User }) => {
-  const token = useAuthStore.getState().token
-  const response = await fetch(`${API_URL}/login/social`, {
+export const socialLogin = async ({
+  user,
+  token,
+}: {
+  user: User
+  token: string
+}) => {
+  if (!token) {
+    console.error('No token provided for social login')
+    return null
+  }
+
+  const requestOptions = {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({ ...user }),
-  })
+  }
+
+  debugApiRequest(
+    `${API_URL}/users/login/social`,
+    requestOptions,
+    'Social Login',
+  )
+
+  const response = await fetch(`${API_URL}/users/login/social`, requestOptions)
+
+  await debugApiResponse(response, 'Social Login')
 
   if (!response.ok) {
-    const error = await response.json()
-    console.log('Social login error:', { status: response.status, error })
+    // Check if response is HTML (error page) instead of JSON
+    const contentType = response.headers.get('content-type')
+    if (!contentType || !contentType.includes('application/json')) {
+      const htmlError = await response.text()
+      console.error(
+        'Received HTML response instead of JSON:',
+        htmlError.substring(0, 200),
+      )
+      return null
+    }
+
+    try {
+      const error = await response.json()
+      console.log('Social login error:', { status: response.status, error })
+    } catch (parseError) {
+      console.error('Failed to parse error response:', parseError)
+    }
     return null
   }
 
