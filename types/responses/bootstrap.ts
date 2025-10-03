@@ -6,7 +6,7 @@ export interface PendingReview {
 }
 
 export interface BootstrapResponse {
-  rideId: string
+  rideId: string | null
   inRide: boolean
   pendingReviews: PendingReview[]
   isDriver: boolean
