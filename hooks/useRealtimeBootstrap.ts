@@ -6,13 +6,13 @@ import { useAuthStore } from 'store/useAuthStore'
 import { User } from '~types/user'
 
 export const useRealtimeBootstrap = () => {
-  const { user } = useAuthStore()
+  const { user, token } = useAuthStore()
   const { setBootstrap, setLoading, clearBootstrap, isLoading, rideId } =
     useBootstrapStore()
   const unsubscribeRef = useRef<(() => void) | null>(null)
 
   const fetchBootstrap = async () => {
-    if (!user?.id) return
+    if (!user?.id || !token) return
 
     setLoading(true)
     try {
@@ -46,7 +46,7 @@ export const useRealtimeBootstrap = () => {
   }
 
   useEffect(() => {
-    if (!user?.id) {
+    if (!user?.id || !token) {
       clearBootstrap()
       return
     }
@@ -65,7 +65,7 @@ export const useRealtimeBootstrap = () => {
         unsubscribeRef.current = null
       }
     }
-  }, [user?.id])
+  }, [user?.id, token])
 
   return {
     isLoading,

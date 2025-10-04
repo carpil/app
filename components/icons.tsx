@@ -76,3 +76,15 @@ export const StarOutlineIcon = ({ color, size = 24 }: IconProps) => (
 export const StarFilledIcon = ({ color, size = 24 }: IconProps) => (
   <Ionicons name="star" size={size} color={color} />
 )
+
+export const KebabIcon = ({ color, size = 24 }: IconProps) => (
+  <Feather name="more-vertical" size={size} color={color} />
+)
+
+export const UsersGroupIcon = ({ color, size = 24 }: IconProps) => (
+  <Ionicons name="people-outline" size={size} color={color} />
+)
+
+export const ChatIcon = ({ color, size = 24 }: IconProps) => (
+  <Feather name="message-square" size={size} color={color} />
+)
