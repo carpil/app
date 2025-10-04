@@ -22,7 +22,7 @@ const TODAY = new Date()
 const TEN_MINUTES = 10 * 60000
 const GOOGLE_MAPS_API_KEY = process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY ?? ''
 
-const COSTA_RICA_REGION: Region = {
+export const COSTA_RICA_REGION: Region = {
   latitude: 9.7489,
   latitudeDelta: 5.0,
   longitude: -83.7534,

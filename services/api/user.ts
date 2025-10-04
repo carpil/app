@@ -34,7 +34,6 @@ export const bootstrapMe = async () => {
   const response = await fetch(`${API_URL}/users/me/bootstrap`, requestOptions)
 
   const data = await response.json()
-  console.log({ data })
   if (!response.ok) {
     return null
   }
