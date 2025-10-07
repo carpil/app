@@ -18,7 +18,7 @@ export const subscribeToRide = (
   return onSnapshot(
     rideRef,
     (snapshot) => {
-      if (snapshot.exists()) {
+      if (snapshot.exists) {
         const data = snapshot.data()
         if (data) {
           const ride: Ride = {

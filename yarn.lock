@@ -2281,18 +2281,17 @@
   dependencies:
     plist "^3.1.0"
 
-"@react-native-firebase/firestore@22.4.0":
-  version "22.4.0"
-  resolved "https://registry.yarnpkg.com/@react-native-firebase/firestore/-/firestore-22.4.0.tgz#a0474c8913d997a34b2b956630506899840f1196"
-  integrity sha512-8kMh2FNdLQj9A9wDk8xye+iRneeL29Qx3OBbTiGLjsXTuybZdi6Ww+UpoClwwLorlmXA827GLyO4kNtwkYh1pQ==
-  dependencies:
-    react-native-url-polyfill "2.0.0"
+"@react-native-firebase/firestore@21.14.0":
+  version "21.14.0"
+  resolved "https://registry.yarnpkg.com/@react-native-firebase/firestore/-/firestore-21.14.0.tgz#76a946a35cb7856e838ce34e99d4372de2343671"
+  integrity sha512-nk8i4le8uQeydRo1JymUCUOWprVK8FUlgtjG0ZG3ne7qt7NvmzgoK59KGwP+G5e8th2wWgACDHmvRrQK6ctXlA==
 
-"@react-native-google-signin/google-signin@19.1.1":
-  version "19.1.1"
-  resolved "https://npm.pkg.github.com/download/@react-native-google-signin/google-signin/19.1.1/eac174fac5adaaa95d26f1a95b947bb598b9c312#eac174fac5adaaa95d26f1a95b947bb598b9c312"
-  integrity sha512-XMAQ5ZjXUybQ0+vk+5eQvHRWNT8OXhs9bSSN83jFVrP2OMJPfLtAM0k8gmh2rfxrXDFN0GesU2EsHJcqb+DGHQ==
+"@react-native-google-signin/google-signin@^21.1.1":
+  version "21.1.1"
+  resolved "https://npm.pkg.github.com/download/@react-native-google-signin/google-signin/21.1.1/48aa14a077b6e43654422611ae2f5b31740f0448#48aa14a077b6e43654422611ae2f5b31740f0448"
+  integrity sha512-OG3uQnbE5homaA4pSmo85Wjb2xx6vvtvnbwUfmOKJ8hCv4zurlBGfi88rFRTqjg0xRZGxb5weV51JuAjxuWbZw==
   dependencies:
+    "@types/google-one-tap" "^1.2.6"
     jwt-decode "^4.0.0"
     nanoevents "^9.1.0"
 
@@ -2537,6 +2536,11 @@
   resolved "https://registry.yarnpkg.com/@standard-schema/utils/-/utils-0.3.0.tgz#3d5e608f16c2390c10528e98e59aef6bf73cae7b"
   integrity sha512-e7Mew686owMaPJVNNLs55PUvgz371nKgwsc4vxE49zsODpJEnxgxRo2y/OKrqueavXgZNMDVj3DdHFlaSAeU8g==
 
+"@stripe/stripe-react-native@0.54.1":
+  version "0.54.1"
+  resolved "https://registry.yarnpkg.com/@stripe/stripe-react-native/-/stripe-react-native-0.54.1.tgz#eb2f3f0078adf4e452e5aeef20f5abf892a1510b"
+  integrity sha512-dtK4OohFr6/xwmnkJCfrQbxWl2dEyGs4kIXNSVxfl8uLVJ7P71wgFDl7Kdp3xEzd7zLcPToPrRFYtPZu/ud5nQ==
+
 "@tybys/wasm-util@^0.9.0":
   version "0.9.0"
   resolved "https://registry.yarnpkg.com/@tybys/wasm-util/-/wasm-util-0.9.0.tgz#3e75eb00604c8d6db470bf18c37b7d984a0e3355"
@@ -2586,6 +2590,11 @@
   version "7946.0.16"
   resolved "https://registry.yarnpkg.com/@types/geojson/-/geojson-7946.0.16.tgz#8ebe53d69efada7044454e3305c19017d97ced2a"
   integrity sha512-6C8nqWur3j98U6+lXDfTUWIfgvZU+EumvpHKcYjujKH7woYyLj2sUmff0tRhrqM7BohUw7Pz3ZB1jj2gW9Fvmg==
+
+"@types/google-one-tap@^1.2.6":
+  version "1.2.6"
+  resolved "https://registry.yarnpkg.com/@types/google-one-tap/-/google-one-tap-1.2.6.tgz#854bdf1a51f9bc3d61f3c55d44135b653c523583"
+  integrity sha512-REmJsXVHvKb/sgI8DF+7IesMbDbcsEokHBqxU01ENZ8d98UPWdRLhUCtxEm9bhNFFg6PJGy7PNFdvovp0hK3jA==
 
 "@types/graceful-fs@^4.1.3":
   version "4.1.9"
@@ -7372,13 +7381,6 @@ react-native-svg@15.8.0:
     css-select "^5.1.0"
     css-tree "^1.1.3"
     warn-once "0.1.1"
-
-react-native-url-polyfill@2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/react-native-url-polyfill/-/react-native-url-polyfill-2.0.0.tgz#db714520a2985cff1d50ab2e66279b9f91ffd589"
-  integrity sha512-My330Do7/DvKnEvwQc0WdcBnFPploYKp9CYlefDXzIdEaA+PAhDYllkvGeEroEzvc4Kzzj2O4yVdz8v6fjRvhA==
-  dependencies:
-    whatwg-url-without-unicode "8.0.0-3"
 
 react-native@0.76.9:
   version "0.76.9"

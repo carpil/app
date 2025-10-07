@@ -18,28 +18,87 @@ import {
   StyleSheet,
   Platform,
   TouchableOpacity,
+  Alert,
 } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import MapView, { Marker } from 'react-native-maps'
 import MapViewDirections from 'react-native-maps-directions'
 import { Modalize } from 'react-native-modalize'
+import { useStripe } from '@stripe/stripe-react-native'
 import { completeRide, getRide } from 'services/api/rides'
+import { createPaymentIntent } from 'services/api/payments'
+import { useAuthStore } from 'store/useAuthStore'
+import { formatCRC, convertCRCToCentimos } from '@utils/currency'
 import { Ride } from '~types/ride'
 import { User } from '~types/user'
 
-const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? ''
+const GOOGLE_MAPS_API_KEY = process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY ?? ''
 
 export default function RideNavigationScreen() {
   const { rideId } = useLocalSearchParams<{ rideId: string }>()
   const { isDriver } = useBootstrap()
+  const user = useAuthStore((state) => state.user)
+  const { initPaymentSheet, presentPaymentSheet } = useStripe()
 
   const [ride, setRide] = useState<Ride | null>(null)
+  const [isPaymentProcessing, setIsPaymentProcessing] = useState(false)
   const mapRef = useRef<MapView>(null)
   const modalizeRef = useRef<Modalize>(null)
 
   const handleFinishRide = async () => {
     const message = await completeRide(rideId)
     console.log({ message })
+  }
+
+  const handlePayment = async () => {
+    if (!ride || !user) return
+
+    try {
+      setIsPaymentProcessing(true)
+
+      // Convertir colones a céntimos (Stripe requiere la unidad más pequeña)
+      const amountInCentimos = convertCRCToCentimos(ride.price)
+
+      // Create payment intent
+      const paymentData = await createPaymentIntent({
+        userId: user.id,
+        rideId: ride.id,
+        amount: amountInCentimos, // Céntimos de colón para Stripe
+        description: `Pago por viaje de ${ride.origin?.name.primary} a ${ride.destination?.name.primary} - ${formatCRC(ride.price)}`,
+      })
+
+      if (!paymentData || !paymentData.clientSecret) {
+        Alert.alert('Error', 'No se pudo crear el pago. Intenta nuevamente.')
+        return
+      }
+
+      // Initialize payment sheet
+      const { error: initError } = await initPaymentSheet({
+        merchantDisplayName: 'Carpil',
+        paymentIntentClientSecret: paymentData.clientSecret,
+        allowsDelayedPaymentMethods: true,
+        returnURL: 'carpil://stripe-redirect',
+      })
+
+      if (initError) {
+        Alert.alert('Error', initError.message)
+        return
+      }
+
+      // Present payment sheet
+      const { error: presentError } = await presentPaymentSheet()
+
+      if (presentError) {
+        Alert.alert('Pago cancelado', presentError.message)
+      } else {
+        Alert.alert('Éxito', '¡Tu pago se ha procesado exitosamente!')
+      }
+    } catch (error) {
+      console.error('Payment error:', error)
+      Alert.alert('Error', 'Ocurrió un error al procesar el pago.')
+    } finally {
+      setIsPaymentProcessing(false)
+    }
   }
 
   useEffect(() => {
@@ -226,6 +285,28 @@ export default function RideNavigationScreen() {
                 <Text style={styles.finishRideText}>Completar viaje</Text>
               </TouchableOpacity>
             )}
+            {!isDriver && (
+              <>
+                <View style={styles.paymentInfoContainer}>
+                  <Text style={styles.paymentInfoLabel}>Total a pagar:</Text>
+                  <Text style={styles.paymentInfoAmount}>
+                    {formatCRC(ride.price)}
+                  </Text>
+                </View>
+                <TouchableOpacity
+                  style={[
+                    styles.paymentButton,
+                    isPaymentProcessing && styles.paymentButtonDisabled,
+                  ]}
+                  onPress={handlePayment}
+                  disabled={isPaymentProcessing}
+                >
+                  <Text style={styles.paymentButtonText}>
+                    {isPaymentProcessing ? 'Procesando...' : 'Pagar viaje'}
+                  </Text>
+                </TouchableOpacity>
+              </>
+            )}
           </View>
         </Modalize>
       </View>
@@ -307,6 +388,41 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   finishRideText: {
+    color: COLORS.white,
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  paymentInfoContainer: {
+    marginTop: 20,
+    padding: 16,
+    backgroundColor: COLORS.inactive_gray,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: COLORS.gray_600,
+    alignItems: 'center',
+  },
+  paymentInfoLabel: {
+    color: COLORS.gray_400,
+    fontSize: 14,
+    marginBottom: 4,
+  },
+  paymentInfoAmount: {
+    color: COLORS.white,
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
+  paymentButton: {
+    backgroundColor: COLORS.primary,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 8,
+    marginTop: 12,
+    alignItems: 'center',
+  },
+  paymentButtonDisabled: {
+    backgroundColor: COLORS.gray_600,
+  },
+  paymentButtonText: {
     color: COLORS.white,
     fontSize: 16,
     fontWeight: 'bold',
