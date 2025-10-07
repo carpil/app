@@ -60,7 +60,7 @@ export const subscribeToUserDocument = (
     return onSnapshot(
       userDocRef,
       (docSnapshot) => {
-        if (docSnapshot.exists()) {
+        if (docSnapshot.exists) {
           const userData = docSnapshot.data() as User
           console.log('📄 User document updated:', {
             userId,
