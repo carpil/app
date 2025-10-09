@@ -53,6 +53,9 @@
         {
           "ios": {
             "useFrameworks": "static"
+          },
+          "android": {
+            "kotlinVersion": "2.0.0"
           }
         }
       ]
