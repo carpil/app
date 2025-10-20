@@ -4,9 +4,10 @@ import { COLORS } from '@utils/constansts/colors'
 import RatingsModal from 'app/ratings/modal'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { useBootstrap } from 'hooks/useBootstrap'
+import CheckoutModal from 'app/checkout/modal'
 
 export default function TabsLayout() {
-  const { pendingReviews } = useBootstrap()
+  const { pendingReviews, pendingPayment } = useBootstrap()
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -42,7 +43,8 @@ export default function TabsLayout() {
           }}
         />
       </Tabs>
-      {pendingReviews && pendingReviews.length > 0 && (
+      {pendingPayment && <CheckoutModal pendingPayment={pendingPayment} />}
+      {!pendingPayment && pendingReviews && pendingReviews.length > 0 && (
         <RatingsModal pendingReviews={pendingReviews} />
       )}
     </GestureHandlerRootView>

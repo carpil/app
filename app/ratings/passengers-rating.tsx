@@ -14,7 +14,7 @@ interface PassengersRatingProps {
   passengers: UserInfo[]
 }
 
-interface RatingComponentProps {
+export interface RatingComponentProps {
   userId: string
   rating: number
 }

@@ -48,6 +48,7 @@
       "expo-build-properties",
       "expo-apple-authentication",
       "expo-notifications",
+      "expo-image-picker",
       [
         "expo-build-properties",
         {

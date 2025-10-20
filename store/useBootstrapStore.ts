@@ -7,6 +7,7 @@ interface BootstrapState {
   rideId: string | null
   inRide: boolean
   pendingReviews: BootstrapResponse['pendingReviews']
+  pendingPayment: BootstrapResponse['pendingPayment']
   isDriver: boolean
   isLoading: boolean
   lastFetched: number | null
@@ -22,7 +23,8 @@ export const useBootstrapStore = create<BootstrapState>()(
     (set) => ({
       rideId: null,
       inRide: false,
-      pendingReviews: [],
+      pendingReviews: null,
+      pendingPayment: null,
       isDriver: false,
       isLoading: false,
       lastFetched: null,
@@ -31,6 +33,7 @@ export const useBootstrapStore = create<BootstrapState>()(
           rideId: bootstrap.rideId,
           inRide: bootstrap.inRide,
           pendingReviews: bootstrap.pendingReviews,
+          pendingPayment: bootstrap.pendingPayment,
           isDriver: bootstrap.isDriver,
           lastFetched: Date.now(),
         }),
@@ -38,7 +41,8 @@ export const useBootstrapStore = create<BootstrapState>()(
         set({
           rideId: null,
           inRide: false,
-          pendingReviews: [],
+          pendingReviews: null,
+          pendingPayment: null,
           isDriver: false,
           lastFetched: null,
         }),
