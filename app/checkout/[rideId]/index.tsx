@@ -4,6 +4,7 @@ import {
   StyleSheet,
   Pressable,
   TouchableOpacity,
+  Alert,
 } from 'react-native'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import SafeScreen from '@components/safe-screen'
@@ -15,6 +16,12 @@ import AvatarCard from './components/avtar-card'
 import { ScrollView } from 'react-native-gesture-handler'
 import AllPassengersCard from './components/all-passengers-card'
 import { formatCRC } from '@utils/currency'
+import { useDebitCard } from './use-debit-card'
+import { useAuthStore } from 'store/useAuthStore'
+import Avatar from '@components/avatar'
+import StarRating from 'app/ratings/star-rating'
+import { RatingComponentProps } from 'app/ratings/passengers-rating'
+import { createRating } from 'services/api/ratings'
 
 enum PaymentMethod {
   SINPE_MOVIL = 'sinpe_movil',
@@ -26,6 +33,69 @@ export default function Checkout() {
   const router = useRouter()
   const [ride, setRide] = useState<Ride | null>(null)
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod | null>(null)
+  const [ratings, setRatings] = useState<RatingComponentProps[]>([])
+  const user = useAuthStore((state) => state.user)
+
+  const { isPaymentProcessing, handlePayment } = useDebitCard({
+    ride,
+    user,
+  })
+
+  const handlePay = async () => {
+    if (!paymentMethod) return
+    if (paymentMethod === PaymentMethod.SINPE_MOVIL) {
+      router.push(`/checkout/${rideId}/sinpe-movil`)
+    } else if (paymentMethod === PaymentMethod.DEBIT_CARD) {
+      const result = await handlePayment()
+      if (result instanceof Error) {
+        Alert.alert('Error', result.message)
+        return
+      }
+      router.replace('/(tabs)')
+    }
+  }
+
+  const handleCompleteRating = async () => {
+    if (ratings.length === 0) {
+      console.log('⚠️ No ratings collected, skipping save')
+      return
+    }
+
+    const ratingsToSave = ratings.map((rating) => ({
+      targetUserId: rating.userId,
+      rideId: rideId || '',
+      rating: rating.rating,
+      comment: '',
+    }))
+
+    try {
+      console.log(`Saving ${ratingsToSave.length} rating(s)...`)
+      const responses = await Promise.all(
+        ratingsToSave.map(async (ratingItem, index) => {
+          console.log(
+            `Saving rating ${index + 1}/${ratingsToSave.length} for user ${ratingItem.targetUserId}`,
+          )
+          return await createRating(ratingItem)
+        }),
+      )
+
+      const successfulSaves = responses.filter((response) => response !== null)
+
+      if (successfulSaves.length === ratingsToSave.length) {
+        console.log(
+          `✅ All ${ratingsToSave.length} rating(s) saved successfully`,
+        )
+        router.replace('/(tabs)')
+      } else {
+        console.log(
+          `⚠️ Only ${successfulSaves.length}/${ratingsToSave.length} ratings saved successfully`,
+        )
+      }
+    } catch (error) {
+      console.error('❌ Error saving ratings:', error)
+    }
+  }
+
   useEffect(() => {
     const fetchRide = async () => {
       const ride = await getRide(rideId)
@@ -45,6 +115,7 @@ export default function Checkout() {
   }
 
   const priceFormatted = formatCRC(ride.price)
+  const isDriver = user?.id === ride.driver.id
   return (
     <SafeScreen backgroundColor={COLORS.dark_gray}>
       <ScrollView style={{ flex: 1 }}>
@@ -75,93 +146,165 @@ export default function Checkout() {
         >
           Gracias por viajar con Carpil.
         </Text>
-        <AvatarCard user={ride?.driver} role="driver" />
-        <AllPassengersCard passengers={ride?.passengers} />
-
-        <View
-          style={{
-            marginTop: 40,
-          }}
-        >
-          <Text
-            style={{
-              color: COLORS.white,
-              fontSize: 14,
-              fontWeight: 'bold',
-            }}
-          >
-            Seleccione una forma de pago
-          </Text>
-          <View
-            style={{
-              flexDirection: 'column',
-              gap: 8,
-              marginTop: 10,
-            }}
-          >
-            <Pressable
-              style={[
-                styles.button,
-                paymentMethod === PaymentMethod.SINPE_MOVIL &&
-                  styles.buttonActive,
-              ]}
-              onPress={() => setPaymentMethod(PaymentMethod.SINPE_MOVIL)}
+        {!isDriver && (
+          <>
+            <AvatarCard user={ride?.driver} role="driver" />
+            <AllPassengersCard passengers={ride?.passengers} />
+          </>
+        )}
+        {isDriver && (
+          <View>
+            <Text
+              style={{
+                color: COLORS.white,
+                marginBottom: 10,
+                fontSize: 14,
+                fontWeight: 'bold',
+                marginTop: 10,
+              }}
             >
-              <Text
-                style={[
-                  styles.buttonText,
-                  paymentMethod === PaymentMethod.SINPE_MOVIL &&
-                    styles.buttonTextActive,
-                ]}
+              Califica a los pasajeros
+            </Text>
+            {ride?.passengers.map((passenger) => (
+              <View
+                key={passenger.id}
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  gap: 8,
+                  borderWidth: 1,
+                  borderColor: COLORS.gray_600,
+                  borderRadius: 8,
+                  padding: 8,
+                  backgroundColor: COLORS.inactive_gray,
+                }}
               >
-                SINPE Móvil
-              </Text>
-            </Pressable>
-            <Pressable
-              style={[
-                styles.button,
-                paymentMethod === PaymentMethod.DEBIT_CARD &&
-                  styles.buttonActive,
-              ]}
-              onPress={() => setPaymentMethod(PaymentMethod.DEBIT_CARD)}
-            >
-              <Text
-                style={[
-                  styles.buttonText,
-                  paymentMethod === PaymentMethod.DEBIT_CARD &&
-                    styles.buttonTextActive,
-                ]}
-              >
-                Tarjeta de débito / crédito
-              </Text>
-            </Pressable>
+                <Avatar user={passenger} size={42} />
+                <View
+                  style={{
+                    gap: 4,
+                  }}
+                >
+                  <View>
+                    <Text
+                      style={{
+                        color: COLORS.white,
+                        fontSize: 14,
+                        fontWeight: 'bold',
+                      }}
+                    >
+                      {passenger.name}
+                    </Text>
+                    <StarRating
+                      size={28}
+                      onRatingChange={(rating) => {
+                        setRatings((prevRatings) => {
+                          // Remove existing rating for this user if it exists
+                          const filteredRatings = prevRatings.filter(
+                            (r) => r.userId !== passenger.id,
+                          )
+                          // Add the new rating
+                          return [
+                            ...filteredRatings,
+                            { userId: passenger.id, rating },
+                          ]
+                        })
+                      }}
+                    />
+                  </View>
+                </View>
+              </View>
+            ))}
           </View>
-        </View>
-
-        <TouchableOpacity
-          style={[
-            styles.finishRideButton,
-            !paymentMethod && styles.finishRideButtonDisabled,
-          ]}
-          disabled={!paymentMethod}
-          onPress={() => {
-            if (!paymentMethod) return
-            if (paymentMethod === PaymentMethod.SINPE_MOVIL) {
-              router.push(`/checkout/${rideId}/sinpe-movil`)
-            } else if (paymentMethod === PaymentMethod.DEBIT_CARD) {
-              router.push(`/checkout/${rideId}/debit-card`)
-            }
-          }}
-        >
-          <Text
-            style={[
-              styles.finishRideText,
-              !paymentMethod && styles.finishRideTextDisabled,
-            ]}
+        )}
+        {!isDriver && (
+          <>
+            <View
+              style={{
+                marginTop: 40,
+              }}
+            >
+              <Text
+                style={{
+                  color: COLORS.white,
+                  fontSize: 14,
+                  fontWeight: 'bold',
+                }}
+              >
+                Seleccione una forma de pago
+              </Text>
+              <View
+                style={{
+                  flexDirection: 'column',
+                  gap: 8,
+                  marginTop: 10,
+                }}
+              >
+                <Pressable
+                  style={[
+                    styles.button,
+                    paymentMethod === PaymentMethod.SINPE_MOVIL &&
+                      styles.buttonActive,
+                  ]}
+                  onPress={() => setPaymentMethod(PaymentMethod.SINPE_MOVIL)}
+                >
+                  <Text
+                    style={[
+                      styles.buttonText,
+                      paymentMethod === PaymentMethod.SINPE_MOVIL &&
+                        styles.buttonTextActive,
+                    ]}
+                  >
+                    SINPE Móvil
+                  </Text>
+                </Pressable>
+                <Pressable
+                  style={[
+                    styles.button,
+                    paymentMethod === PaymentMethod.DEBIT_CARD &&
+                      styles.buttonActive,
+                  ]}
+                  onPress={() => setPaymentMethod(PaymentMethod.DEBIT_CARD)}
+                >
+                  <Text
+                    style={[
+                      styles.buttonText,
+                      paymentMethod === PaymentMethod.DEBIT_CARD &&
+                        styles.buttonTextActive,
+                    ]}
+                  >
+                    Tarjeta de débito / crédito
+                  </Text>
+                </Pressable>
+              </View>
+            </View>
+            <TouchableOpacity
+              style={[
+                styles.finishRideButton,
+                !paymentMethod && styles.finishRideButtonDisabled,
+              ]}
+              disabled={!paymentMethod || isPaymentProcessing}
+              onPress={handlePay}
+            >
+              <Text
+                style={[
+                  styles.finishRideText,
+                  !paymentMethod && styles.finishRideTextDisabled,
+                ]}
+              >
+                {`Pagar ${priceFormatted}`}
+              </Text>
+            </TouchableOpacity>
+          </>
+        )}
+        {isDriver && (
+          <TouchableOpacity
+            style={styles.finishRideButton}
+            onPress={handleCompleteRating}
           >
-            {`Pagar ${priceFormatted}`}
-          </Text>
-        </TouchableOpacity>
+            <Text style={styles.finishRideText}>Finalizar viaje</Text>
+          </TouchableOpacity>
+        )}
       </ScrollView>
     </SafeScreen>
   )

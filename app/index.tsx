@@ -59,7 +59,7 @@ export default function Index() {
   }
 
   if (inRide && rideId) {
-    return <Redirect href={`/checkout/${rideId}`} />
+    return <Redirect href={`/ride-navigation/${rideId}`} />
   }
 
   return <Redirect href="/(tabs)" />

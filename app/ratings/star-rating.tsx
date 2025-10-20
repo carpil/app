@@ -8,6 +8,7 @@ interface StarRatingProps {
   initialRating?: number
   maxRating?: number
   userId?: string
+  size?: number
 }
 
 export default function StarRating({
@@ -15,6 +16,7 @@ export default function StarRating({
   initialRating = 0,
   maxRating = 5,
   userId,
+  size = 30,
 }: StarRatingProps) {
   const [rating, setRating] = useState(initialRating)
 
@@ -36,7 +38,7 @@ export default function StarRating({
         style={styles.starButton}
         activeOpacity={0.7}
       >
-        <StarIcon color={starColor} size={30} />
+        <StarIcon color={starColor} size={size} />
       </TouchableOpacity>
     )
   }
@@ -52,7 +54,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'row',
-    justifyContent: 'center',
+    // justifyContent: 'center',
     alignItems: 'center',
     gap: 5,
     borderRadius: 10,
