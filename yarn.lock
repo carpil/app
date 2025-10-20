@@ -2286,6 +2286,11 @@
   resolved "https://registry.yarnpkg.com/@react-native-firebase/firestore/-/firestore-21.14.0.tgz#76a946a35cb7856e838ce34e99d4372de2343671"
   integrity sha512-nk8i4le8uQeydRo1JymUCUOWprVK8FUlgtjG0ZG3ne7qt7NvmzgoK59KGwP+G5e8th2wWgACDHmvRrQK6ctXlA==
 
+"@react-native-firebase/storage@^23.4.1":
+  version "23.4.1"
+  resolved "https://registry.yarnpkg.com/@react-native-firebase/storage/-/storage-23.4.1.tgz#a78647b4545ae1472fe0b9a09c2409db1f93ff62"
+  integrity sha512-LCRySKFwzBVppC18FYxm+Rt9UfYbfoqwOhQHk2uazz5eZuJ59U7T2ue1tV9ZqrX7bk6cb/io65ePIkhlSCT2sg==
+
 "@react-native-google-signin/google-signin@^21.1.1":
   version "21.1.1"
   resolved "https://npm.pkg.github.com/download/@react-native-google-signin/google-signin/21.1.1/48aa14a077b6e43654422611ae2f5b31740f0448#48aa14a077b6e43654422611ae2f5b31740f0448"
