@@ -1,5 +1,13 @@
-import { Text, View, StyleSheet, TouchableOpacity, Image } from 'react-native'
-import { useLocalSearchParams } from 'expo-router'
+import {
+  Text,
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  Alert,
+  ActivityIndicator,
+} from 'react-native'
+import { useLocalSearchParams, useRouter } from 'expo-router'
 import SafeScreen from '@components/safe-screen'
 import { COLORS } from '@utils/constansts/colors'
 import { useEffect, useState } from 'react'
@@ -11,15 +19,19 @@ import { User } from '~types/user'
 import Avatar from '@components/avatar'
 import { formatCRC } from '@utils/currency'
 import * as ImagePicker from 'expo-image-picker'
+import { uploadReceiptToStorage } from 'services/firestore/upload-receipt'
+import { completeSinpePayment } from 'services/api/payments'
 
 export default function SinpeMovilPayment() {
   const { rideId } = useLocalSearchParams<{ rideId: string }>()
+  const router = useRouter()
 
   const [ride, setRide] = useState<Ride | null>(null)
   const [driver, setDriver] = useState<User | null>(null)
   const [paymentImage, setPaymentImage] = useState<string | null>(null)
+  const [isProcessing, setIsProcessing] = useState(false)
 
-  const { token } = useAuthStore((state) => state)
+  const { token, user } = useAuthStore((state) => state)
 
   useEffect(() => {
     const fetchRide = async () => {
@@ -76,6 +88,59 @@ export default function SinpeMovilPayment() {
 
     if (!result.canceled && result.assets[0]) {
       setPaymentImage(result.assets[0].uri)
+    }
+  }
+
+  const handleFinish = async () => {
+    if (!paymentImage || !ride || !user) {
+      Alert.alert('Error', 'Por favor sube un comprobante de pago.')
+      return
+    }
+
+    try {
+      setIsProcessing(true)
+
+      // Upload receipt to Firebase Storage
+      const attachmentUrl = await uploadReceiptToStorage(
+        paymentImage,
+        rideId,
+        user.id,
+      )
+
+      // Complete the SINPE payment
+      const response = await completeSinpePayment({
+        userId: user.id,
+        rideId: rideId,
+        amount: ride.price,
+        description: `Pago por viaje de ${ride.origin?.name.primary} a ${ride.destination?.name.primary} - ${formatCRC(ride.price)}`,
+        paymentMethod: 'sinpe',
+        attachmentUrl: attachmentUrl,
+      })
+
+      if (!response || !response.success) {
+        Alert.alert(
+          'Error',
+          'No se pudo completar el pago. Intenta nuevamente.',
+        )
+        return
+      }
+
+      Alert.alert('¡Éxito!', 'Tu pago ha sido registrado exitosamente.', [
+        {
+          text: 'OK',
+          onPress: () => router.back(),
+        },
+      ])
+    } catch (error) {
+      console.error('Error completing SINPE payment:', error)
+      Alert.alert(
+        'Error',
+        error instanceof Error
+          ? error.message
+          : 'Ocurrió un error al procesar el pago.',
+      )
+    } finally {
+      setIsProcessing(false)
     }
   }
 
@@ -253,12 +318,16 @@ export default function SinpeMovilPayment() {
         <TouchableOpacity
           style={[
             styles.finishButton,
-            !paymentImage && styles.finishButtonDisabled,
+            (!paymentImage || isProcessing) && styles.finishButtonDisabled,
           ]}
-          onPress={() => console.log('Finalizar clicked')}
-          disabled={!paymentImage}
+          onPress={handleFinish}
+          disabled={!paymentImage || isProcessing}
         >
-          <Text style={styles.finishButtonText}>Finalizar</Text>
+          {isProcessing ? (
+            <ActivityIndicator color={COLORS.white} />
+          ) : (
+            <Text style={styles.finishButtonText}>Finalizar</Text>
+          )}
         </TouchableOpacity>
       </View>
     </SafeScreen>
