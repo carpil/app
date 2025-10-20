@@ -14,6 +14,21 @@ interface CreatePaymentIntentResponse {
   message: string
 }
 
+interface CompleteSinpePaymentRequest {
+  userId: string
+  rideId: string
+  amount: number
+  description: string
+  paymentMethod: 'sinpe'
+  attachmentUrl: string
+}
+
+interface CompleteSinpePaymentResponse {
+  success: boolean
+  message: string
+  paymentId?: string
+}
+
 export const createPaymentIntent = async (
   request: CreatePaymentIntentRequest,
 ) => {
@@ -34,5 +49,28 @@ export const createPaymentIntent = async (
   }
 
   const data = (await response.json()) as CreatePaymentIntentResponse
+  return data
+}
+
+export const completeSinpePayment = async (
+  request: CompleteSinpePaymentRequest,
+) => {
+  const token = useAuthStore.getState().token
+  const response = await fetch(`${API_URL}/payments/complete-sinpe`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(request),
+  })
+
+  if (!response.ok) {
+    const error = await response.json()
+    console.log({ status: response.status, error: JSON.stringify(error) })
+    return null
+  }
+
+  const data = (await response.json()) as CompleteSinpePaymentResponse
   return data
 }
