@@ -11,12 +11,14 @@ interface DriverRatingProps {
   user: UserInfo
   onNext?: () => void
   onSaveRating: (rating: Rating) => void
+  hasOtherPassengers?: boolean
 }
 
 export default function DriverRating({
   user,
   onNext,
   onSaveRating,
+  hasOtherPassengers = false,
 }: DriverRatingProps) {
   const [rating, setRating] = useState(0)
 
@@ -50,7 +52,9 @@ export default function DriverRating({
           onNext?.()
         }}
       >
-        <Text style={styles.completeButtonText}>Siguiente</Text>
+        <Text style={styles.completeButtonText}>
+          {hasOtherPassengers ? 'Siguiente' : 'Finalizar'}
+        </Text>
       </TouchableOpacity>
     </View>
   )
