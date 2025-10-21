@@ -13,7 +13,7 @@ import { COLORS } from '@utils/constansts/colors'
 import { useEffect, useState } from 'react'
 import { getRide } from 'services/api/rides'
 import { Ride } from '~types/ride'
-import { getUser } from 'services/api/user'
+import { getUser, bootstrapMe } from 'services/api/user'
 import { useAuthStore } from 'store/useAuthStore'
 import { User } from '~types/user'
 import Avatar from '@components/avatar'
@@ -21,6 +21,7 @@ import { formatCRC } from '@utils/currency'
 import * as ImagePicker from 'expo-image-picker'
 import { uploadReceiptToStorage } from 'services/firestore/upload-receipt'
 import { completeSinpePayment } from 'services/api/payments'
+import { useBootstrapStore } from 'store/useBootstrapStore'
 
 export default function SinpeMovilPayment() {
   const { rideId } = useLocalSearchParams<{ rideId: string }>()
@@ -32,6 +33,7 @@ export default function SinpeMovilPayment() {
   const [isProcessing, setIsProcessing] = useState(false)
 
   const { token, user } = useAuthStore((state) => state)
+  const setBootstrap = useBootstrapStore((state) => state.setBootstrap)
 
   useEffect(() => {
     const fetchRide = async () => {
@@ -123,6 +125,12 @@ export default function SinpeMovilPayment() {
           'No se pudo completar el pago. Intenta nuevamente.',
         )
         return
+      }
+
+      // Refresh bootstrap data to trigger modal switch
+      const bootstrap = await bootstrapMe()
+      if (bootstrap) {
+        setBootstrap(bootstrap)
       }
 
       Alert.alert('¡Éxito!', 'Tu pago ha sido registrado exitosamente.', [
