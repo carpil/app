@@ -31,6 +31,7 @@ export default function RideRequestDetails() {
           },
           headerTitle: 'Carpil',
           headerBackTitle: 'Volver',
+          headerBackVisible: true,
         }}
       />
       <ScrollView>

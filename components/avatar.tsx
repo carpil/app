@@ -1,16 +1,29 @@
-import { View, Text, Image, StyleSheet } from 'react-native'
+import { View, Text, Image, StyleSheet, Pressable } from 'react-native'
 import { User } from '~types/user'
 import { COLORS } from '@utils/constansts/colors'
+import { useRouter } from 'expo-router'
 
 interface AvatarProps {
   user: User
   size?: number
+  goToUserDetails?: boolean
 }
 
 const DEFAULT_SIZE = 64
 
-export default function Avatar({ user, size = DEFAULT_SIZE }: AvatarProps) {
+export default function Avatar({
+  user,
+  size = DEFAULT_SIZE,
+  goToUserDetails = false,
+}: AvatarProps) {
   const { profilePicture, name } = user
+  const router = useRouter()
+
+  const handlePress = () => {
+    if (goToUserDetails) {
+      router.push(`/users/${user.id}`)
+    }
+  }
 
   if (!profilePicture || profilePicture === '') {
     const initials = (name || 'U').slice(0, 2).toUpperCase()
@@ -24,10 +37,12 @@ export default function Avatar({ user, size = DEFAULT_SIZE }: AvatarProps) {
   }
 
   return (
-    <Image
-      source={{ uri: profilePicture }}
-      style={{ ...styles.avatar, width: size, height: size }}
-    />
+    <Pressable onPress={handlePress} disabled={!goToUserDetails}>
+      <Image
+        source={{ uri: profilePicture }}
+        style={{ ...styles.avatar, width: size, height: size }}
+      />
+    </Pressable>
   )
 }
 

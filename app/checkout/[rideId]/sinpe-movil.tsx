@@ -23,6 +23,10 @@ import { uploadReceiptToStorage } from 'services/firestore/upload-receipt'
 import { completeSinpePayment } from 'services/api/payments'
 import { useBootstrapStore } from 'store/useBootstrapStore'
 
+export const formatPhoneNumber = (phoneNumber: string) => {
+  return phoneNumber.replace(/(\d{3})(\d{4})(\d{4})/, '($1) $2 $3')
+}
+
 export default function SinpeMovilPayment() {
   const { rideId } = useLocalSearchParams<{ rideId: string }>()
   const router = useRouter()
@@ -67,10 +71,6 @@ export default function SinpeMovilPayment() {
   }
 
   const formattedPrice = formatCRC(ride.price)
-
-  const formatPhoneNumber = (phoneNumber: string) => {
-    return phoneNumber.replace(/(\d{3})(\d{4})(\d{4})/, '($1) $2 $3')
-  }
 
   const pickImage = async () => {
     // Request permission to access media library

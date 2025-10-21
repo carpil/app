@@ -33,7 +33,6 @@ export default function RideCard({ ride }: RideCardProps) {
   return (
     <Link href={`/ride/${id}`} asChild style={styles.card}>
       <Pressable
-        onPress={() => console.log(`Pressed ${ride.id}`)}
         style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}
       >
         {/* Driver and passengers */}
