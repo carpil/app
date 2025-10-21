@@ -9,6 +9,7 @@ interface StarRatingProps {
   maxRating?: number
   userId?: string
   size?: number
+  justifyContent?: 'center' | 'flex-start' | 'flex-end' | 'space-between' | 'space-around'
 }
 
 export default function StarRating({
@@ -17,6 +18,7 @@ export default function StarRating({
   maxRating = 5,
   userId,
   size = 30,
+  justifyContent = 'center',
 }: StarRatingProps) {
   const [rating, setRating] = useState(initialRating)
 
@@ -44,7 +46,7 @@ export default function StarRating({
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { justifyContent }]}>
       {Array.from({ length: maxRating }, (_, index) => renderStar(index))}
     </View>
   )
@@ -54,7 +56,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'row',
-    // justifyContent: 'center',
     alignItems: 'center',
     gap: 5,
     borderRadius: 10,
