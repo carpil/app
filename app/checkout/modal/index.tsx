@@ -16,6 +16,8 @@ import { LocationIcon } from '@components/icons'
 import { router } from 'expo-router'
 import { useDebitCard } from '../[rideId]/use-debit-card'
 import { useAuthStore } from 'store/useAuthStore'
+import { useBootstrapStore } from 'store/useBootstrapStore'
+import { bootstrapMe } from 'services/api/user'
 
 enum PaymentMethod {
   SINPE_MOVIL = 'sinpe_movil',
@@ -31,6 +33,7 @@ export default function CheckoutModal({ pendingPayment }: CheckoutModalProps) {
   const [canDismiss] = useState(true)
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod | null>(null)
   const user = useAuthStore((state) => state.user)
+  const setBootstrap = useBootstrapStore((state) => state.setBootstrap)
   const { isPaymentProcessing, handlePayment } = useDebitCard({
     ride: pendingPayment,
     user,
@@ -44,6 +47,17 @@ export default function CheckoutModal({ pendingPayment }: CheckoutModalProps) {
     }
   }, [])
 
+  const refreshBootstrap = async () => {
+    try {
+      const bootstrap = await bootstrapMe()
+      if (bootstrap) {
+        setBootstrap(bootstrap)
+      }
+    } catch (error) {
+      console.error('Error refreshing bootstrap:', error)
+    }
+  }
+
   const handlePay = async () => {
     if (paymentMethod === PaymentMethod.SINPE_MOVIL) {
       router.push(`/checkout/${pendingPayment.rideId}/sinpe-movil`)
@@ -54,7 +68,14 @@ export default function CheckoutModal({ pendingPayment }: CheckoutModalProps) {
           Alert.alert('Error', result.message)
           return
         }
-        router.replace('/(tabs)')
+        
+        // Refresh bootstrap data to trigger modal switch
+        await refreshBootstrap()
+        
+        // Close the modal
+        if (modalizeRef.current) {
+          modalizeRef.current.close()
+        }
       } catch (error) {
         console.error('Error processing payment:', error)
         Alert.alert('Error', 'Ocurrió un error al procesar el pago.')
