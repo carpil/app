@@ -197,6 +197,7 @@ export default function Checkout() {
                     </Text>
                     <StarRating
                       size={28}
+                      justifyContent="flex-start"
                       onRatingChange={(rating) => {
                         setRatings((prevRatings) => {
                           // Remove existing rating for this user if it exists
