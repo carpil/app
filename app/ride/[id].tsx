@@ -5,7 +5,7 @@ import {
   StyleSheet,
   ActivityIndicator,
 } from 'react-native'
-import { Stack, useLocalSearchParams } from 'expo-router'
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router'
 import Screen from '@components/screen'
 import Avatar from '@components/avatar'
 import { formatDate } from '@utils/format-date'
@@ -21,6 +21,7 @@ export default function RideDetails() {
   const rideId = id as string
   const { ride, loading, error } = useRealtimeRide(rideId)
   const { calculateDriver } = useDriver()
+  const router = useRouter()
 
   if (loading) {
     return (
@@ -101,8 +102,15 @@ export default function RideDetails() {
   }
 
   const handleStartRide = async () => {
-    const message = await startRide(rideId)
-    console.log({ message })
+    try {
+      const message = await startRide(rideId)
+      console.log({ message })
+      if (message) {
+        router.push(`/ride-navigation/${rideId}`)
+      }
+    } catch (error) {
+      console.error('Error starting ride:', error)
+    }
   }
 
   return (
