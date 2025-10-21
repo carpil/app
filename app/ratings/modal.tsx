@@ -126,6 +126,7 @@ export default function RatingsModal({ pendingReviews }: RatingsModalProps) {
             user={driver}
             onNext={handleNext}
             onSaveRating={handleSaveRating}
+            hasOtherPassengers={passengers.length > 0}
           />
         )}
         {currentStep === 2 && passengers.length > 0 && (
