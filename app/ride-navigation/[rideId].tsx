@@ -59,6 +59,22 @@ export default function RideNavigationScreen() {
     fetchRide()
   }, [rideId])
 
+  useEffect(() => {
+    if (ride && mapRef.current && origin && destination) {
+      // Fit map to show the entire route
+      mapRef.current.fitToCoordinates(
+        [
+          { latitude: origin.lat!, longitude: origin.lng! },
+          { latitude: destination.lat!, longitude: destination.lng! },
+        ],
+        {
+          edgePadding: { top: 100, right: 50, bottom: 300, left: 50 },
+          animated: true,
+        }
+      )
+    }
+  }, [ride, origin, destination])
+
   if (ride == null || ride.origin == null || ride.destination == null) {
     return null
   }
