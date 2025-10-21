@@ -3,7 +3,6 @@ import {
   ChatIcon,
   KebabIcon,
   LocationIcon,
-  StarFilledIcon,
   UsersGroupIcon,
 } from '@components/icons'
 import { COLORS } from '@utils/constansts/colors'
@@ -200,16 +199,6 @@ export default function RideNavigationScreen() {
                           {passenger.name}
                         </Text>
                       </View>
-                      <View
-                        style={{
-                          flexDirection: 'row',
-                          alignItems: 'center',
-                          gap: 4,
-                        }}
-                      >
-                        <StarFilledIcon color={COLORS.star_yellow} size={16} />
-                        <Text style={styles.passengerRating}>4.5</Text>
-                      </View>
                     </View>
                     <View
                       style={{
@@ -310,10 +299,6 @@ const styles = StyleSheet.create({
     color: COLORS.white,
     fontSize: 14,
     fontWeight: 'bold',
-  },
-  passengerRating: {
-    color: COLORS.white,
-    fontSize: 12,
   },
   finishRideButton: {
     backgroundColor: COLORS.primary,
