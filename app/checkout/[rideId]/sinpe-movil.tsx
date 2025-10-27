@@ -24,6 +24,10 @@ import { uploadReceiptToStorage } from 'services/firestore/upload-receipt'
 import { completeSinpePayment } from 'services/api/payments'
 import { useBootstrapStore } from 'store/useBootstrapStore'
 
+export const formatPhoneNumber = (phoneNumber: string) => {
+  return phoneNumber.replace(/(\d{3})(\d{4})(\d{4})/, '($1) $2 $3')
+}
+
 export default function SinpeMovilPayment() {
   const { rideId } = useLocalSearchParams<{ rideId: string }>()
   const router = useRouter()
@@ -68,10 +72,6 @@ export default function SinpeMovilPayment() {
   }
 
   const formattedPrice = formatCRC(ride.price)
-
-  const formatPhoneNumber = (phoneNumber: string) => {
-    return phoneNumber.replace(/(\d{3})(\d{4})(\d{4})/, '($1) $2 $3')
-  }
 
   const copyToClipboard = async (text: string, label: string) => {
     await Clipboard.setStringAsync(text)
@@ -189,10 +189,7 @@ export default function SinpeMovilPayment() {
 
         <TouchableOpacity
           onPress={() =>
-            copyToClipboard(
-              driver.phoneNumber ?? '',
-              'Número de teléfono',
-            )
+            copyToClipboard(driver.phoneNumber ?? '', 'Número de teléfono')
           }
           style={{
             flexDirection: 'column',

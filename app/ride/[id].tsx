@@ -5,7 +5,7 @@ import {
   StyleSheet,
   ActivityIndicator,
 } from 'react-native'
-import { Stack, useLocalSearchParams, useRouter } from 'expo-router'
+import { useLocalSearchParams, useRouter } from 'expo-router'
 import Screen from '@components/screen'
 import Avatar from '@components/avatar'
 import { formatDate } from '@utils/format-date'
@@ -26,17 +26,6 @@ export default function RideDetails() {
   if (loading) {
     return (
       <Screen>
-        <Stack.Screen
-          options={{
-            headerShown: true,
-            headerTintColor: COLORS.white,
-            headerStyle: {
-              backgroundColor: COLORS.primary,
-            },
-            headerTitle: 'Carpil',
-            headerBackTitle: 'Volver',
-          }}
-        />
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={COLORS.primary} />
           <Text style={styles.loadingText}>Cargando detalles del ride...</Text>
@@ -48,17 +37,6 @@ export default function RideDetails() {
   if (error || !ride) {
     return (
       <Screen>
-        <Stack.Screen
-          options={{
-            headerShown: true,
-            headerTintColor: COLORS.white,
-            headerStyle: {
-              backgroundColor: COLORS.primary,
-            },
-            headerTitle: 'Carpil',
-            headerBackTitle: 'Volver',
-          }}
-        />
         <View style={styles.errorContainer}>
           <Text style={styles.errorIcon}>🚗</Text>
           <Text style={styles.errorTitle}>Ride no encontrado</Text>
@@ -115,20 +93,9 @@ export default function RideDetails() {
 
   return (
     <Screen>
-      <Stack.Screen
-        options={{
-          headerShown: true,
-          headerTintColor: COLORS.white,
-          headerStyle: {
-            backgroundColor: COLORS.primary,
-          },
-          headerTitle: 'Carpil',
-          headerBackTitle: 'Volver',
-        }}
-      />
       <ScrollView>
         <View style={styles.pictureContainer}>
-          <Avatar user={driver} size={100} />
+          <Avatar user={driver} size={100} goToUserDetails={true} />
           <Text style={styles.driverName}>{driver.name}</Text>
         </View>
 
@@ -178,7 +145,12 @@ export default function RideDetails() {
             >
               <View style={styles.passengerContainer}>
                 {passengers.map((passenger) => (
-                  <Avatar key={passenger.id} user={passenger} size={48} />
+                  <Avatar
+                    key={passenger.id}
+                    user={passenger}
+                    size={48}
+                    goToUserDetails={true}
+                  />
                 ))}
               </View>
               {!fullSeats && (

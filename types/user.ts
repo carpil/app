@@ -22,3 +22,13 @@ export interface UserInfo {
   profilePicture: string
   role: 'driver' | 'passenger'
 }
+
+export interface UserInfoResponse {
+  userId: string
+  name: string
+  profilePicture: string
+  averageRating: number
+  ridesCompletedAsDriver: number
+  ridesCompletedAsPassenger: number
+  joinedAt: Date
+}

@@ -45,7 +45,6 @@
       "@react-native-google-signin/google-signin",
       "@react-native-firebase/app",
       "@react-native-firebase/auth",
-      "@react-native-firebase/storage",
       "expo-build-properties",
       "expo-apple-authentication",
       "expo-notifications",
