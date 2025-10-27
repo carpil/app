@@ -14,8 +14,15 @@ ios/DerivedData/
 ios/*.ipa
 ios/*.xcarchive
 
-# Android
-android/
+# Android (only ignore build outputs and generated files)
+android/build/
+android/.gradle/
+android/app/build/
+android/app/.cxx/
+android/.cxx/
+*.apk
+*.aab
+local.properties
 
 # Expo
 .expo/

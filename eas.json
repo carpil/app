@@ -12,12 +12,7 @@
       "distribution": "internal"
     },
     "production": {
-      "autoIncrement": true,
-      "android": {
-        "buildType": "app-bundle",
-        "gradleCommand": ":app:bundleRelease"
-      },
-      "distribution": "store"
+      "autoIncrement": true
     }
   },
   "submit": {
