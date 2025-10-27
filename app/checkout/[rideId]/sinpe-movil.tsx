@@ -7,6 +7,7 @@ import {
   Alert,
   ActivityIndicator,
 } from 'react-native'
+import * as Clipboard from 'expo-clipboard'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import SafeScreen from '@components/safe-screen'
 import { COLORS } from '@utils/constansts/colors'
@@ -71,6 +72,11 @@ export default function SinpeMovilPayment() {
   }
 
   const formattedPrice = formatCRC(ride.price)
+
+  const copyToClipboard = async (text: string, label: string) => {
+    await Clipboard.setStringAsync(text)
+    Alert.alert('Copiado', `${label} copiado al portapapeles`)
+  }
 
   const pickImage = async () => {
     // Request permission to access media library
@@ -181,7 +187,10 @@ export default function SinpeMovilPayment() {
           </Text>
         </View>
 
-        <View
+        <TouchableOpacity
+          onPress={() =>
+            copyToClipboard(driver.phoneNumber ?? '', 'Número de teléfono')
+          }
           style={{
             flexDirection: 'column',
             alignItems: 'center',
@@ -208,11 +217,14 @@ export default function SinpeMovilPayment() {
               fontSize: 14,
             }}
           >
-            Número de teléfono
+            Número de teléfono (toca para copiar)
           </Text>
-        </View>
+        </TouchableOpacity>
 
-        <View
+        <TouchableOpacity
+          onPress={() =>
+            copyToClipboard(ride.price.toString(), 'Precio del viaje')
+          }
           style={{
             flexDirection: 'column',
             alignItems: 'center',
@@ -239,9 +251,9 @@ export default function SinpeMovilPayment() {
               fontSize: 14,
             }}
           >
-            Precio del viaje
+            Precio del viaje (toca para copiar)
           </Text>
-        </View>
+        </TouchableOpacity>
 
         <TouchableOpacity
           onPress={pickImage}
