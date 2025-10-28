@@ -14,6 +14,11 @@ ios/DerivedData/
 ios/*.ipa
 ios/*.xcarchive
 
+# ✅ Allow shared Xcode schemes (required for EAS Build)
+!ios/*/xcshareddata/
+!ios/*/xcshareddata/xcschemes/
+!ios/*/xcshareddata/xcschemes/*.xcscheme
+
 # Android (only ignore build outputs and generated files)
 android/build/
 android/.gradle/
@@ -54,7 +59,6 @@ fastlane/test_output
 
 # Xcode (excluir archivos específicos en lugar de todos)
 **/xcuserdata/
-**/xcshareddata/
 **/*.xcuserdatad/
 
 # Google Services (archivos con claves API y configuraciones sensibles)
