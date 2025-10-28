@@ -11,7 +11,9 @@
     "ios-simulator": {
       "extends": "development",
       "ios": {
-        "simulator": true
+        "simulator": true,
+        "buildConfiguration": "Debug",
+        "scheme": "carpil"
       }
     },
     "preview": {
