@@ -4,13 +4,13 @@ const IS_DEV = process.env.APP_VARIANT === 'development'
 const IS_PREVIEW = process.env.APP_VARIANT === 'preview'
 
 const getUniqueIdentifier = () => {
-  if (IS_DEV) {
-    return 'com.carpil.carpil.dev'
-  }
+  // if (IS_DEV) {
+  //   return 'com.carpil.carpil.dev'
+  // }
 
-  if (IS_PREVIEW) {
-    return 'com.carpil.carpil.preview'
-  }
+  // if (IS_PREVIEW) {
+  //   return 'com.carpil.carpil.preview'
+  // }
 
   return 'com.carpil.carpil'
 }
@@ -28,9 +28,9 @@ const getAppName = () => {
 }
 
 const getGoogleServicesFile = () => {
-  if (IS_PREVIEW) {
-    return './google-services-preview.json'
-  }
+  // if (IS_PREVIEW) {
+  //   return './google-services-preview.json'
+  // }
 
   return './google-services.json'
 }
