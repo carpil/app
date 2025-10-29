@@ -63,4 +63,5 @@ fastlane/test_output
 
 # Google Services (archivos con claves API y configuraciones sensibles)
 google-services.json
+google-services-*.json
 GoogleService-Info.plist
