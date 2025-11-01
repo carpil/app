@@ -1,37 +1,16 @@
 import { ExpoConfig } from 'expo/config'
 
-const IS_DEV = process.env.APP_VARIANT === 'development'
-const IS_PREVIEW = process.env.APP_VARIANT === 'preview'
+const GOOGLE_MAPS_API_KEY = process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY ?? ''
 
 const getUniqueIdentifier = () => {
-  // if (IS_DEV) {
-  //   return 'com.carpil.carpil.dev'
-  // }
-
-  // if (IS_PREVIEW) {
-  //   return 'com.carpil.carpil.preview'
-  // }
-
   return 'com.carpil.carpil'
 }
 
 const getAppName = () => {
-  if (IS_DEV) {
-    return 'Carpil (Dev)'
-  }
-
-  if (IS_PREVIEW) {
-    return 'Carpil (Preview)'
-  }
-
   return 'Carpil'
 }
 
 const getGoogleServicesFile = () => {
-  // if (IS_PREVIEW) {
-  //   return './google-services-preview.json'
-  // }
-
   return './google-services.json'
 }
 
@@ -68,7 +47,7 @@ export default (config: ExpoConfig) => ({
     },
     config: {
       googleMaps: {
-        apiKey: 'AIzaSyDf_V4LyxaXMmr_SbkVc8t84RQjvXhuNIc',
+        apiKey: GOOGLE_MAPS_API_KEY,
       },
     },
     package: getUniqueIdentifier(),

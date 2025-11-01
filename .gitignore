@@ -38,6 +38,13 @@ local.properties
 *.DS_Store
 .env
 
+# Environment variables
+.env
+.env.local
+.env.development
+.env.preview
+.env.production
+
 # Metro bundler
 metro-cache/
 
@@ -65,3 +72,4 @@ fastlane/test_output
 google-services.json
 google-services-*.json
 GoogleService-Info.plist
+GoogleService-Info-*.plist
