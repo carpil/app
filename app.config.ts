@@ -61,7 +61,6 @@ export default (config: ExpoConfig) => ({
     '@react-native-google-signin/google-signin',
     '@react-native-firebase/app',
     '@react-native-firebase/auth',
-    'expo-build-properties',
     'expo-apple-authentication',
     'expo-notifications',
     'expo-image-picker',
@@ -72,7 +71,10 @@ export default (config: ExpoConfig) => ({
           useFrameworks: 'static',
         },
         android: {
-          kotlinVersion: '2.0.0',
+          kotlinVersion: '2.0.21',
+          gradleProperties: {
+            kspVersion: '2.0.21-1.0.28',
+          },
         },
       },
     ],
