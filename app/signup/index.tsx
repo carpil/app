@@ -120,13 +120,12 @@ export default function SignUp() {
       const userResponse = await signUpEmail({ user, token: userToken })
 
       if (userResponse == null) {
-        console.error('Sign up failed: API returned null response')
-        console.log('Rolling back: Deleting Firebase user...')
+        // TODO: Firebase Crashlytics - Log: Sign up failed, API returned null response
 
         // Rollback: Delete Firebase user since backend creation failed
         if (firebaseUser) {
           await deleteUser(firebaseUser)
-          console.log('Firebase user deleted successfully')
+          // TODO: Firebase Crashlytics - Log: Firebase user deleted successfully (rollback)
         }
 
         // TODO: Show error message to user
@@ -138,34 +137,30 @@ export default function SignUp() {
       reset()
       router.replace('/')
     } catch (error: any) {
-      console.error('Error creating user:', {
-        error: error.message,
-        code: error.code,
-        stack: error.stack,
-      })
+      // TODO: Firebase Crashlytics - Log error: error.message, error.code, error.stack
 
       // If Firebase user was created but something failed after, delete it
       if (firebaseUser && error.code !== 'auth/email-already-in-use') {
         try {
-          console.log('Rolling back: Deleting Firebase user due to error...')
+          // TODO: Firebase Crashlytics - Log: Rolling back, deleting Firebase user due to error
           await deleteUser(firebaseUser)
-          console.log('Firebase user deleted successfully')
+          // TODO: Firebase Crashlytics - Log: Firebase user deleted successfully (error rollback)
         } catch (deleteError) {
-          console.error('Failed to delete Firebase user:', deleteError)
+          // TODO: Firebase Crashlytics - Log error: Failed to delete Firebase user during rollback
         }
       }
 
       if (error.code === 'auth/email-already-in-use') {
-        console.log('El correo electrónico ya está en uso')
+        // TODO: Firebase Crashlytics - Log: Email already in use
         // TODO: Show error message to user
       } else if (error.code === 'auth/invalid-email') {
-        console.log('Formato de correo electrónico inválido')
+        // TODO: Firebase Crashlytics - Log: Invalid email format
         // TODO: Show error message to user
       } else if (error.code === 'auth/weak-password') {
-        console.log('La contraseña es demasiado débil')
+        // TODO: Firebase Crashlytics - Log: Weak password
         // TODO: Show error message to user
       } else {
-        console.log('Unexpected error:', error.message)
+        // TODO: Firebase Crashlytics - Log: Unexpected error with message
         // TODO: Show generic error message to user
       }
     } finally {
