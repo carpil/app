@@ -4,9 +4,10 @@ import { SignUpResponse } from '~types/responses/auth'
 import { User } from '~types/user'
 import { debugApiRequest, debugApiResponse } from '@utils/debug-api'
 
+const usersUrl = `${API_URL}/users`
 export const signUp = async ({ user }: { user: User }) => {
   const token = useAuthStore.getState().token
-  const response = await fetch(`${API_URL}/signup`, {
+  const response = await fetch(`${usersUrl}/signup`, {
     method: 'POST',
     body: JSON.stringify(user),
     headers: {
@@ -30,7 +31,7 @@ export const signUp = async ({ user }: { user: User }) => {
 
 export const login = async ({ user }: { user: User }) => {
   const token = useAuthStore.getState().token
-  const response = await fetch(`${API_URL}/login`, {
+  const response = await fetch(`${usersUrl}/login`, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${token}`,
@@ -76,13 +77,9 @@ export const socialLogin = async ({
     body: JSON.stringify({ ...user }),
   }
 
-  debugApiRequest(
-    `${API_URL}/users/login/social`,
-    requestOptions,
-    'Social Login',
-  )
+  debugApiRequest(`${usersUrl}/login/social`, requestOptions, 'Social Login')
 
-  const response = await fetch(`${API_URL}/users/login/social`, requestOptions)
+  const response = await fetch(`${usersUrl}/login/social`, requestOptions)
 
   await debugApiResponse(response, 'Social Login')
 
@@ -111,5 +108,39 @@ export const socialLogin = async ({
   const { message, user: userResponse } = data
 
   console.log('Social login success:', { message, userResponse })
+  return userResponse
+}
+
+export const signUpEmail = async ({
+  user,
+  token,
+}: {
+  user: User
+  token: string
+}) => {
+  const signupData = {
+    firstName: user.firstName,
+    lastName: user.lastName,
+    phoneNumber: user.phoneNumber,
+    email: user.email,
+  }
+
+  const response = await fetch(`${usersUrl}/signup/email`, {
+    method: 'POST',
+    body: JSON.stringify(signupData),
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+  })
+
+  if (!response.ok) {
+    const error = await response.json()
+    console.log({ status: response.status, error })
+    return null
+  }
+
+  const data = (await response.json()) as SignUpResponse
+  const { user: userResponse } = data
   return userResponse
 }
