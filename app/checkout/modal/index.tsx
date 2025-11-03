@@ -14,7 +14,7 @@ import { RideInfo } from '~types/responses/bootstrap'
 import { formatCRC } from '@utils/currency'
 import { LocationIcon } from '@components/icons'
 import { router } from 'expo-router'
-import { useDebitCard } from '../[rideId]/use-debit-card'
+import { useDebitCard } from 'hooks/use-debit-card'
 import { useAuthStore } from 'store/useAuthStore'
 import { useBootstrapStore } from 'store/useBootstrapStore'
 import { bootstrapMe } from 'services/api/user'
@@ -68,10 +68,10 @@ export default function CheckoutModal({ pendingPayment }: CheckoutModalProps) {
           Alert.alert('Error', result.message)
           return
         }
-        
+
         // Refresh bootstrap data to trigger modal switch
         await refreshBootstrap()
-        
+
         // Close the modal
         if (modalizeRef.current) {
           modalizeRef.current.close()

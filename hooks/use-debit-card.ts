@@ -1,14 +1,15 @@
-import { convertCRCToCentimos, formatCRC } from '@utils/currency'
 import { useState } from 'react'
-import { Ride } from '~types/ride'
-import { User } from '~types/user'
-import { createPaymentIntent } from 'services/api/payments'
 import { Alert } from 'react-native'
 import {
   initPaymentSheet,
   presentPaymentSheet,
 } from '@stripe/stripe-react-native'
+
+import { convertCRCToCentimos, formatCRC } from '@utils/currency'
+import { createPaymentIntent } from 'services/api/payments'
+import { Ride } from '~types/ride'
 import { RideInfo } from '~types/responses/bootstrap'
+import { User } from '~types/user'
 
 interface UseDebitCardProps {
   ride: Ride | RideInfo | null

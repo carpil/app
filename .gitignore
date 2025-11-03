@@ -14,6 +14,11 @@ ios/DerivedData/
 ios/*.ipa
 ios/*.xcarchive
 
+# ✅ Allow shared Xcode schemes (required for EAS Build)
+!ios/*/xcshareddata/
+!ios/*/xcshareddata/xcschemes/
+!ios/*/xcshareddata/xcschemes/*.xcscheme
+
 # Android (only ignore build outputs and generated files)
 android/build/
 android/.gradle/
@@ -32,6 +37,13 @@ local.properties
 *.log
 *.DS_Store
 .env
+
+# Environment variables
+.env
+.env.local
+.env.development
+.env.preview
+.env.production
 
 # Metro bundler
 metro-cache/
@@ -54,9 +66,10 @@ fastlane/test_output
 
 # Xcode (excluir archivos específicos en lugar de todos)
 **/xcuserdata/
-**/xcshareddata/
 **/*.xcuserdatad/
 
 # Google Services (archivos con claves API y configuraciones sensibles)
 google-services.json
+google-services-*.json
 GoogleService-Info.plist
+GoogleService-Info-*.plist
