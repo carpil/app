@@ -50,16 +50,15 @@ Verify these plugins and file references exist:
 
 **File**: `.env`
 
-Add your iOS Google Client ID and Web Client ID (for Android):
+Add your iOS Google Client ID:
 
 ```env
-EXPO_PUBLIC_IOS_GOOGLE_CLIENT_ID=YOUR_IOS_CLIENT_ID.apps.googleusercontent.com
-EXPO_PUBLIC_WEB_GOOGLE_CLIENT_ID=YOUR_WEB_CLIENT_ID.apps.googleusercontent.com
+EXPO_PUBLIC_IOS_GOOGLE_CLIENT_ID=YOUR_CLIENT_ID.apps.googleusercontent.com
 ```
 
-**Where to find them**: 
-- **iOS Client ID**: In `GoogleService-Info.plist`, look for the `CLIENT_ID` key.
-- **Web Client ID**: In your Firebase Console, go to Project Settings > General > Your apps > Web app > Web client ID. You can also find it in the `google-services.json` file under `oauth_client` with `client_type: 3`.
+**Where to find it**: In `GoogleService-Info.plist`, look for the `CLIENT_ID` key.
+
+**Note for Android**: The Web Client ID is automatically read from `google-services.json`, so you don't need to set it as an environment variable.
 
 ---
 
@@ -80,11 +79,12 @@ Copy the SHA-1 from the output and add it to your Firebase project settings.
 
 ### Google Sign-In Fails on Android
 
-- **Most Common Issue**: Verify `EXPO_PUBLIC_WEB_GOOGLE_CLIENT_ID` is set in `.env` file
-  - This CANNOT be 'autoDetect' - it must be the actual Web Client ID from Firebase Console
-  - Find it in Firebase Console > Project Settings > General > Your apps > Web app
-- Verify SHA-1 fingerprint is added to Firebase project
-- Ensure `google-services.json` is in project root
+- Verify `google-services.json` is in project root and contains the correct OAuth client configuration
+  - The library automatically reads the Web Client ID from this file
+- Verify SHA-1 fingerprint is added to Firebase project (critical for Android)
+  - Run `cd android && ./gradlew signingReport` to get your SHA-1
+  - Add it in Firebase Console: Project Settings > General > Your apps > Android app > Add fingerprint
+- Ensure `@react-native-google-signin/google-signin` plugin is configured in `app.config.ts`
 - Run `npx expo prebuild --clean` and rebuild
 
 ### Google Sign-In Fails on iOS
