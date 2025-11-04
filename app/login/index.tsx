@@ -25,7 +25,6 @@ export default function Login() {
   useEffect(() => {
     GoogleOneTapSignIn.configure({
       webClientId,
-      offlineAccess: true,
       scopes: ['email', 'profile'],
     })
   }, [])
@@ -76,9 +75,13 @@ export default function Login() {
             />
           )}
         </View>
-        <Text style={styles.subtitle}>
-          ¿No tienes una cuenta? <Text style={styles.link}>Regístrate</Text>
-        </Text>
+        <Link href="/signup" asChild>
+          <Pressable>
+            <Text style={styles.subtitle}>
+              ¿No tienes una cuenta? <Text style={styles.link}>Regístrate</Text>
+            </Text>
+          </Pressable>
+        </Link>
       </View>
     </SafeScreen>
   )
