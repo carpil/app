@@ -36,6 +36,18 @@ export default (config: ExpoConfig) => ({
     infoPlist: {
       ITSAppUsesNonExemptEncryption: false,
       UIBackgroundModes: ['remote-notification'],
+      NSCameraUsageDescription:
+        'Carpil necesita acceso a tu cámara para que puedas tomar fotos de perfil y compartir imágenes con otros usuarios durante tus viajes compartidos.',
+      NSPhotoLibraryUsageDescription:
+        'Carpil necesita acceso a tu galería de fotos para que puedas seleccionar una foto de perfil y compartir imágenes relacionadas con tus viajes.',
+      NSPhotoLibraryAddUsageDescription:
+        'Carpil necesita permiso para guardar fotos en tu galería, como recibos de viajes o capturas importantes.',
+      NSLocationWhenInUseUsageDescription:
+        'Carpil necesita acceso a tu ubicación para mostrarte viajes disponibles cerca de ti, calcular rutas y facilitar puntos de encuentro con otros usuarios.',
+      NSLocationAlwaysAndWhenInUseUsageDescription:
+        'Carpil necesita acceso a tu ubicación para optimizar la experiencia de viajes compartidos, encontrar conductores cercanos y proporcionar actualizaciones en tiempo real durante tus trayectos.',
+      NSLocationAlwaysUsageDescription:
+        'Carpil necesita acceso continuo a tu ubicación para notificarte sobre viajes disponibles cerca de ti y proporcionar seguimiento en tiempo real durante los viajes activos.',
     },
     googleServicesFile: './GoogleService-Info.plist',
     usesAppleSignIn: true,
@@ -52,6 +64,16 @@ export default (config: ExpoConfig) => ({
     },
     package: getUniqueIdentifier(),
     googleServicesFile: getGoogleServicesFile(),
+    targetSdkVersion: 35,
+    compileSdkVersion: 35,
+    permissions: [
+      'CAMERA',
+      'READ_EXTERNAL_STORAGE',
+      'WRITE_EXTERNAL_STORAGE',
+      'ACCESS_FINE_LOCATION',
+      'ACCESS_COARSE_LOCATION',
+      'POST_NOTIFICATIONS',
+    ],
   },
   web: {
     favicon: './assets/favicon.png',

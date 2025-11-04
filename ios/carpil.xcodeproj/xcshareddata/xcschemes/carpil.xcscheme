@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
    LastUpgradeVersion = "1130"
-   version = "1.3"
-   isShared = "YES">
+   version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
       buildImplicitDependencies = "YES">
@@ -16,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "carpil.app"
-               BlueprintName = "carpil"
-               ReferencedContainer = "container:carpil.xcodeproj">
+               BuildableName = "Carpil.app"
+               BlueprintName = "Carpil"
+               ReferencedContainer = "container:Carpil.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -34,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "carpilTests.xctest"
-               BlueprintName = "carpilTests"
-               ReferencedContainer = "container:carpil.xcodeproj">
+               BuildableName = "CarpilTests.xctest"
+               BlueprintName = "CarpilTests"
+               ReferencedContainer = "container:Carpil.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -56,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "carpil.app"
-            BlueprintName = "carpil"
-            ReferencedContainer = "container:carpil.xcodeproj">
+            BuildableName = "Carpil.app"
+            BlueprintName = "Carpil"
+            ReferencedContainer = "container:Carpil.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -73,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "carpil.app"
-            BlueprintName = "carpil"
-            ReferencedContainer = "container:carpil.xcodeproj">
+            BuildableName = "Carpil.app"
+            BlueprintName = "Carpil"
+            ReferencedContainer = "container:Carpil.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
