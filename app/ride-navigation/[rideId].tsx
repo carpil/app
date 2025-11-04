@@ -142,7 +142,11 @@ export default function RideNavigationScreen() {
           }
           avoidKeyboardLikeIOS={true}
         >
-          <View>
+          <View
+            style={{
+              paddingBottom: Platform.OS === 'ios' ? 40 : 20,
+            }}
+          >
             {/* Ride Details */}
             {/* Origin */}
             <View
