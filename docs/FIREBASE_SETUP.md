@@ -50,13 +50,16 @@ Verify these plugins and file references exist:
 
 **File**: `.env`
 
-Add your iOS Google Client ID:
+Add your iOS Google Client ID and Web Client ID (for Android):
 
 ```env
-EXPO_PUBLIC_IOS_GOOGLE_CLIENT_ID=YOUR_CLIENT_ID.apps.googleusercontent.com
+EXPO_PUBLIC_IOS_GOOGLE_CLIENT_ID=YOUR_IOS_CLIENT_ID.apps.googleusercontent.com
+EXPO_PUBLIC_WEB_GOOGLE_CLIENT_ID=YOUR_WEB_CLIENT_ID.apps.googleusercontent.com
 ```
 
-**Where to find it**: In `GoogleService-Info.plist`, look for the `CLIENT_ID` key.
+**Where to find them**: 
+- **iOS Client ID**: In `GoogleService-Info.plist`, look for the `CLIENT_ID` key.
+- **Web Client ID**: In your Firebase Console, go to Project Settings > General > Your apps > Web app > Web client ID. You can also find it in the `google-services.json` file under `oauth_client` with `client_type: 3`.
 
 ---
 
@@ -77,6 +80,9 @@ Copy the SHA-1 from the output and add it to your Firebase project settings.
 
 ### Google Sign-In Fails on Android
 
+- **Most Common Issue**: Verify `EXPO_PUBLIC_WEB_GOOGLE_CLIENT_ID` is set in `.env` file
+  - This CANNOT be 'autoDetect' - it must be the actual Web Client ID from Firebase Console
+  - Find it in Firebase Console > Project Settings > General > Your apps > Web app
 - Verify SHA-1 fingerprint is added to Firebase project
 - Ensure `google-services.json` is in project root
 - Run `npx expo prebuild --clean` and rebuild

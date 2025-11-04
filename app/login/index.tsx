@@ -10,7 +10,7 @@ import {
 import { AppleIcon, GoogleIcon } from '@components/icons'
 import { COLORS } from '@utils/constansts/colors'
 import { GoogleOneTapSignIn } from '@react-native-google-signin/google-signin'
-import { IOS_GOOGLE_CLIENT_ID } from '@utils/constansts/api'
+import { IOS_GOOGLE_CLIENT_ID, WEB_GOOGLE_CLIENT_ID } from '@utils/constansts/api'
 import { Link, router } from 'expo-router'
 import SafeScreen from '@components/safe-screen'
 import SocialButton from '@components/buttons/social'
@@ -19,7 +19,7 @@ import { handleAppleLogin } from 'services/auth/apple'
 
 const logo = require('../../assets/logo.png')
 
-const webClientId = Platform.OS === 'ios' ? IOS_GOOGLE_CLIENT_ID : 'autoDetect'
+const webClientId = Platform.OS === 'ios' ? IOS_GOOGLE_CLIENT_ID : WEB_GOOGLE_CLIENT_ID
 
 export default function Login() {
   useEffect(() => {
