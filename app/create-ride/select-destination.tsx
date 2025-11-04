@@ -1,4 +1,4 @@
-import { Tabs, useRouter } from 'expo-router'
+import { useRouter } from 'expo-router'
 import { View } from 'react-native'
 import 'react-native-get-random-values'
 import { useContext } from 'react'
@@ -13,11 +13,6 @@ export default function SelectDestination() {
 
   return (
     <SafeScreen backgroundColor={COLORS.dark_gray}>
-      <Tabs.Screen
-        options={{
-          tabBarActiveBackgroundColor: COLORS.inactive_gray,
-        }}
-      />
       <View style={{ flex: 1, paddingBottom: 10 }}>
         <PlacesAutocomplete
           placeholder={'Busca tu destino'}

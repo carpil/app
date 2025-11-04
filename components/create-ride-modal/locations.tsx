@@ -13,62 +13,6 @@ export default function RideLocationsPill({
   destination,
 }: RideLocationsPillProps) {
   return (
-    <View style={styles.container}>
-      <View style={{ flex: 1 }}>
-        <View style={{ flexDirection: 'row' }}>
-          <View>
-            <LocationIcon color={COLORS.secondary} />
-            <MoreIcon color={COLORS.secondary} />
-          </View>
-          <View style={{ marginLeft: 8 }}>
-            <Text
-              style={{
-                fontSize: 18,
-                color: 'white',
-                fontWeight: 'bold',
-              }}
-            >
-              {origin.name.primary}
-            </Text>
-            <Text
-              style={{
-                fontSize: 12,
-                color: COLORS.secondary_gray,
-              }}
-            >
-              {origin.name.secondary}
-            </Text>
-          </View>
-        </View>
-        <View style={{ flexDirection: 'row' }}>
-          <LocationIcon color={COLORS.primary} />
-          <View style={{ marginLeft: 8 }}>
-            <Text
-              style={{
-                fontSize: 18,
-                color: 'white',
-                fontWeight: 'bold',
-              }}
-            >
-              {destination.name.primary}
-            </Text>
-            <Text
-              style={{
-                fontSize: 12,
-                color: COLORS.secondary_gray,
-              }}
-            >
-              {destination.name.secondary}
-            </Text>
-          </View>
-        </View>
-      </View>
-      <Link href={'/create-ride/select-origin'} asChild>
-        <Pressable>
-          <EditIcon color={COLORS.secondary_gray} />
-        </Pressable>
-      </Link>
-    </View>
   )
 }
 
