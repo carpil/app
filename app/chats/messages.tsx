@@ -9,12 +9,12 @@ import {
   Alert,
   ActivityIndicator,
 } from 'react-native'
-import { BackIcon, SendIcon } from '@components/icons'
+import { SendIcon } from '@components/icons'
 import { ChatResponse } from '~types/responses/chat'
 import { COLORS } from '@utils/constansts/colors'
 import { formatDate } from '@utils/format-date'
 import { getChat, sendMessage } from 'services/api/chats'
-import { Link, useLocalSearchParams } from 'expo-router'
+import { useLocalSearchParams } from 'expo-router'
 import Avatar from '@components/avatar'
 import SafeScreen from '@components/safe-screen'
 import {
@@ -158,9 +158,6 @@ export default function Messages() {
       <View style={styles.container}>
         {/* header */}
         <View style={styles.header}>
-          <Link href="/(tabs)/messages">
-            <BackIcon color={COLORS.white} />
-          </Link>
           <View style={styles.headerTextContainer}>
             <Text style={styles.headerText}>{title}</Text>
             <Text style={styles.headerTextSecondary}>
@@ -220,10 +217,7 @@ const styles = StyleSheet.create({
     marginBottom: Platform.OS === 'ios' ? 30 : 5,
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
     padding: 12,
-    gap: 3,
     borderBottomWidth: 1,
     borderBottomColor: COLORS.gray_600,
   },
@@ -233,7 +227,6 @@ const styles = StyleSheet.create({
     color: COLORS.white,
   },
   headerTextContainer: {
-    marginLeft: 10,
     gap: 4,
   },
   headerTextSecondary: {

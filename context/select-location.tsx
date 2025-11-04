@@ -10,6 +10,12 @@ interface SelectLocation {
   setMeetingPoint: (location: Location) => void
 }
 
+const DEFAULT_LOCATION: Location = {
+  id: 'ChIJISmvIRDfoI8RUpyjWIVU5bU',
+  location: { lat: 9.864797699999999, lng: -83.9210959 },
+  name: { primary: 'Cartago', secondary: 'Provincia de Cartago, Costa Rica' },
+}
+
 export const SelectLocationContext = createContext<SelectLocation>({
   origin: null,
   destination: null,
@@ -20,9 +26,13 @@ export const SelectLocationContext = createContext<SelectLocation>({
 })
 
 const LocationProvider = ({ children }: { children: React.ReactNode }) => {
-  const [origin, setOrigin] = useState<Location | null>(null)
-  const [destination, setDestination] = useState<Location | null>(null)
-  const [meetingPoint, setMeetingPoint] = useState<Location | null>(null)
+  const [origin, setOrigin] = useState<Location | null>(DEFAULT_LOCATION)
+  const [destination, setDestination] = useState<Location | null>(
+    DEFAULT_LOCATION,
+  )
+  const [meetingPoint, setMeetingPoint] = useState<Location | null>(
+    DEFAULT_LOCATION,
+  )
   return (
     <SelectLocationContext.Provider
       value={{
