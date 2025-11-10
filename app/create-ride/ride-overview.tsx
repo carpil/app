@@ -9,13 +9,13 @@ import { Modalize } from 'react-native-modalize'
 import { router } from 'expo-router'
 import { SelectLocationContext } from '@context/select-location'
 import { View, StyleSheet, Platform, Text } from 'react-native'
-import CreateRide from '@components/create-ride-modal/create-button'
 import MapView, { Marker, Region } from 'react-native-maps'
 import MapViewDirections from 'react-native-maps-directions'
 import PassengersPill from '@components/create-ride-modal/passengers'
 import PricePill from '@components/create-ride-modal/price'
 import SchedulePill from '@components/create-ride-modal/schedule'
 import { LocationIcon } from '@components/icons'
+import ActionButton from '@components/design-system/buttons/action-button'
 
 const MAX_PASSENGERS = 15
 const TODAY = new Date()
@@ -204,7 +204,12 @@ export default function RideOverview() {
               handleChangePrice={setPrice}
               isValid={price !== ''}
             />
-            <CreateRide onPress={onCreateRide} disabled={!isValid} />
+            <ActionButton
+              onPress={onCreateRide}
+              text="Crear viaje"
+              type="primary"
+              disabled={!isValid}
+            />
           </View>
         </Modalize>
       </View>

@@ -11,13 +11,7 @@ import { COSTA_RICA_REGION } from 'app/create-ride/ride-overview'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import { useBootstrap } from 'hooks/useBootstrap'
 import { useEffect, useRef, useState } from 'react'
-import {
-  Text,
-  View,
-  StyleSheet,
-  Platform,
-  TouchableOpacity,
-} from 'react-native'
+import { Text, View, StyleSheet, Platform } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import MapView, { Marker } from 'react-native-maps'
 import MapViewDirections from 'react-native-maps-directions'
@@ -26,6 +20,7 @@ import { completeRide, getRide } from 'services/api/rides'
 import { formatCRC } from '@utils/currency'
 import { Ride } from '~types/ride'
 import { User } from '~types/user'
+import ActionButton from '@components/design-system/buttons/action-button'
 
 const GOOGLE_MAPS_API_KEY = process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY ?? ''
 
@@ -70,7 +65,7 @@ export default function RideNavigationScreen() {
         {
           edgePadding: { top: 100, right: 50, bottom: 300, left: 50 },
           animated: true,
-        }
+        },
       )
     }
   }, [ride, origin, destination])
@@ -231,12 +226,11 @@ export default function RideNavigationScreen() {
               </View>
             </View>
             {isDriver && (
-              <TouchableOpacity
-                style={styles.finishRideButton}
+              <ActionButton
                 onPress={handleFinishRide}
-              >
-                <Text style={styles.finishRideText}>Completar viaje</Text>
-              </TouchableOpacity>
+                text="Completar viaje"
+                type="primary"
+              />
             )}
             {!isDriver && (
               <>

@@ -1,11 +1,4 @@
-import {
-  Text,
-  View,
-  StyleSheet,
-  Pressable,
-  TouchableOpacity,
-  Alert,
-} from 'react-native'
+import { Text, View, StyleSheet, Pressable, Alert } from 'react-native'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import SafeScreen from '@components/safe-screen'
 import { useEffect, useState } from 'react'
@@ -22,6 +15,7 @@ import Avatar from '@components/avatar'
 import StarRating from 'app/ratings/star-rating'
 import { RatingComponentProps } from 'app/ratings/passengers-rating'
 import { createRating } from 'services/api/ratings'
+import ActionButton from '@components/design-system/buttons/action-button'
 
 enum PaymentMethod {
   SINPE_MOVIL = 'sinpe_movil',
@@ -279,32 +273,20 @@ export default function Checkout() {
                 </Pressable>
               </View>
             </View>
-            <TouchableOpacity
-              style={[
-                styles.finishRideButton,
-                !paymentMethod && styles.finishRideButtonDisabled,
-              ]}
-              disabled={!paymentMethod || isPaymentProcessing}
+            <ActionButton
               onPress={handlePay}
-            >
-              <Text
-                style={[
-                  styles.finishRideText,
-                  !paymentMethod && styles.finishRideTextDisabled,
-                ]}
-              >
-                {`Pagar ${priceFormatted}`}
-              </Text>
-            </TouchableOpacity>
+              text={`Pagar ${priceFormatted}`}
+              type="primary"
+              disabled={!paymentMethod || isPaymentProcessing}
+            />
           </>
         )}
         {isDriver && (
-          <TouchableOpacity
-            style={styles.finishRideButton}
+          <ActionButton
             onPress={handleCompleteRating}
-          >
-            <Text style={styles.finishRideText}>Finalizar viaje</Text>
-          </TouchableOpacity>
+            text="Finalizar viaje"
+            type="primary"
+          />
         )}
       </ScrollView>
     </SafeScreen>
