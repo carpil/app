@@ -2,21 +2,35 @@ import { Tabs } from 'expo-router'
 import { CarIcon, MessagesIcon, ProfileIcon } from '@components/icons'
 import { COLORS } from '@utils/constansts/colors'
 import RatingsModal from 'app/ratings/modal'
-import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { useBootstrap } from 'hooks/useBootstrap'
 import CheckoutModal from 'app/checkout/modal'
+import { Text, View, StyleSheet } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
+
+const RidesHeader = () => {
+  const insets = useSafeAreaInsets()
+
+  return (
+    <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
+      <Text style={styles.headerTitle}>Viajes disponibles</Text>
+    </View>
+  )
+}
 
 export default function TabsLayout() {
   const { pendingReviews, pendingPayment } = useBootstrap()
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
+    <>
       <Tabs
         screenOptions={{
           headerShown: false,
           tabBarStyle: {
             backgroundColor: COLORS.light_gray,
             borderWidth: 0,
+            borderTopWidth: 0,
+            elevation: 0,
+            shadowOpacity: 0,
           },
           tabBarActiveTintColor: COLORS.secondary,
         }}
@@ -26,6 +40,8 @@ export default function TabsLayout() {
           options={{
             title: 'Inicio',
             tabBarIcon: ({ color }) => <CarIcon color={color} />,
+            headerShown: true,
+            header: () => <RidesHeader />,
           }}
         />
         <Tabs.Screen
@@ -47,6 +63,20 @@ export default function TabsLayout() {
       {!pendingPayment && pendingReviews && pendingReviews.length > 0 && (
         <RatingsModal pendingReviews={pendingReviews} />
       )}
-    </GestureHandlerRootView>
+    </>
   )
 }
+
+const styles = StyleSheet.create({
+  header: {
+    backgroundColor: COLORS.primary,
+    paddingBottom: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  headerTitle: {
+    color: COLORS.white,
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
+})

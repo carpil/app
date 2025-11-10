@@ -1,7 +1,6 @@
 import { Stack, router } from 'expo-router'
 import { COLORS } from '@utils/constansts/colors'
-import { Pressable } from 'react-native'
-import { Ionicons } from '@expo/vector-icons'
+import BackButton from '@components/design-system/buttons/back-button'
 
 export default function SignUpLayout() {
   return (
@@ -20,16 +19,8 @@ export default function SignUpLayout() {
       <Stack.Screen
         name="index"
         options={{
-          title: '',
-          headerBackTitle: 'Atrás',
-          headerLeft: () => (
-            <Pressable
-              onPress={() => router.back()}
-              style={{ paddingLeft: 10 }}
-            >
-              <Ionicons name="arrow-back" size={24} color={COLORS.white} />
-            </Pressable>
-          ),
+          title: 'Registrarse',
+          headerLeft: () => <BackButton onPress={() => router.back()} />,
         }}
       />
     </Stack>

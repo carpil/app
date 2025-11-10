@@ -2,13 +2,14 @@ import { ActivityIndicator, StyleSheet, Text, View } from 'react-native'
 import { getUserInfo } from 'services/api/user'
 import { useAuthStore } from 'store/useAuthStore'
 import { useEffect, useState } from 'react'
-import { Stack, useLocalSearchParams } from 'expo-router'
+import { router, Stack, useLocalSearchParams } from 'expo-router'
 import Screen from '@components/screen'
 import { COLORS } from '@utils/constansts/colors'
 import Avatar from '@components/avatar'
 import { StarFilledIcon } from '@components/icons'
 import { UserInfoResponse } from '~types/user'
 import { formatDate } from '@utils/format-date'
+import BackButton from '@components/design-system/buttons/back-button'
 
 export default function UserDetails() {
   const { userId } = useLocalSearchParams()
@@ -38,18 +39,6 @@ export default function UserDetails() {
   if (loading) {
     return (
       <Screen>
-        <Stack.Screen
-          options={{
-            headerShown: true,
-            headerTintColor: COLORS.white,
-            headerStyle: {
-              backgroundColor: COLORS.primary,
-            },
-            headerTitle: 'Detalles del usuario',
-            headerBackTitle: 'Volver',
-            headerBackVisible: true,
-          }}
-        />
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={COLORS.primary} />
           <Text style={styles.loadingText}>
@@ -74,9 +63,10 @@ export default function UserDetails() {
           headerStyle: {
             backgroundColor: COLORS.dark_gray,
           },
+          headerShadowVisible: false,
           headerTitle: 'Detalles del usuario',
-          headerBackTitle: 'Volver',
-          headerBackVisible: true,
+          headerLeft: () => <BackButton onPress={() => router.back()} />,
+          headerBackVisible: false,
         }}
       />
       <View style={styles.container}>

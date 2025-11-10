@@ -1,6 +1,6 @@
-import { Stack } from 'expo-router'
+import { router, Stack } from 'expo-router'
 import { COLORS } from '@utils/constansts/colors'
-import HeaderBack from '@components/buttons/header-back'
+import BackButton from '@components/design-system/buttons/back-button'
 
 export default function RideLayout() {
   return (
@@ -26,7 +26,7 @@ export default function RideLayout() {
             backgroundColor: COLORS.primary,
           },
           headerTitle: 'Detalles del ride',
-          headerLeft: () => <HeaderBack />,
+          headerLeft: () => <BackButton onPress={() => router.back()} />,
         }}
       />
     </Stack>

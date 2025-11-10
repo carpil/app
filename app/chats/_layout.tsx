@@ -1,5 +1,6 @@
-import { Stack } from 'expo-router'
+import { router, Stack } from 'expo-router'
 import { COLORS } from '@utils/constansts/colors'
+import BackButton from '@components/design-system/buttons/back-button'
 
 export default function ChatsLayout() {
   return (
@@ -24,8 +25,8 @@ export default function ChatsLayout() {
       <Stack.Screen
         name="messages"
         options={{
-          title: '',
-          headerBackTitle: 'Atrás',
+          headerShown: true,
+          headerLeft: () => <BackButton onPress={() => router.back()} />,
         }}
       />
     </Stack>

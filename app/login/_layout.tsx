@@ -1,5 +1,6 @@
-import { Stack } from 'expo-router'
+import { Stack, router } from 'expo-router'
 import { COLORS } from '@utils/constansts/colors'
+import BackButton from '@components/design-system/buttons/back-button'
 
 export default function LoginLayout() {
   return (
@@ -24,8 +25,8 @@ export default function LoginLayout() {
       <Stack.Screen
         name="login-email"
         options={{
-          title: '',
-          headerBackTitle: 'Atrás',
+          title: 'Iniciar sesión',
+          headerLeft: () => <BackButton onPress={() => router.back()} />,
         }}
       />
     </Stack>

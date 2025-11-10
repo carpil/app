@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useLayoutEffect, useState } from 'react'
 import {
   View,
   StyleSheet,
@@ -14,7 +14,7 @@ import { ChatResponse } from '~types/responses/chat'
 import { COLORS } from '@utils/constansts/colors'
 import { formatDate } from '@utils/format-date'
 import { getChat, sendMessage } from 'services/api/chats'
-import { useLocalSearchParams } from 'expo-router'
+import { useLocalSearchParams, useNavigation } from 'expo-router'
 import Avatar from '@components/avatar'
 import SafeScreen from '@components/safe-screen'
 import {
@@ -36,10 +36,28 @@ export default function Messages() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const { chatId } = useLocalSearchParams()
+  const navigation = useNavigation()
 
   const { user } = useAuthStore()
 
   const userId = user?.id ?? ''
+
+  // Update navigation title when chat data is loaded
+  useLayoutEffect(() => {
+    if (chat?.ride?.origin && chat?.ride?.destination) {
+      const title =
+        chat.ride.origin.name.primary +
+        ' ➡️ ' +
+        chat.ride.destination.name.primary
+      navigation.setOptions({
+        headerTitle: title,
+      })
+    } else {
+      navigation.setOptions({
+        headerTitle: 'Chat',
+      })
+    }
+  }, [chat, navigation])
 
   useEffect(() => {
     const fetchChatAndSetupListener = async () => {
@@ -88,7 +106,9 @@ export default function Messages() {
                 return message
               }),
             )
-            setMessages(newMessages)
+            setMessages(
+              newMessages.filter((msg): msg is MessageBubble => msg !== null),
+            )
           },
         )
 
