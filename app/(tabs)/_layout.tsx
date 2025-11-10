@@ -1,18 +1,30 @@
-import { Tabs } from 'expo-router'
+import { Text, StyleSheet, View, Platform } from 'react-native'
 import { CarIcon, MessagesIcon, ProfileIcon } from '@components/icons'
 import { COLORS } from '@utils/constansts/colors'
-import RatingsModal from 'app/ratings/modal'
+import { Tabs } from 'expo-router'
 import { useBootstrap } from 'hooks/useBootstrap'
-import CheckoutModal from 'app/checkout/modal'
-import { Text, View, StyleSheet } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import CheckoutModal from 'app/checkout/modal'
+import RatingsModal from 'app/ratings/modal'
 
-const RidesHeader = () => {
+const HeaderTitle = ({
+  title,
+  color = COLORS.primary,
+}: {
+  title: string
+  color: string
+}) => {
   const insets = useSafeAreaInsets()
-
   return (
-    <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
-      <Text style={styles.headerTitle}>Viajes disponibles</Text>
+    <View
+      style={{
+        backgroundColor: color,
+        paddingTop: (Platform.OS === 'ios' ? insets.top : 0) + 16,
+        paddingBottom: 10,
+        paddingHorizontal: 16,
+      }}
+    >
+      <Text style={styles.headerTitle}>{title}</Text>
     </View>
   )
 }
@@ -38,24 +50,31 @@ export default function TabsLayout() {
         <Tabs.Screen
           name="index"
           options={{
-            title: 'Inicio',
             tabBarIcon: ({ color }) => <CarIcon color={color} />,
             headerShown: true,
-            header: () => <RidesHeader />,
+            header: () => (
+              <HeaderTitle title="Viajes disponibles" color={COLORS.primary} />
+            ),
           }}
         />
         <Tabs.Screen
           name="messages"
           options={{
-            title: 'Mensajes',
             tabBarIcon: ({ color }) => <MessagesIcon color={color} />,
+            headerShown: true,
+            header: () => (
+              <HeaderTitle title="Chats" color={COLORS.dark_gray} />
+            ),
           }}
         />
         <Tabs.Screen
           name="profile"
           options={{
-            title: 'Perfil',
             tabBarIcon: ({ color }) => <ProfileIcon color={color} />,
+            headerShown: true,
+            header: () => (
+              <HeaderTitle title="Perfil" color={COLORS.dark_gray} />
+            ),
           }}
         />
       </Tabs>
@@ -69,8 +88,6 @@ export default function TabsLayout() {
 
 const styles = StyleSheet.create({
   header: {
-    backgroundColor: COLORS.primary,
-    paddingBottom: 16,
     alignItems: 'center',
     justifyContent: 'center',
   },

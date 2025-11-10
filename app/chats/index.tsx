@@ -54,9 +54,6 @@ export default function Chats() {
   return (
     <SafeScreen backgroundColor={COLORS.dark_gray}>
       <View style={styles.container}>
-        <View style={styles.header}>
-          <Text style={styles.headerText}>Chats</Text>
-        </View>
         <FlatList
           data={chats}
           renderItem={renderChat}
