@@ -92,3 +92,7 @@ export const UsersGroupIcon = ({ color, size = 24 }: IconProps) => (
 export const ChatIcon = ({ color, size = 24 }: IconProps) => (
   <Feather name="message-square" size={size} color={color} />
 )
+
+export const ArrowUpRightIcon = ({ color, size = 24 }: IconProps) => (
+  <Feather name="arrow-up-right" size={size} color={color} />
+)
