@@ -1,5 +1,5 @@
-import { useRef, useMemo, useEffect } from 'react'
-import { StyleSheet } from 'react-native'
+import { useRef, useMemo } from 'react'
+import { Platform, StyleSheet } from 'react-native'
 import {
   GOOGLE_MAPS_API_KEY,
   googleMapsTheme,
@@ -17,11 +17,11 @@ export const COSTA_RICA_REGION: Region = {
   longitudeDelta: 5.0,
 }
 
-const MAP_EDGE_PADDING = {
+const FINAL_PADDING = {
   top: 100,
-  right: 50,
-  bottom: 200,
-  left: 50,
+  right: 60,
+  bottom: Platform.OS === 'ios' ? 300 : 200,
+  left: 60,
 }
 
 const MARKER_COLORS = {
@@ -52,15 +52,12 @@ export default function Map({ origin, destination, meetingPoint }: MapProps) {
     return points
   }, [origin, destination, meetingPoint])
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      mapRef.current?.fitToCoordinates(coordinates, {
-        edgePadding: MAP_EDGE_PADDING,
-        animated: true,
-      })
-    }, 100)
-    return () => clearTimeout(timer)
-  }, [coordinates])
+  const handleFitToCoordinates = () => {
+    mapRef.current?.fitToCoordinates(coordinates, {
+      edgePadding: FINAL_PADDING,
+      animated: true,
+    })
+  }
 
   return (
     <MapView
@@ -77,8 +74,8 @@ export default function Map({ origin, destination, meetingPoint }: MapProps) {
         apikey={GOOGLE_MAPS_API_KEY}
         strokeWidth={5}
         strokeColor={COLORS.primary}
-        precision="low"
-        resetOnChange={false}
+        strokeColors={[COLORS.primary]}
+        onReady={handleFitToCoordinates}
       />
       <MapPoint location={origin} color={MARKER_COLORS.origin} />
       <MapPoint location={destination} color={MARKER_COLORS.destination} />
