@@ -139,7 +139,7 @@ export default function RideOverview() {
 
         <Modalize
           ref={modalizeRef}
-          alwaysOpen={Platform.OS === 'ios' ? 120 : 135}
+          alwaysOpen={Platform.OS === 'ios' ? 140 : 135}
           modalStyle={{
             backgroundColor: COLORS.dark_gray,
           }}
