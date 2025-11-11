@@ -15,7 +15,7 @@ export default function SelectOrigin() {
     <SafeScreen backgroundColor={COLORS.dark_gray}>
       <View style={{ flex: 1, paddingBottom: 10 }}>
         <PlacesAutocomplete
-          placeholder={'Busca tu origen'}
+          placeholder={'¿Desde dónde sales?'}
           onPress={(location) => {
             setOrigin(location)
             router.push('/create-ride/select-destination')
