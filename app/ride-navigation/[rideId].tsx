@@ -6,30 +6,24 @@ import {
   UsersGroupIcon,
 } from '@components/icons'
 import { COLORS } from '@utils/constansts/colors'
-import { googleMapsTheme } from '@utils/constansts/google-maps-theme'
-import { COSTA_RICA_REGION } from 'app/create-ride/ride-overview'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import { useBootstrap } from 'hooks/useBootstrap'
 import { useEffect, useRef, useState } from 'react'
 import { Text, View, StyleSheet, Platform } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
-import MapView, { Marker } from 'react-native-maps'
-import MapViewDirections from 'react-native-maps-directions'
 import { Modalize } from 'react-native-modalize'
 import { completeRide, getRide } from 'services/api/rides'
 import { formatCRC } from '@utils/currency'
 import { Ride } from '~types/ride'
 import { User } from '~types/user'
 import ActionButton from '@components/design-system/buttons/action-button'
-
-const GOOGLE_MAPS_API_KEY = process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY ?? ''
+import Map from '@components/design-system/maps/map'
 
 export default function RideNavigationScreen() {
   const { rideId } = useLocalSearchParams<{ rideId: string }>()
   const { isDriver } = useBootstrap()
   const router = useRouter()
   const [ride, setRide] = useState<Ride | null>(null)
-  const mapRef = useRef<MapView>(null)
   const modalizeRef = useRef<Modalize>(null)
 
   const handleFinishRide = async () => {
@@ -54,28 +48,9 @@ export default function RideNavigationScreen() {
     fetchRide()
   }, [rideId])
 
-  useEffect(() => {
-    if (ride && mapRef.current && origin && destination) {
-      // Fit map to show the entire route
-      mapRef.current.fitToCoordinates(
-        [
-          { latitude: origin.lat!, longitude: origin.lng! },
-          { latitude: destination.lat!, longitude: destination.lng! },
-        ],
-        {
-          edgePadding: { top: 100, right: 50, bottom: 300, left: 50 },
-          animated: true,
-        },
-      )
-    }
-  }, [ride, origin, destination])
-
   if (ride == null || ride.origin == null || ride.destination == null) {
     return null
   }
-
-  const origin = ride.origin.location
-  const destination = ride.destination.location
 
   const allUsers = [ride.driver, ...ride.passengers] as User[]
 
@@ -84,46 +59,7 @@ export default function RideNavigationScreen() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <View style={styles.container}>
-        <MapView
-          ref={mapRef}
-          style={styles.map}
-          userInterfaceStyle={'dark'}
-          customMapStyle={googleMapsTheme}
-          initialRegion={COSTA_RICA_REGION}
-        >
-          <MapViewDirections
-            origin={{
-              latitude: origin.lat!,
-              longitude: origin.lng!,
-            }}
-            destination={{
-              latitude: destination.lat!,
-              longitude: destination.lng!,
-            }}
-            apikey={GOOGLE_MAPS_API_KEY}
-            strokeWidth={5}
-            strokeColor={COLORS.primary}
-          />
-          <Marker
-            coordinate={{
-              latitude: origin.lat!,
-              longitude: origin.lng!,
-            }}
-          />
-          <Marker
-            coordinate={{
-              latitude: destination.lat!,
-              longitude: destination.lng!,
-            }}
-          />
-          {/* Device location */}
-          <Marker
-            coordinate={{
-              latitude: 9.9333,
-              longitude: -84.0833,
-            }}
-          />
-        </MapView>
+        <Map origin={ride.origin} destination={ride.destination} />
         <Modalize
           ref={modalizeRef}
           alwaysOpen={Platform.OS === 'ios' ? 135 + driverOffset : 135}
@@ -133,9 +69,11 @@ export default function RideNavigationScreen() {
             paddingVertical: 15,
           }}
           modalTopOffset={
-            Platform.OS === 'ios' ? 450 + driverOffset : 320 + driverOffset
+            Platform.OS === 'ios' ? 450 + driverOffset : 200 + driverOffset
           }
           avoidKeyboardLikeIOS={true}
+          disableScrollIfPossible={true}
+          scrollViewProps={{ scrollEnabled: false }}
         >
           <View>
             {/* Ride Details */}
