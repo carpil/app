@@ -10,10 +10,11 @@ import Screen from '@components/screen'
 import Avatar from '@components/avatar'
 import { formatDate } from '@utils/format-date'
 import { COLORS } from '@utils/constansts/colors'
-import { joinRide, startRide } from 'services/api/rides'
+import { joinRide, startRide, unjoinRide } from 'services/api/rides'
 import { useRealtimeRide } from 'hooks/useRealtimeRide'
 import { useDriver } from 'hooks/useDriver'
 import ActionButton from '@components/design-system/buttons/action-button'
+import { useAuthStore } from 'store/useAuthStore'
 
 export default function RideDetails() {
   const { id } = useLocalSearchParams()
@@ -21,6 +22,7 @@ export default function RideDetails() {
   const { ride, loading, error } = useRealtimeRide(rideId)
   const { calculateDriver } = useDriver()
   const router = useRouter()
+  const { user } = useAuthStore()
 
   if (loading) {
     return (
@@ -59,6 +61,7 @@ export default function RideDetails() {
   } = ride
 
   const isDriver = calculateDriver(driver.id)
+  const isPassenger = user ? passengers.some((p) => p.id === user.id) : false
 
   const remainingSeats = availableSeats - passengers.length
   const fullSeats = availableSeats === passengers.length
@@ -75,6 +78,19 @@ export default function RideDetails() {
       }
     } catch (error) {
       console.error('Error joining ride:', error)
+    }
+  }
+
+  const handleUnjoinRide = async () => {
+    try {
+      const message = await unjoinRide(rideId)
+      if (message) {
+        console.log('Successfully unjoined ride:', message)
+      } else {
+        console.log('Failed to unjoin ride')
+      }
+    } catch (error) {
+      console.error('Error unjoining ride:', error)
     }
   }
 
@@ -168,6 +184,12 @@ export default function RideDetails() {
           <ActionButton
             onPress={handleStartRide}
             text="Iniciar viaje"
+            type="secondary"
+          />
+        ) : isPassenger ? (
+          <ActionButton
+            onPress={handleUnjoinRide}
+            text="Cancelar espacio"
             type="secondary"
           />
         ) : (
