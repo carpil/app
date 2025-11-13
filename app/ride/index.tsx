@@ -115,7 +115,7 @@ export default function Rides() {
 
   if (loading) {
     return (
-      <SafeScreen>
+      <SafeScreen applyTopInset={false}>
         <FlatList
           data={Array.from({ length: 5 })}
           renderItem={() => <RideCardSkeleton />}
@@ -128,7 +128,7 @@ export default function Rides() {
   }
 
   return (
-    <SafeScreen>
+    <SafeScreen applyTopInset={false}>
       <FlatList
         data={rides}
         renderItem={renderItem}
@@ -148,7 +148,7 @@ export default function Rides() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           flexGrow: 1,
-          paddingBottom: 100, // Space for CreateRideButton
+          paddingBottom: 100,
         }}
       />
       <CreateRideButton />

@@ -17,7 +17,7 @@ export default function Profile() {
   }
 
   return (
-    <SafeScreen>
+    <SafeScreen applyTopInset={false}>
       <Text>{user?.id}</Text>
       <Text>{user?.name}</Text>
       <Text>{user?.email}</Text>
