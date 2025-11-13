@@ -28,7 +28,7 @@ export default function CreateRideLayout() {
         options={{
           title: 'Selecciona tu origen',
           headerShown: true,
-          headerLeft: () => <BackButton onPress={() => router.back()} />,
+          headerLeft: () => <BackButton />,
         }}
       />
       <Stack.Screen
@@ -36,7 +36,7 @@ export default function CreateRideLayout() {
         options={{
           title: 'Selecciona tu destino',
           headerShown: true,
-          headerLeft: () => <BackButton onPress={() => router.back()} />,
+          headerLeft: () => <BackButton />,
         }}
       />
       <Stack.Screen
@@ -44,7 +44,7 @@ export default function CreateRideLayout() {
         options={{
           title: 'Punto de encuentro',
           headerShown: true,
-          headerLeft: () => <BackButton onPress={() => router.back()} />,
+          headerLeft: () => <BackButton />,
         }}
       />
       <Stack.Screen
@@ -56,7 +56,7 @@ export default function CreateRideLayout() {
           },
           headerTransparent: true,
           headerShown: true,
-          headerLeft: () => <BackButton onPress={() => router.back()} />,
+          headerLeft: () => <BackButton />,
           headerRight: () => (
             <CloseButton onPress={() => router.replace('/(tabs)')} />
           ),

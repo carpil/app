@@ -26,7 +26,7 @@ export default function RideLayout() {
             backgroundColor: COLORS.primary,
           },
           headerTitle: 'Detalles del ride',
-          headerLeft: () => <BackButton onPress={() => router.back()} />,
+          headerLeft: () => <BackButton />,
         }}
       />
     </Stack>
