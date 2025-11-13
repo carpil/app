@@ -4,10 +4,21 @@ import { COLORS } from '@utils/constansts/colors'
 import { router } from 'expo-router'
 
 interface BackButtonProps {
-  onPress: () => void
+  onPress?: () => void
 }
+
+const handleBackNavigation = () => {
+  // Check if we can navigate back in the stack
+  if (router.canGoBack()) {
+    router.back()
+  } else {
+    // Fallback to home tab when coming from notifications on iOS
+    router.replace('/(tabs)/')
+  }
+}
+
 export default function BackButton({
-  onPress = () => router.back(),
+  onPress = handleBackNavigation,
 }: BackButtonProps) {
   if (Platform.OS === 'ios') {
     return (

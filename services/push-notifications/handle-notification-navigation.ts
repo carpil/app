@@ -25,7 +25,10 @@ export const handleNotificationNavigation = (data: NotificationData) => {
     const path = url.replace(/^carpil:\/\//, '/')
 
     console.log(`🧭 Navigating to: ${path}`)
-    router.push(path as any)
+    
+    // Use replace instead of push to avoid navigation stack issues on iOS
+    // This ensures the home tab is in the navigation stack as a fallback
+    router.replace(path as any)
   } catch (error) {
     console.error('❌ Error handling notification navigation:', error)
   }

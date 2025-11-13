@@ -20,7 +20,7 @@ export default function SignUpLayout() {
         name="index"
         options={{
           title: 'Registrarse',
-          headerLeft: () => <BackButton onPress={() => router.back()} />,
+          headerLeft: () => <BackButton />,
         }}
       />
     </Stack>

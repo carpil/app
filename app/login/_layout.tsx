@@ -26,7 +26,7 @@ export default function LoginLayout() {
         name="login-email"
         options={{
           title: 'Iniciar sesión',
-          headerLeft: () => <BackButton onPress={() => router.back()} />,
+          headerLeft: () => <BackButton />,
         }}
       />
     </Stack>

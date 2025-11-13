@@ -65,7 +65,7 @@ export default function UserDetails() {
           },
           headerShadowVisible: false,
           headerTitle: 'Detalles del usuario',
-          headerLeft: () => <BackButton onPress={() => router.back()} />,
+          headerLeft: () => <BackButton />,
           headerBackVisible: false,
         }}
       />

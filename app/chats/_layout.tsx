@@ -26,7 +26,7 @@ export default function ChatsLayout() {
         name="messages"
         options={{
           headerShown: true,
-          headerLeft: () => <BackButton onPress={() => router.back()} />,
+          headerLeft: () => <BackButton />,
         }}
       />
     </Stack>
