@@ -50,6 +50,7 @@ export default function TabsLayout() {
         <Tabs.Screen
           name="index"
           options={{
+            tabBarLabel: 'Rides',
             tabBarIcon: ({ color }) => <CarIcon color={color} />,
             headerShown: true,
             header: () => (
