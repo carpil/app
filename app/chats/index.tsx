@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { View, StyleSheet, FlatList, Text } from 'react-native'
+import { View, StyleSheet, FlatList } from 'react-native'
 import ChatCard from '@components/chats/card'
 import SafeScreen from '@components/safe-screen'
 import { COLORS } from '@utils/constansts/colors'
@@ -36,9 +36,6 @@ export default function Chats() {
     return (
       <SafeScreen backgroundColor={COLORS.dark_gray} applyTopInset={false}>
         <View style={styles.container}>
-          <View style={styles.header}>
-            <Text style={styles.headerText}>Chats</Text>
-          </View>
           <FlatList
             data={Array.from({ length: 5 })}
             renderItem={() => <ChatCardSkeleton />}

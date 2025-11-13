@@ -41,7 +41,7 @@ export default function ChatCard({ chat, user, onPress }: ChatCardProps) {
   const date = chat.createdAt
 
   return (
-    <Link href={`/chats/messages?chatId=${chat.id}`} asChild>
+    <Link href={`/chats/${chat.id}`} asChild>
       <TouchableOpacity style={styles.card} onPress={onPress}>
         {date && (
           <Text style={styles.date}>
