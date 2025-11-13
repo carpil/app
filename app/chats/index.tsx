@@ -34,7 +34,7 @@ export default function Chats() {
 
   if (loading) {
     return (
-      <SafeScreen backgroundColor={COLORS.dark_gray}>
+      <SafeScreen backgroundColor={COLORS.dark_gray} applyTopInset={false}>
         <View style={styles.container}>
           <View style={styles.header}>
             <Text style={styles.headerText}>Chats</Text>
@@ -52,7 +52,7 @@ export default function Chats() {
   }
 
   return (
-    <SafeScreen backgroundColor={COLORS.dark_gray}>
+    <SafeScreen backgroundColor={COLORS.dark_gray} applyTopInset={false}>
       <View style={styles.container}>
         <FlatList
           data={chats}
