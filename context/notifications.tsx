@@ -9,6 +9,15 @@ import React, {
 import * as Notifications from 'expo-notifications'
 import { registerForPushNotificationsAsync } from 'services/push-notifications/register-push-notifications'
 import { setPushNotificationToken } from 'services/api/notifications'
+import { handleNotificationNavigation } from 'services/push-notifications/handle-notification-navigation'
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: true,
+  }),
+})
 
 interface NotificationContextType {
   expoPushToken: string | null
@@ -55,17 +64,14 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
 
     notificationListener.current =
       Notifications.addNotificationReceivedListener((notification) => {
-        console.log('🔔 Notification Received: ', notification)
         setNotification(notification)
       })
 
     responseListener.current =
       Notifications.addNotificationResponseReceivedListener((response) => {
-        console.log(
-          '🔔 Notification Response: ',
-          JSON.stringify(response, null, 2),
-          JSON.stringify(response.notification.request.content.data, null, 2),
-        )
+        const notificationData = response.notification.request.content.data
+
+        handleNotificationNavigation(notificationData)
       })
 
     return () => {
