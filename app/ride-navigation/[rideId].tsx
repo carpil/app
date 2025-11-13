@@ -7,7 +7,6 @@ import {
 } from '@components/icons'
 import { COLORS } from '@utils/constansts/colors'
 import { useLocalSearchParams, useRouter } from 'expo-router'
-import { useBootstrap } from 'hooks/useBootstrap'
 import { useEffect, useRef, useState } from 'react'
 import { Text, View, StyleSheet, Platform } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
@@ -18,14 +17,14 @@ import { Ride } from '~types/ride'
 import { User } from '~types/user'
 import ActionButton from '@components/design-system/buttons/action-button'
 import Map from '@components/design-system/maps/map'
+import { useAuthStore } from 'store/useAuthStore'
 
 export default function RideNavigationScreen() {
   const { rideId } = useLocalSearchParams<{ rideId: string }>()
-  const { isDriver } = useBootstrap()
   const router = useRouter()
   const [ride, setRide] = useState<Ride | null>(null)
   const modalizeRef = useRef<Modalize>(null)
-
+  const user = useAuthStore((state) => state.user)
   const handleFinishRide = async () => {
     try {
       const message = await completeRide(rideId)
@@ -54,6 +53,7 @@ export default function RideNavigationScreen() {
 
   const allUsers = [ride.driver, ...ride.passengers] as User[]
 
+  const isDriver = user?.id === ride.driver.id
   const driverOffset = isDriver ? 0 : 50
 
   return (
