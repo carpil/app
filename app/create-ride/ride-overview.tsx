@@ -3,37 +3,27 @@ import { COLORS } from '@utils/constansts/colors'
 import { createRide } from 'services/api/rides'
 import { CreateRideRequest } from '~types/requests/ride'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
-import { googleMapsTheme } from '@utils/constansts/google-maps-theme'
 import { isAfter } from '@formkit/tempo'
 import { Modalize } from 'react-native-modalize'
 import { router } from 'expo-router'
 import { SelectLocationContext } from '@context/select-location'
 import { View, StyleSheet, Platform, Text } from 'react-native'
-import CreateRide from '@components/create-ride-modal/create-button'
-import MapView, { Marker, Region } from 'react-native-maps'
-import MapViewDirections from 'react-native-maps-directions'
 import PassengersPill from '@components/create-ride-modal/passengers'
 import PricePill from '@components/create-ride-modal/price'
 import SchedulePill from '@components/create-ride-modal/schedule'
 import { LocationIcon } from '@components/icons'
+import ActionButton from '@components/design-system/buttons/action-button'
+import Map from '@components/design-system/maps/map'
 
 const MAX_PASSENGERS = 15
 const TODAY = new Date()
 const TEN_MINUTES = 10 * 60000
-const GOOGLE_MAPS_API_KEY = process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY ?? ''
-
-export const COSTA_RICA_REGION: Region = {
-  latitude: 9.7489,
-  latitudeDelta: 5.0,
-  longitude: -83.7534,
-  longitudeDelta: 5.0,
-}
 
 export default function RideOverview() {
   const { origin, destination, meetingPoint } = useContext(
     SelectLocationContext,
   )
-  const mapRef = useRef(null)
+
   const modalizeRef = useRef<Modalize>(null)
 
   const [passengers, setPassengers] = useState<number>(3)
@@ -91,55 +81,15 @@ export default function RideOverview() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <View style={styles.container}>
-        <MapView
-          ref={mapRef}
-          style={styles.map}
-          userInterfaceStyle={'dark'}
-          customMapStyle={googleMapsTheme}
-          initialRegion={COSTA_RICA_REGION}
-        >
-          <MapViewDirections
-            origin={{
-              latitude: origin.location.lat!,
-              longitude: origin.location.lng!,
-            }}
-            destination={{
-              latitude: destination.location.lat!,
-              longitude: destination.location.lng!,
-            }}
-            apikey={GOOGLE_MAPS_API_KEY}
-            strokeWidth={5}
-            strokeColor={COLORS.primary}
-          />
-          <Marker
-            coordinate={{
-              latitude: origin.location.lat!,
-              longitude: origin.location.lng!,
-            }}
-            title="Origin"
-            description="Origin"
-          />
-          <Marker
-            coordinate={{
-              latitude: destination.location.lat!,
-              longitude: destination.location.lng!,
-            }}
-            title="Destination"
-            description="Destination"
-          />
-          <Marker
-            coordinate={{
-              latitude: meetingPoint.location.lat!,
-              longitude: meetingPoint.location.lng!,
-            }}
-            title="Meeting Point"
-            description="Meeting Point"
-          />
-        </MapView>
+        <Map
+          origin={origin}
+          destination={destination}
+          meetingPoint={meetingPoint}
+        />
 
         <Modalize
           ref={modalizeRef}
-          alwaysOpen={Platform.OS === 'ios' ? 120 : 135}
+          alwaysOpen={Platform.OS === 'ios' ? 140 : 135}
           modalStyle={{
             backgroundColor: COLORS.dark_gray,
           }}
@@ -204,7 +154,12 @@ export default function RideOverview() {
               handleChangePrice={setPrice}
               isValid={price !== ''}
             />
-            <CreateRide onPress={onCreateRide} disabled={!isValid} />
+            <ActionButton
+              onPress={onCreateRide}
+              text="Crear viaje"
+              type="primary"
+              disabled={!isValid}
+            />
           </View>
         </Modalize>
       </View>

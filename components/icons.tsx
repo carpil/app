@@ -61,8 +61,12 @@ export const EyeOffIcon = ({ color }: IconProps) => (
   <Ionicons name="eye-off-outline" size={24} color={color} />
 )
 
-export const BackIcon = ({ color }: IconProps) => (
-  <Ionicons name="arrow-back" size={24} color={color} />
+export const BackIcon = ({ color, size = 24 }: IconProps) => (
+  <Ionicons name="arrow-back" size={size} color={color} />
+)
+
+export const CloseIcon = ({ color, size = 24 }: IconProps) => (
+  <Ionicons name="close" size={size} color={color} />
 )
 
 export const SendIcon = ({ color, size }: IconProps) => (
@@ -87,4 +91,8 @@ export const UsersGroupIcon = ({ color, size = 24 }: IconProps) => (
 
 export const ChatIcon = ({ color, size = 24 }: IconProps) => (
   <Feather name="message-square" size={size} color={color} />
+)
+
+export const ArrowUpRightIcon = ({ color, size = 24 }: IconProps) => (
+  <Feather name="arrow-up-right" size={size} color={color} />
 )

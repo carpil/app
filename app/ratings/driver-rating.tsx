@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
+import { View, Text, StyleSheet } from 'react-native'
 import Avatar from '@components/avatar'
 import StarRating from './star-rating'
 import { useState } from 'react'
@@ -6,6 +6,7 @@ import { UserInfo } from '~types/user'
 import { COLORS } from '@utils/constansts/colors'
 import { Rating } from '~types/rating'
 import { useBootstrap } from 'hooks/useBootstrap'
+import ActionButton from '@components/design-system/buttons/action-button'
 
 interface DriverRatingProps {
   user: UserInfo
@@ -24,6 +25,16 @@ export default function DriverRating({
 
   const { rideId } = useBootstrap()
 
+  const handleCompleteRating = () => {
+    onSaveRating({
+      targetUserId: user.id,
+      rideId: rideId || '',
+      rating,
+      comment: '',
+    })
+    onNext?.()
+  }
+
   return (
     <View style={styles.container}>
       <Text style={styles.text}>{'¿Cómo calificarías a este conductor?'}</Text>
@@ -40,22 +51,12 @@ export default function DriverRating({
         </View>
       </View>
       <StarRating onRatingChange={setRating} />
-      <TouchableOpacity
-        style={styles.completeButton}
-        onPress={() => {
-          onSaveRating({
-            targetUserId: user.id,
-            rideId: rideId || '',
-            rating,
-            comment: '',
-          })
-          onNext?.()
-        }}
-      >
-        <Text style={styles.completeButtonText}>
-          {hasOtherPassengers ? 'Siguiente' : 'Finalizar'}
-        </Text>
-      </TouchableOpacity>
+      <ActionButton
+        onPress={handleCompleteRating}
+        text={hasOtherPassengers ? 'Siguiente' : 'Completar'}
+        type={hasOtherPassengers ? 'secondary' : 'primary'}
+        disabled={!rating}
+      />
     </View>
   )
 }

@@ -1,11 +1,4 @@
-import {
-  Text,
-  View,
-  StyleSheet,
-  Pressable,
-  TouchableOpacity,
-  Alert,
-} from 'react-native'
+import { Text, View, StyleSheet, Pressable, Alert } from 'react-native'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import SafeScreen from '@components/safe-screen'
 import { useEffect, useState } from 'react'
@@ -22,6 +15,8 @@ import Avatar from '@components/avatar'
 import StarRating from 'app/ratings/star-rating'
 import { RatingComponentProps } from 'app/ratings/passengers-rating'
 import { createRating } from 'services/api/ratings'
+import ActionButton from '@components/design-system/buttons/action-button'
+import MapImage from '@components/design-system/maps/image'
 
 enum PaymentMethod {
   SINPE_MOVIL = 'sinpe_movil',
@@ -106,7 +101,7 @@ export default function Checkout() {
     fetchRide()
   }, [rideId])
 
-  if (!ride) {
+  if (!ride || !ride.origin || !ride.destination) {
     return (
       <SafeScreen>
         <Text>Cargando...</Text>
@@ -119,11 +114,7 @@ export default function Checkout() {
   return (
     <SafeScreen backgroundColor={COLORS.dark_gray}>
       <ScrollView style={{ flex: 1 }}>
-        <View style={styles.mapContainer}>
-          <Text>Map</Text>
-          <Text>{ride?.origin?.name.primary}</Text>
-          <Text>{ride?.destination?.name.primary}</Text>
-        </View>
+        <MapImage origin={ride.origin} destination={ride.destination} />
         <Text
           style={{
             color: COLORS.white,
@@ -279,32 +270,20 @@ export default function Checkout() {
                 </Pressable>
               </View>
             </View>
-            <TouchableOpacity
-              style={[
-                styles.finishRideButton,
-                !paymentMethod && styles.finishRideButtonDisabled,
-              ]}
-              disabled={!paymentMethod || isPaymentProcessing}
+            <ActionButton
               onPress={handlePay}
-            >
-              <Text
-                style={[
-                  styles.finishRideText,
-                  !paymentMethod && styles.finishRideTextDisabled,
-                ]}
-              >
-                {`Pagar ${priceFormatted}`}
-              </Text>
-            </TouchableOpacity>
+              text={`Pagar ${priceFormatted}`}
+              type="primary"
+              disabled={!paymentMethod || isPaymentProcessing}
+            />
           </>
         )}
         {isDriver && (
-          <TouchableOpacity
-            style={styles.finishRideButton}
+          <ActionButton
             onPress={handleCompleteRating}
-          >
-            <Text style={styles.finishRideText}>Finalizar viaje</Text>
-          </TouchableOpacity>
+            text="Finalizar viaje"
+            type="primary"
+          />
         )}
       </ScrollView>
     </SafeScreen>

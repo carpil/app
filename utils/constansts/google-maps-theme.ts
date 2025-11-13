@@ -1,5 +1,8 @@
 import { MapStyleElement } from 'react-native-maps'
 
+export const GOOGLE_MAPS_API_KEY =
+  process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY ?? ''
+
 export const googleMapsTheme: MapStyleElement[] = [
   {
     elementType: 'geometry',
@@ -157,6 +160,33 @@ export const googleMapsTheme: MapStyleElement[] = [
     stylers: [
       {
         color: '#17263c',
+      },
+    ],
+  },
+  {
+    featureType: 'road',
+    elementType: 'labels',
+    stylers: [
+      {
+        visibility: 'off',
+      },
+    ],
+  },
+  {
+    featureType: 'road.local',
+    elementType: 'labels',
+    stylers: [
+      {
+        visibility: 'off',
+      },
+    ],
+  },
+  {
+    featureType: 'road.arterial',
+    elementType: 'labels',
+    stylers: [
+      {
+        visibility: 'off',
       },
     ],
   },

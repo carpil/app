@@ -6,7 +6,6 @@ import {
   StyleSheet,
   Text,
   Pressable,
-  TouchableOpacity,
   Alert,
 } from 'react-native'
 import { Modalize } from 'react-native-modalize'
@@ -18,6 +17,7 @@ import { useDebitCard } from 'hooks/use-debit-card'
 import { useAuthStore } from 'store/useAuthStore'
 import { useBootstrapStore } from 'store/useBootstrapStore'
 import { bootstrapMe } from 'services/api/user'
+import ActionButton from '@components/design-system/buttons/action-button'
 
 enum PaymentMethod {
   SINPE_MOVIL = 'sinpe_movil',
@@ -189,26 +189,14 @@ export default function CheckoutModal({ pendingPayment }: CheckoutModalProps) {
           </View>
         </View>
 
-        <TouchableOpacity
-          style={[
-            styles.payButton,
-            (!paymentMethod || isPaymentProcessing) && styles.payButtonDisabled,
-          ]}
-          disabled={!paymentMethod || isPaymentProcessing}
+        <ActionButton
           onPress={handlePay}
-        >
-          <Text
-            style={[
-              styles.payButtonText,
-              (!paymentMethod || isPaymentProcessing) &&
-                styles.payButtonTextDisabled,
-            ]}
-          >
-            {isPaymentProcessing
-              ? 'Procesando...'
-              : `Pagar ${formatCRC(price)}`}
-          </Text>
-        </TouchableOpacity>
+          text={
+            isPaymentProcessing ? 'Procesando...' : `Pagar ${formatCRC(price)}`
+          }
+          type="primary"
+          disabled={!paymentMethod || isPaymentProcessing}
+        />
       </View>
     </Modalize>
   )

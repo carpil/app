@@ -1,4 +1,4 @@
-import { View, StyleSheet } from 'react-native'
+import { View, StyleSheet, Platform } from 'react-native'
 import {
   SafeAreaProvider,
   useSafeAreaInsets,
@@ -20,8 +20,8 @@ export default function SafeScreen({
       <View
         style={{
           ...styles.container,
-          paddingTop: insets.top,
           backgroundColor,
+          paddingTop: (Platform.OS === 'ios' ? insets.top : 0) + 16,
         }}
       >
         {children}

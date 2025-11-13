@@ -3,31 +3,9 @@ node_modules/
 package-lock.json
 yarn.lock
 
-# iOS (archivos específicos a excluir en lugar de todo el directorio)
-ios/Pods/
-ios/build/
-ios/*.xcworkspace/
-ios/Podfile.lock
-ios/*.xcuserstate
-ios/.xcode.env.local
-ios/DerivedData/
-ios/*.ipa
-ios/*.xcarchive
+ios/
 
-# ✅ Allow shared Xcode schemes (required for EAS Build)
-!ios/*/xcshareddata/
-!ios/*/xcshareddata/xcschemes/
-!ios/*/xcshareddata/xcschemes/*.xcscheme
-
-# Android (only ignore build outputs and generated files)
-android/build/
-android/.gradle/
-android/app/build/
-android/app/.cxx/
-android/.cxx/
-*.apk
-*.aab
-local.properties
+android/
 
 # Expo
 .expo/

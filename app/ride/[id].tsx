@@ -9,12 +9,11 @@ import { useLocalSearchParams, useRouter } from 'expo-router'
 import Screen from '@components/screen'
 import Avatar from '@components/avatar'
 import { formatDate } from '@utils/format-date'
-import ReservationButton from '@components/reservation-button'
 import { COLORS } from '@utils/constansts/colors'
 import { joinRide, startRide } from 'services/api/rides'
 import { useRealtimeRide } from 'hooks/useRealtimeRide'
 import { useDriver } from 'hooks/useDriver'
-import PrimaryButton from '@components/buttons/primary'
+import ActionButton from '@components/design-system/buttons/action-button'
 
 export default function RideDetails() {
   const { id } = useLocalSearchParams()
@@ -166,9 +165,17 @@ export default function RideDetails() {
         </View>
 
         {isDriver ? (
-          <PrimaryButton onPress={handleStartRide} text="Iniciar viaje" />
+          <ActionButton
+            onPress={handleStartRide}
+            text="Iniciar viaje"
+            type="secondary"
+          />
         ) : (
-          <ReservationButton onPress={handleJoinRide} />
+          <ActionButton
+            onPress={handleJoinRide}
+            text="Reservar espacio"
+            type="secondary"
+          />
         )}
       </ScrollView>
     </Screen>

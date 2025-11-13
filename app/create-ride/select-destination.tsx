@@ -15,7 +15,7 @@ export default function SelectDestination() {
     <SafeScreen backgroundColor={COLORS.dark_gray}>
       <View style={{ flex: 1, paddingBottom: 10 }}>
         <PlacesAutocomplete
-          placeholder={'Busca tu destino'}
+          placeholder={'¿A dónde vas?'}
           onPress={(location) => {
             setDestination(location)
             router.push('/create-ride/select-meeting-point')

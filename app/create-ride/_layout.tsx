@@ -1,31 +1,7 @@
-import { Pressable, StyleSheet } from 'react-native'
 import { Stack, router } from 'expo-router'
 import { COLORS } from '@utils/constansts/colors'
-import { Ionicons } from '@expo/vector-icons'
-
-const CloseIconButton = () => (
-  <Pressable
-    onPress={() => router.replace('/(tabs)')}
-    style={({ pressed }) => [
-      styles.iconButton,
-      { backgroundColor: pressed ? COLORS.dark_gray : COLORS.raisin_black },
-    ]}
-  >
-    <Ionicons name="close" size={16} color={COLORS.white} />
-  </Pressable>
-)
-
-const BackIconButton = () => (
-  <Pressable
-    onPress={() => router.back()}
-    style={({ pressed }) => [
-      styles.iconButton,
-      { backgroundColor: pressed ? COLORS.dark_gray : COLORS.raisin_black },
-    ]}
-  >
-    <Ionicons name="arrow-back" size={16} color={COLORS.white} />
-  </Pressable>
-)
+import BackButton from '@components/design-system/buttons/back-button'
+import CloseButton from '@components/design-system/buttons/close-button'
 
 export default function CreateRideLayout() {
   return (
@@ -51,21 +27,24 @@ export default function CreateRideLayout() {
         name="select-origin"
         options={{
           title: 'Selecciona tu origen',
-          headerBackTitle: 'Atrás',
+          headerShown: true,
+          headerLeft: () => <BackButton onPress={() => router.back()} />,
         }}
       />
       <Stack.Screen
         name="select-destination"
         options={{
           title: 'Selecciona tu destino',
-          headerBackTitle: 'Atrás',
+          headerShown: true,
+          headerLeft: () => <BackButton onPress={() => router.back()} />,
         }}
       />
       <Stack.Screen
         name="select-meeting-point"
         options={{
           title: 'Punto de encuentro',
-          headerBackTitle: 'Atrás',
+          headerShown: true,
+          headerLeft: () => <BackButton onPress={() => router.back()} />,
         }}
       />
       <Stack.Screen
@@ -76,20 +55,13 @@ export default function CreateRideLayout() {
             backgroundColor: 'transparent',
           },
           headerTransparent: true,
-          headerLeft: () => <BackIconButton />,
-          headerRight: () => <CloseIconButton />,
+          headerShown: true,
+          headerLeft: () => <BackButton onPress={() => router.back()} />,
+          headerRight: () => (
+            <CloseButton onPress={() => router.replace('/(tabs)')} />
+          ),
         }}
       />
     </Stack>
   )
 }
-
-const styles = StyleSheet.create({
-  iconButton: {
-    padding: 8,
-    backgroundColor: COLORS.raisin_black,
-    borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-})

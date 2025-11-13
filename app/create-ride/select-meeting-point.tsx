@@ -15,7 +15,7 @@ export default function SelectMeetingPoint() {
     <SafeScreen backgroundColor={COLORS.dark_gray}>
       <View style={{ flex: 1, paddingBottom: 10 }}>
         <PlacesAutocomplete
-          placeholder={'Busca tu punto de encuentro'}
+          placeholder={'¿Dónde recogerás a tus pasajeros?'}
           queryType={'establishment'}
           onPress={(location) => {
             setMeetingPoint(location)

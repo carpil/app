@@ -5,7 +5,6 @@ import {
   TouchableOpacity,
   Image,
   Alert,
-  ActivityIndicator,
 } from 'react-native'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import SafeScreen from '@components/safe-screen'
@@ -22,6 +21,7 @@ import * as ImagePicker from 'expo-image-picker'
 import { uploadReceiptToStorage } from 'services/firestore/upload-receipt'
 import { completeSinpePayment } from 'services/api/payments'
 import { useBootstrapStore } from 'store/useBootstrapStore'
+import ActionButton from '@components/design-system/buttons/action-button'
 
 export const formatPhoneNumber = (phoneNumber: string) => {
   return phoneNumber.replace(/(\d{3})(\d{4})(\d{4})/, '($1) $2 $3')
@@ -323,20 +323,12 @@ export default function SinpeMovilPayment() {
           </Text>
         </TouchableOpacity>
 
-        <TouchableOpacity
-          style={[
-            styles.finishButton,
-            (!paymentImage || isProcessing) && styles.finishButtonDisabled,
-          ]}
+        <ActionButton
           onPress={handleFinish}
+          text={`Pagar ${formattedPrice}`}
+          type="primary"
           disabled={!paymentImage || isProcessing}
-        >
-          {isProcessing ? (
-            <ActivityIndicator color={COLORS.white} />
-          ) : (
-            <Text style={styles.finishButtonText}>Finalizar</Text>
-          )}
-        </TouchableOpacity>
+        />
       </View>
     </SafeScreen>
   )
