@@ -174,7 +174,7 @@ export default function Messages() {
   }
 
   return (
-    <SafeScreen backgroundColor={COLORS.dark_gray}>
+    <SafeScreen backgroundColor={COLORS.dark_gray} keyboardAware>
       <View style={styles.container}>
         {/* header */}
         <View style={styles.header}>

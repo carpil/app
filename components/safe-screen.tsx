@@ -1,5 +1,6 @@
 import { View, StyleSheet, Platform } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { COLORS } from '@utils/constansts/colors'
 
 interface Props {
@@ -7,6 +8,7 @@ interface Props {
   children: React.ReactNode
   applyTopInset?: boolean
   applyBottomInset?: boolean
+  keyboardAware?: boolean
 }
 
 export default function SafeScreen({
@@ -14,6 +16,7 @@ export default function SafeScreen({
   children,
   applyTopInset = true,
   applyBottomInset = false,
+  keyboardAware = false,
 }: Props) {
   const insets = useSafeAreaInsets()
   
@@ -24,6 +27,26 @@ export default function SafeScreen({
   const paddingBottom = applyBottomInset 
     ? insets.bottom 
     : 0
+
+  if (keyboardAware) {
+    return (
+      <KeyboardAwareScrollView
+        style={{
+          ...styles.container,
+          backgroundColor,
+          paddingTop,
+          paddingBottom,
+        }}
+        contentContainerStyle={{ flexGrow: 1 }}
+        enableOnAndroid
+        enableAutomaticScroll
+        extraScrollHeight={20}
+        keyboardShouldPersistTaps="handled"
+      >
+        {children}
+      </KeyboardAwareScrollView>
+    )
+  }
 
   return (
     <View
