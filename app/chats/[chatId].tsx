@@ -12,7 +12,6 @@ import {
 import { SendIcon } from '@components/icons'
 import { ChatResponse } from '~types/responses/chat'
 import { COLORS } from '@utils/constansts/colors'
-import { formatDate } from '@utils/format-date'
 import { getChat, sendMessage } from 'services/api/chats'
 import { useLocalSearchParams, useNavigation } from 'expo-router'
 import Avatar from '@components/avatar'
@@ -23,8 +22,10 @@ import {
   doc,
   onSnapshot,
   updateDoc,
+  query,
+  orderBy,
 } from '@react-native-firebase/firestore'
-import { Message, MessageBubble } from '~types/message'
+import { FirestoreMessage, MessageBubble } from '~types/message'
 import { useAuthStore } from 'store/useAuthStore'
 import { decryptMessage } from '@utils/decrypt-message'
 import MessageBubbleComponent from '@components/chats/message-bubble'
@@ -42,15 +43,26 @@ export default function Messages() {
 
   const userId = user?.id ?? ''
 
-  // Update navigation title when chat data is loaded
   useLayoutEffect(() => {
     if (chat?.ride?.origin && chat?.ride?.destination) {
       const title =
         chat.ride.origin.name.primary +
         ' ➡️ ' +
         chat.ride.destination.name.primary
+
       navigation.setOptions({
-        headerTitle: title,
+        headerTitle: () => (
+          <View style={headerStyles.headerContainer}>
+            <Text style={headerStyles.headerTitle} numberOfLines={1}>
+              {title}
+            </Text>
+            <View style={headerStyles.headerParticipants}>
+              {chat.participants.map((participant) => (
+                <Avatar key={participant.id} user={participant} size={20} />
+              ))}
+            </View>
+          </View>
+        ),
       })
     } else {
       navigation.setOptions({
@@ -65,52 +77,51 @@ export default function Messages() {
         setLoading(true)
         setError(null)
 
-        // First, fetch the chat data to get participants
         const chat = await getChat(chatId as string)
         setChat(chat)
 
-        // Only set up the Firestore listener after we have the chat data
         const db = getFirestore()
-        const unsubscribe = onSnapshot(
+        const messagesQuery = query(
           collection(doc(db, 'chats', chatId as string), 'messages'),
-          async (snapshot) => {
-            const newMessages = await Promise.all(
-              snapshot.docs.map(async (doc: any) => {
-                const data = doc.data() as Message
-
-                if (data.seenBy?.includes(userId)) {
-                  await updateDoc(
-                    doc(db, 'chats', chatId as string, 'messages', doc.id),
-                    {
-                      seenBy: [...(data.seenBy ?? []), userId],
-                    },
-                  )
-                }
-
-                const user = chat?.participants?.find(
-                  (participant) => participant.id === data.userId,
-                )
-
-                if (!user) {
-                  return null
-                }
-
-                const message: MessageBubble = {
-                  id: doc.id,
-                  content: decryptMessage(data.content),
-                  createdAt: data.createdAt,
-                  user,
-                  isMe: data.userId === userId,
-                }
-
-                return message
-              }),
-            )
-            setMessages(
-              newMessages.filter((msg): msg is MessageBubble => msg !== null),
-            )
-          },
+          orderBy('createdAt', 'asc'),
         )
+        const unsubscribe = onSnapshot(messagesQuery, async (snapshot) => {
+          const newMessages = await Promise.all(
+            snapshot.docs.map(async (doc: any) => {
+              const data = doc.data() as FirestoreMessage
+
+              if (data.seenBy?.includes(userId)) {
+                await updateDoc(
+                  doc(db, 'chats', chatId as string, 'messages', doc.id),
+                  {
+                    seenBy: [...(data.seenBy ?? []), userId],
+                  },
+                )
+              }
+
+              const user = chat?.participants?.find(
+                (participant) => participant.id === data.userId,
+              )
+
+              if (!user) {
+                return null
+              }
+
+              const message: MessageBubble = {
+                id: doc.id,
+                content: decryptMessage(data.content),
+                createdAt: data.createdAt.toDate(),
+                user,
+                isMe: data.userId === userId,
+              }
+
+              return message
+            }),
+          )
+          setMessages(
+            newMessages.filter((msg): msg is MessageBubble => msg !== null),
+          )
+        })
 
         return unsubscribe
       } catch (err) {
@@ -156,13 +167,6 @@ export default function Messages() {
     )
   }
 
-  const title =
-    chat.ride?.origin?.name.primary +
-    ' ➡️ ' +
-    chat.ride?.destination?.name.primary
-
-  const departureTime = formatDate(chat.ride?.departureDate ?? new Date())
-
   const handleSendMessage = async () => {
     const data = await sendMessage(chatId as string, message)
     if (data == null) {
@@ -174,25 +178,8 @@ export default function Messages() {
   }
 
   return (
-    <SafeScreen backgroundColor={COLORS.dark_gray}>
+    <SafeScreen backgroundColor={COLORS.dark_gray} applyTopInset={false}>
       <View style={styles.container}>
-        {/* header */}
-        <View style={styles.header}>
-          <View style={styles.headerTextContainer}>
-            <Text style={styles.headerText}>{title}</Text>
-            <Text style={styles.headerTextSecondary}>
-              {departureTime.date} {departureTime.hour}
-            </Text>
-            <View style={styles.headerParticipants}>
-              {chat.participants.map((participant) => {
-                return (
-                  <Avatar key={participant.id} user={participant} size={24} />
-                )
-              })}
-            </View>
-          </View>
-        </View>
-
         {/* messages */}
         <View style={styles.messagesContainer}>
           {messages.map((message) => (
@@ -201,6 +188,7 @@ export default function Messages() {
               user={message.user}
               message={message.content}
               isDriver={message.isMe}
+              createdAt={message.createdAt}
             />
           ))}
         </View>
@@ -235,29 +223,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     marginBottom: Platform.OS === 'ios' ? 30 : 5,
-  },
-  header: {
-    padding: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.gray_600,
-  },
-  headerText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: COLORS.white,
-  },
-  headerTextContainer: {
-    gap: 4,
-  },
-  headerTextSecondary: {
-    fontSize: 14,
-    color: COLORS.gray_400,
-  },
-  headerParticipants: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: -8,
-    marginTop: 4,
   },
   messagesContainer: {
     flex: 1,
@@ -347,5 +312,33 @@ const styles = StyleSheet.create({
     color: COLORS.gray_400,
     textAlign: 'center',
     marginTop: 10,
+  },
+})
+
+const headerStyles = StyleSheet.create({
+  headerContainer: {
+    flex: 1,
+    gap: 4,
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.gray_600,
+    marginRight: 10,
+  },
+  headerTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: COLORS.white,
+    // textAlign: 'center',
+  },
+  headerSubtitle: {
+    fontSize: 12,
+    color: COLORS.gray_400,
+    textAlign: 'center',
+  },
+  headerParticipants: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: -8,
+    marginTop: 2,
   },
 })
