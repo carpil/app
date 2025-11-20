@@ -7,16 +7,28 @@ import ActionButton from '@components/design-system/buttons/action-button'
 import Avatar from '@components/avatar'
 import { COLORS } from '@utils/constansts/colors'
 import { ChevronRightIcon } from '@components/icons'
+import { GoogleOneTapSignIn } from '@react-native-google-signin/google-signin'
 
 export default function Profile() {
   const user = useAuthStore((state) => state.user)
 
   const logout = useAuthStore((state) => state.logout)
   const onLogout = async () => {
-    const auth = getAuth()
-    await signOut(auth)
-    logout()
-    router.replace('/login')
+    try {
+      try {
+        await GoogleOneTapSignIn.signOut()
+      } catch (error) {
+        console.log('Google Sign-In sign out:', error)
+      }
+      const auth = getAuth()
+      await signOut(auth)
+      logout()
+      router.replace('/login')
+    } catch (error) {
+      console.error('Logout error:', error)
+      logout()
+      router.replace('/login')
+    }
   }
 
   const handleSupportPress = async () => {
@@ -34,7 +46,6 @@ export default function Profile() {
   return (
     <Screen backgroundColor={COLORS.dark_gray}>
       <View style={styles.container}>
-        {/* User Info Section */}
         <View style={styles.card}>
           <Avatar
             user={{
@@ -48,7 +59,6 @@ export default function Profile() {
           {user.email && <Text style={styles.userEmail}>{user.email}</Text>}
         </View>
 
-        {/* Menu Section */}
         <View style={styles.menuSection}>
           <Pressable
             style={({ pressed }) => [
@@ -73,7 +83,6 @@ export default function Profile() {
           </Pressable>
         </View>
 
-        {/* Logout Button */}
         <View style={styles.logoutContainer}>
           <ActionButton
             text="Cerrar sesión"

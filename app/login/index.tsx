@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import {
   Image,
   Platform,
@@ -9,8 +8,6 @@ import {
 } from 'react-native'
 import { AppleIcon, GoogleIcon } from '@components/icons'
 import { COLORS } from '@utils/constansts/colors'
-import { GoogleOneTapSignIn } from '@react-native-google-signin/google-signin'
-import { IOS_GOOGLE_CLIENT_ID } from '@utils/constansts/api'
 import { Link, router } from 'expo-router'
 import SafeScreen from '@components/safe-screen'
 import SocialButton from '@components/buttons/social'
@@ -20,15 +17,6 @@ import { handleAppleLogin } from 'services/auth/apple'
 const logo = require('../../assets/logo.png')
 
 export default function Login() {
-  useEffect(() => {
-    GoogleOneTapSignIn.configure({
-      // On iOS, we need to explicitly pass the client ID
-      // On Android, it's automatically read from google-services.json
-      ...(Platform.OS === 'ios' && { webClientId: IOS_GOOGLE_CLIENT_ID }),
-      scopes: ['email', 'profile'],
-    })
-  }, [])
-
   const goToHome = () => {
     router.replace('/')
   }
