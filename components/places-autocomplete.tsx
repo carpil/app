@@ -13,7 +13,11 @@ export const PlaceRow = ({ data }: { data: GooglePlaceData }) => {
   return (
     <View
       style={{
+        flex: 1,
         flexDirection: 'column',
+        paddingVertical: 6,
+        borderBottomWidth: 1,
+        borderBottomColor: COLORS.border_gray,
       }}
     >
       <Text
@@ -89,6 +93,9 @@ export default function PlacesAutocomplete({
         },
         row: {
           backgroundColor: COLORS.dark_gray,
+        },
+        separator: {
+          height: 0,
         },
       }}
       textInputProps={{

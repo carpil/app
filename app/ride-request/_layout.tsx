@@ -1,8 +1,8 @@
-import { router, Stack } from 'expo-router'
+import { Stack } from 'expo-router'
 import { COLORS } from '@utils/constansts/colors'
 import BackButton from '@components/design-system/buttons/back-button'
 
-export default function RideLayout() {
+export default function RideRequestLayout() {
   return (
     <Stack
       screenOptions={{
@@ -10,12 +10,6 @@ export default function RideLayout() {
         contentStyle: { backgroundColor: COLORS.dark_gray },
       }}
     >
-      <Stack.Screen
-        name="index"
-        options={{
-          title: 'Rides',
-        }}
-      />
       <Stack.Screen
         name="[id]"
         options={{
@@ -25,7 +19,7 @@ export default function RideLayout() {
           headerStyle: {
             backgroundColor: COLORS.primary,
           },
-          headerTitle: 'Detalles del ride',
+          headerTitle: 'Detalle de la solicitud',
           headerLeft: () => <BackButton />,
         }}
       />

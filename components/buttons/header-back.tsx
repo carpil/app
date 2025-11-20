@@ -6,9 +6,19 @@ import { useRouter } from 'expo-router'
 export default function HeaderBack() {
   const router = useRouter()
 
+  const handleBack = () => {
+    // Check if we can navigate back in the stack
+    if (router.canGoBack()) {
+      router.back()
+    } else {
+      // Fallback to home tab when coming from notifications on iOS
+      router.replace('/(tabs)/')
+    }
+  }
+
   return (
     <TouchableOpacity
-      onPress={() => router.back()}
+      onPress={handleBack}
       style={{
         marginLeft: 2,
         padding: 4,

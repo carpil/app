@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
+import { View, Text, StyleSheet } from 'react-native'
 import { COLORS } from '@utils/constansts/colors'
 import Avatar from '@components/avatar'
 import { useAuthStore } from 'store/useAuthStore'
@@ -7,6 +7,7 @@ import { useState } from 'react'
 import { Rating } from '~types/rating'
 import { UserInfo } from '~types/user'
 import { useBootstrap } from 'hooks/useBootstrap'
+import ActionButton from '@components/design-system/buttons/action-button'
 
 interface PassengersRatingProps {
   onComplete?: () => void
@@ -94,18 +95,12 @@ export default function PassengersRating({
           </View>
         </View>
       ))}
-      <TouchableOpacity
-        style={[
-          styles.completeButton,
-          ratings.length === 0 && styles.disabledButton,
-        ]}
+      <ActionButton
         onPress={handleRatingComplete}
+        text={`Completar (${ratings.length}/${passengers.length})`}
+        type="primary"
         disabled={ratings.length === 0}
-      >
-        <Text style={styles.completeButtonText}>
-          Complete Rating ({ratings.length}/{passengers.length})
-        </Text>
-      </TouchableOpacity>
+      />
     </>
   )
 }

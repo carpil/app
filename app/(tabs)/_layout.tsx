@@ -1,22 +1,48 @@
-import { Tabs } from 'expo-router'
+import { Text, StyleSheet, View, Platform } from 'react-native'
 import { CarIcon, MessagesIcon, ProfileIcon } from '@components/icons'
 import { COLORS } from '@utils/constansts/colors'
-import RatingsModal from 'app/ratings/modal'
-import { GestureHandlerRootView } from 'react-native-gesture-handler'
+import { Tabs } from 'expo-router'
 import { useBootstrap } from 'hooks/useBootstrap'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import CheckoutModal from 'app/checkout/modal'
+import RatingsModal from 'app/ratings/modal'
+
+const HeaderTitle = ({
+  title,
+  color = COLORS.primary,
+}: {
+  title: string
+  color: string
+}) => {
+  const insets = useSafeAreaInsets()
+  return (
+    <View
+      style={{
+        backgroundColor: color,
+        paddingTop: (Platform.OS === 'ios' ? insets.top : 0) + 16,
+        paddingBottom: 10,
+        paddingHorizontal: 16,
+      }}
+    >
+      <Text style={styles.headerTitle}>{title}</Text>
+    </View>
+  )
+}
 
 export default function TabsLayout() {
   const { pendingReviews, pendingPayment } = useBootstrap()
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
+    <>
       <Tabs
         screenOptions={{
           headerShown: false,
           tabBarStyle: {
             backgroundColor: COLORS.light_gray,
             borderWidth: 0,
+            borderTopWidth: 0,
+            elevation: 0,
+            shadowOpacity: 0,
           },
           tabBarActiveTintColor: COLORS.secondary,
         }}
@@ -24,22 +50,34 @@ export default function TabsLayout() {
         <Tabs.Screen
           name="index"
           options={{
-            title: 'Inicio',
+            tabBarLabel: 'Rides',
             tabBarIcon: ({ color }) => <CarIcon color={color} />,
+            headerShown: true,
+            header: () => (
+              <HeaderTitle title="Viajes disponibles" color={COLORS.primary} />
+            ),
           }}
         />
         <Tabs.Screen
           name="messages"
           options={{
-            title: 'Mensajes',
+            tabBarLabel: 'Chats',
             tabBarIcon: ({ color }) => <MessagesIcon color={color} />,
+            headerShown: true,
+            header: () => (
+              <HeaderTitle title="Chats" color={COLORS.dark_gray} />
+            ),
           }}
         />
         <Tabs.Screen
           name="profile"
           options={{
-            title: 'Perfil',
+            tabBarLabel: 'Perfil',
             tabBarIcon: ({ color }) => <ProfileIcon color={color} />,
+            headerShown: true,
+            header: () => (
+              <HeaderTitle title="Perfil" color={COLORS.dark_gray} />
+            ),
           }}
         />
       </Tabs>
@@ -47,6 +85,18 @@ export default function TabsLayout() {
       {!pendingPayment && pendingReviews && pendingReviews.length > 0 && (
         <RatingsModal pendingReviews={pendingReviews} />
       )}
-    </GestureHandlerRootView>
+    </>
   )
 }
+
+const styles = StyleSheet.create({
+  header: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  headerTitle: {
+    color: COLORS.white,
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
+})

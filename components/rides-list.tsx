@@ -1,8 +1,6 @@
 import { useState, useCallback } from 'react'
 import { FlatList, RefreshControl, View, Text } from 'react-native'
 import { useFocusEffect } from '@react-navigation/native'
-import CreateRideButton from '@components/create-ride-button'
-import SafeScreen from '@components/safe-screen'
 import RideCard from '@components/ride-card'
 import RideCardSkeleton from '@components/skeletons/ride-card'
 import { getRides } from 'services/api/rides'
@@ -10,7 +8,7 @@ import { useEffect } from 'react'
 import { Ride } from '~types/ride'
 import { COLORS } from '@utils/constansts/colors'
 
-export default function Rides() {
+export default function RidesList() {
   const [rides, setRides] = useState<Ride[]>([])
   const [loading, setLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
@@ -115,43 +113,37 @@ export default function Rides() {
 
   if (loading) {
     return (
-      <SafeScreen applyTopInset={false}>
-        <FlatList
-          data={Array.from({ length: 5 })}
-          renderItem={() => <RideCardSkeleton />}
-          keyExtractor={(_, index) => `skeleton-${index}`}
-          showsVerticalScrollIndicator={false}
-        />
-        <CreateRideButton />
-      </SafeScreen>
+      <FlatList
+        data={Array.from({ length: 5 })}
+        renderItem={() => <RideCardSkeleton />}
+        keyExtractor={(_, index) => `skeleton-${index}`}
+        showsVerticalScrollIndicator={false}
+      />
     )
   }
 
   return (
-    <SafeScreen applyTopInset={false}>
-      <FlatList
-        data={rides}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            tintColor={COLORS.primary}
-            colors={[COLORS.primary]}
-          />
-        }
-        onEndReached={onEndReached}
-        onEndReachedThreshold={0.1}
-        ListFooterComponent={renderFooter}
-        ListEmptyComponent={renderEmpty}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{
-          flexGrow: 1,
-          paddingBottom: 100,
-        }}
-      />
-      <CreateRideButton />
-    </SafeScreen>
+    <FlatList
+      data={rides}
+      renderItem={renderItem}
+      keyExtractor={(item) => item.id}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          tintColor={COLORS.primary}
+          colors={[COLORS.primary]}
+        />
+      }
+      onEndReached={onEndReached}
+      onEndReachedThreshold={0.1}
+      ListFooterComponent={renderFooter}
+      ListEmptyComponent={renderEmpty}
+      showsVerticalScrollIndicator={false}
+      contentContainerStyle={{
+        flexGrow: 1,
+        paddingBottom: 100,
+      }}
+    />
   )
 }

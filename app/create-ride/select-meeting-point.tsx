@@ -1,4 +1,4 @@
-import { Tabs, useRouter } from 'expo-router'
+import { useRouter } from 'expo-router'
 import { View } from 'react-native'
 import 'react-native-get-random-values'
 import { useContext } from 'react'
@@ -12,15 +12,10 @@ export default function SelectMeetingPoint() {
   const { setMeetingPoint } = useContext(SelectLocationContext)
 
   return (
-    <SafeScreen backgroundColor={COLORS.dark_gray}>
-      <Tabs.Screen
-        options={{
-          tabBarActiveBackgroundColor: COLORS.inactive_gray,
-        }}
-      />
+    <SafeScreen backgroundColor={COLORS.dark_gray} applyTopInset={false}>
       <View style={{ flex: 1, paddingBottom: 10 }}>
         <PlacesAutocomplete
-          placeholder={'Busca tu punto de encuentro'}
+          placeholder={'¿Dónde recogerás a tus pasajeros?'}
           queryType={'establishment'}
           onPress={(location) => {
             setMeetingPoint(location)

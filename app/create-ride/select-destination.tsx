@@ -1,4 +1,4 @@
-import { Tabs, useRouter } from 'expo-router'
+import { useRouter } from 'expo-router'
 import { View } from 'react-native'
 import 'react-native-get-random-values'
 import { useContext } from 'react'
@@ -12,18 +12,13 @@ export default function SelectDestination() {
   const router = useRouter()
 
   return (
-    <SafeScreen backgroundColor={COLORS.dark_gray}>
-      <Tabs.Screen
-        options={{
-          tabBarActiveBackgroundColor: COLORS.inactive_gray,
-        }}
-      />
+    <SafeScreen backgroundColor={COLORS.dark_gray} applyTopInset={false}>
       <View style={{ flex: 1, paddingBottom: 10 }}>
         <PlacesAutocomplete
-          placeholder={'Busca tu destino'}
+          placeholder={'¿A dónde vas?'}
           onPress={(location) => {
             setDestination(location)
-            router.push('/create-ride/select-meeting-point')
+            router.push('/create-ride/ride-type')
           }}
         />
       </View>

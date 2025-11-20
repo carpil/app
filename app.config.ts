@@ -33,6 +33,9 @@ export default (config: ExpoConfig) => ({
   ios: {
     supportsTablet: true,
     bundleIdentifier: getUniqueIdentifier(),
+    config: {
+      googleMapsApiKey: GOOGLE_MAPS_API_KEY,
+    },
     infoPlist: {
       ITSAppUsesNonExemptEncryption: false,
       UIBackgroundModes: ['remote-notification'],

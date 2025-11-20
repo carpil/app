@@ -1,67 +1,45 @@
 import { useContext, useEffect, useRef, useState } from 'react'
 import { COLORS } from '@utils/constansts/colors'
-import { createRide } from 'services/api/rides'
-import { CreateRideRequest } from '~types/requests/ride'
-import { GestureHandlerRootView } from 'react-native-gesture-handler'
-import { isAfter } from '@formkit/tempo'
 import { Modalize } from 'react-native-modalize'
-import { router } from 'expo-router'
 import { SelectLocationContext } from '@context/select-location'
 import { View, StyleSheet, Platform, Text } from 'react-native'
-import PassengersPill from '@components/create-ride-modal/passengers'
-import PricePill from '@components/create-ride-modal/price'
-import SchedulePill from '@components/create-ride-modal/schedule'
 import { LocationIcon } from '@components/icons'
 import ActionButton from '@components/design-system/buttons/action-button'
 import Map from '@components/design-system/maps/map'
+import SchedulePill from '@components/create-ride-modal/schedule'
+import { isAfter } from '@formkit/tempo'
+import { createRideRequest } from 'services/api/ride-request'
+import { router } from 'expo-router'
+import { CreateRideRequestInput } from '~types/ride-request'
 
-const MAX_PASSENGERS = 15
 const TODAY = new Date()
 const TEN_MINUTES = 10 * 60000
 
-export default function RideOverview() {
+export default function RideRequestOverview() {
   const { origin, destination, meetingPoint } = useContext(
     SelectLocationContext,
   )
-
   const modalizeRef = useRef<Modalize>(null)
-
-  const [passengers, setPassengers] = useState<number>(3)
   const [date, setDate] = useState<Date>(new Date(Date.now() + TEN_MINUTES))
-  const [price, setPrice] = useState('')
   const [minDate, setMinDate] = useState(TODAY)
 
-  const handleMinusPassengers = () => {
-    if (passengers > 1) {
-      setPassengers(passengers - 1)
-    }
-  }
-
-  const handlePlusPassengers = () => {
-    if (passengers < MAX_PASSENGERS) {
-      setPassengers(passengers + 1)
-    }
-  }
-
-  const onCreateRide = async () => {
+  const handleSearchRide = async () => {
     if (!origin || !destination || !meetingPoint) {
       return
     }
 
-    const rideRequest: CreateRideRequest = {
+    const createRideRequestInput: CreateRideRequestInput = {
       origin,
       destination,
-      meetingPoint,
-      availableSeats: passengers,
-      price: parseInt(price),
       departureDate: date,
     }
 
-    const ride = await createRide(rideRequest)
-    if (!ride) {
+    const response = await createRideRequest(createRideRequestInput)
+    if (!response) {
       return
     }
-    router.replace('/(tabs)')
+
+    router.push('/(tabs)')
   }
 
   useEffect(() => {
@@ -72,38 +50,35 @@ export default function RideOverview() {
     return () => clearInterval(interval)
   }, [])
 
-  const isValid = passengers > 0 && price !== '' && isAfter(date, TODAY)
-
   if (!origin || !destination || !meetingPoint) {
-    return <Text>Selecciona tu origen y destino</Text>
+    return null
   }
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <View style={styles.container}>
-        <Map
-          origin={origin}
-          destination={destination}
-          meetingPoint={meetingPoint}
-        />
+    <View style={styles.container}>
+      <Map
+        origin={origin}
+        destination={destination}
+        meetingPoint={meetingPoint}
+      />
 
-        <Modalize
-          ref={modalizeRef}
-          alwaysOpen={Platform.OS === 'ios' ? 140 : 135}
-          modalStyle={{
-            backgroundColor: COLORS.dark_gray,
-          }}
-          modalTopOffset={Platform.OS === 'ios' ? 100 : 50}
-          avoidKeyboardLikeIOS={true}
-        >
+      <Modalize
+        ref={modalizeRef}
+        alwaysOpen={Platform.OS === 'ios' ? 350 : 350}
+        modalStyle={{
+          backgroundColor: 'transparent',
+          marginHorizontal: 20,
+        }}
+        modalTopOffset={Platform.OS === 'ios' ? 400 : 200}
+        avoidKeyboardLikeIOS={true}
+      >
+        <View>
           <View
             style={{
-              flex: 1,
-              marginHorizontal: 20,
-              gap: 20,
-              paddingTop: 20,
               backgroundColor: COLORS.dark_gray,
-              paddingBottom: Platform.OS === 'ios' ? 40 : 20,
+              padding: 15,
+              borderRadius: 10,
+              gap: 16,
             }}
           >
             <View
@@ -138,38 +113,61 @@ export default function RideOverview() {
                 </Text>
               </View>
             </View>
-            <PassengersPill
-              passengers={passengers}
-              handleMinus={handleMinusPassengers}
-              handlePlus={handlePlusPassengers}
-            />
+          </View>
+          <View
+            style={{
+              flex: 1,
+              marginTop: 10,
+              backgroundColor: COLORS.dark_gray,
+              padding: 15,
+              borderRadius: 10,
+            }}
+          >
             <SchedulePill
               date={date}
               minDate={minDate}
               isValid={isAfter(date, TODAY)}
               setDate={setDate}
             />
-            <PricePill
-              price={price}
-              handleChangePrice={setPrice}
-              isValid={price !== ''}
-            />
+            <Text style={styles.subtitle}>
+              {'Selecciona fecha y hora de tu viaje'}
+            </Text>
             <ActionButton
-              onPress={onCreateRide}
-              text="Crear viaje"
+              text="Buscar viaje"
               type="primary"
-              disabled={!isValid}
+              onPress={handleSearchRide}
             />
           </View>
-        </Modalize>
-      </View>
-    </GestureHandlerRootView>
+        </View>
+      </Modalize>
+    </View>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  titleBox: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: COLORS.white,
+    textAlign: 'center',
+  },
+  subtitleBox: {
+    fontSize: 12,
+    color: COLORS.white_gray,
+    textAlign: 'center',
+  },
+  inactiveTypeBox: {
+    borderColor: COLORS.gray_600,
+    backgroundColor: COLORS.light_gray,
+  },
+  inactiveTitleBox: {
+    color: COLORS.gray_600,
+  },
+  inactiveSubtitleBox: {
+    color: COLORS.gray_600,
   },
   map: {
     flex: 1,
@@ -256,5 +254,18 @@ const styles = StyleSheet.create({
   },
   payButtonTextDisabled: {
     color: COLORS.gray_400,
+  },
+  typeBox: {
+    flex: 1,
+    flexDirection: 'column',
+    gap: 10,
+    backgroundColor: COLORS.light_gray,
+    borderRadius: 10,
+    padding: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 100,
+    borderWidth: 1,
+    borderColor: COLORS.primary,
   },
 })
