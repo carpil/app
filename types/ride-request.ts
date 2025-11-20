@@ -1,12 +1,26 @@
-import { User } from '~types/user'
+import { UserInfo } from '~types/user'
+import { Location } from '~types/location'
+
+export enum RideRequestStatus {
+  Active = 'active',
+  Canceled = 'canceled',
+  Expired = 'expired',
+}
 
 export interface RideRequest {
   id: string
-  origin: string
-  destination: string
+  origin: Location
+  destination: Location
   departureDate: Date
-  spaces: number
-  creator: User
-  deletedAt: Date | null
-  status: 'active' | 'canceled'
+  creator: UserInfo
+  status: RideRequestStatus
+  deletedAt?: Date | null
+  createdAt: Date
+  updatedAt: Date
+}
+
+export interface CreateRideRequestInput {
+  origin: Location
+  destination: Location
+  departureDate: Date
 }

@@ -12,13 +12,13 @@ export default function SelectDestination() {
   const router = useRouter()
 
   return (
-    <SafeScreen backgroundColor={COLORS.dark_gray}>
+    <SafeScreen backgroundColor={COLORS.dark_gray} applyTopInset={false}>
       <View style={{ flex: 1, paddingBottom: 10 }}>
         <PlacesAutocomplete
           placeholder={'¿A dónde vas?'}
           onPress={(location) => {
             setDestination(location)
-            router.push('/create-ride/select-meeting-point')
+            router.push('/create-ride/ride-type')
           }}
         />
       </View>

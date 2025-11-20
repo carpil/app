@@ -61,6 +61,7 @@ export default function TabsLayout() {
         <Tabs.Screen
           name="messages"
           options={{
+            tabBarLabel: 'Chats',
             tabBarIcon: ({ color }) => <MessagesIcon color={color} />,
             headerShown: true,
             header: () => (
@@ -71,6 +72,7 @@ export default function TabsLayout() {
         <Tabs.Screen
           name="profile"
           options={{
+            tabBarLabel: 'Perfil',
             tabBarIcon: ({ color }) => <ProfileIcon color={color} />,
             headerShown: true,
             header: () => (
