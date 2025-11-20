@@ -9,16 +9,21 @@ import {
   OneTapResponse,
 } from '@react-native-google-signin/google-signin'
 import { GoogleOneTapSignIn } from '@react-native-google-signin/google-signin'
-import auth from '@react-native-firebase/auth'
+import {
+  getAuth,
+  GoogleAuthProvider,
+  signInWithCredential,
+} from '@react-native-firebase/auth'
 import { User } from '~types/user'
 import { useAuthStore } from 'store/useAuthStore'
 import { socialLogin } from 'services/api/auth'
 
 const handleSignInSuccess = async (idToken: string) => {
-  const googleCredential = auth.GoogleAuthProvider.credential(idToken)
-  await auth().signInWithCredential(googleCredential)
+  const auth = getAuth()
+  const googleCredential = GoogleAuthProvider.credential(idToken)
+  await signInWithCredential(auth, googleCredential)
 
-  const firebaseUser = auth().currentUser
+  const firebaseUser = auth.currentUser
   const firebaseIdToken = await firebaseUser?.getIdToken()
 
   if (!firebaseIdToken) {
