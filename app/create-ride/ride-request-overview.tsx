@@ -39,7 +39,7 @@ export default function RideRequestOverview() {
       return
     }
 
-    router.replace('/(tabs)')
+    router.push('/(tabs)')
   }
 
   useEffect(() => {

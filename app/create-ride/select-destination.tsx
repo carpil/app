@@ -18,7 +18,7 @@ export default function SelectDestination() {
           placeholder={'¿A dónde vas?'}
           onPress={(location) => {
             setDestination(location)
-            router.push('/create-ride/select-meeting-point')
+            router.push('/create-ride/ride-type')
           }}
         />
       </View>
