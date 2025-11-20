@@ -64,6 +64,7 @@ export default (config: ExpoConfig) => ({
     '@react-native-google-signin/google-signin',
     '@react-native-firebase/app',
     '@react-native-firebase/auth',
+    '@react-native-firebase/crashlytics',
     'expo-apple-authentication',
     'expo-notifications',
     'expo-image-picker',

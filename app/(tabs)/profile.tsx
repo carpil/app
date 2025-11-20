@@ -8,6 +8,7 @@ import Avatar from '@components/avatar'
 import { COLORS } from '@utils/constansts/colors'
 import { ChevronRightIcon } from '@components/icons'
 import { GoogleOneTapSignIn } from '@react-native-google-signin/google-signin'
+import * as Sentry from '@sentry/react-native'
 
 export default function Profile() {
   const user = useAuthStore((state) => state.user)
@@ -36,7 +37,14 @@ export default function Profile() {
   }
 
   const handleReportErrorPress = async () => {
-    await Linking.openURL('https://wa.me/50684481439')
+    if (!user) return
+
+    Sentry.setUser({
+      id: user.id,
+      email: user.email || undefined,
+      username: user.name || undefined,
+    })
+    Sentry.showFeedbackWidget()
   }
 
   if (!user) {

@@ -7,8 +7,22 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { GoogleOneTapSignIn } from '@react-native-google-signin/google-signin'
 import { IOS_GOOGLE_CLIENT_ID } from '@utils/constansts/api'
+import * as Sentry from '@sentry/react-native'
 
-export default function RootLayout() {
+Sentry.init({
+  dsn: (process.env as any).EXPO_PUBLIC_SENTRY_DSN || undefined,
+  replaysSessionSampleRate: 0.8,
+  replaysOnErrorSampleRate: 1.0,
+  integrations: [
+    Sentry.mobileReplayIntegration(),
+    Sentry.feedbackIntegration({
+      isEmailRequired: false,
+      isNameRequired: true,
+    }),
+  ],
+})
+
+export default Sentry.wrap(function RootLayout() {
   useEffect(() => {
     GoogleOneTapSignIn.configure({
       webClientId: Platform.OS === 'ios' ? IOS_GOOGLE_CLIENT_ID : 'autoDetect',
@@ -29,7 +43,7 @@ export default function RootLayout() {
       </SafeAreaProvider>
     </GestureHandlerRootView>
   )
-}
+})
 
 const styles = StyleSheet.create({
   container: {
