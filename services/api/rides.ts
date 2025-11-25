@@ -4,8 +4,8 @@ import { updateUserState } from 'services/firestore/user-state'
 import { CreateRideRequest } from '~types/requests/ride'
 import { DefaultResponse } from '~types/responses/default'
 import { RideResponse, RidesResponse } from '~types/responses/rides'
+import { logger } from '@utils/logs'
 
-// Helper function to update Firebase state after API calls
 const updateFirebaseState = async (state: {
   inRide: boolean
   rideId: string | null
@@ -27,10 +27,23 @@ export const getRides = async () => {
     },
   })
   if (!response.ok) {
+    logger.error('Failed to fetch rides', {
+      action: 'get_rides_failed',
+      metadata: {
+        status: response.status,
+      },
+    })
     return []
   }
   const data = (await response.json()) as RidesResponse
   const { rides } = data
+
+  logger.info('Rides fetched successfully', {
+    action: 'get_rides_success',
+    metadata: {
+      count: rides.length,
+    },
+  })
 
   return rides
 }
@@ -44,10 +57,24 @@ export const getRide = async (id: string) => {
     },
   })
   if (!response.ok) {
+    logger.error('Failed to fetch ride', {
+      action: 'get_ride_failed',
+      metadata: {
+        status: response.status,
+        rideId: id,
+      },
+    })
     return null
   }
   const data = (await response.json()) as RideResponse
   const { ride } = data
+
+  logger.info('Ride fetched successfully', {
+    action: 'get_ride_success',
+    metadata: {
+      rideId: id,
+    },
+  })
 
   return ride
 }
@@ -68,11 +95,29 @@ export const createRide = async (request: CreateRideRequest) => {
 
   if (!response.ok) {
     const error = await response.json()
-    console.log({ status: response.status, error: JSON.stringify(error) })
+    logger.error('Failed to create ride', {
+      action: 'create_ride_failed',
+      metadata: {
+        status: response.status,
+        error,
+        origin: request.origin,
+        destination: request.destination,
+      },
+    })
     return null
   }
   const data = (await response.json()) as RideResponse
   const { ride } = data
+
+  logger.info('Ride created successfully', {
+    action: 'create_ride_success',
+    metadata: {
+      rideId: ride.id,
+      origin: request.origin,
+      destination: request.destination,
+      passengers: request.availableSeats,
+    },
+  })
 
   return ride
 }
@@ -89,12 +134,26 @@ export const joinRide = async (id: string) => {
 
   if (!response.ok) {
     const error = await response.json()
-    console.log({ status: response.status, error })
+    logger.error('Failed to join ride', {
+      action: 'join_ride_failed',
+      metadata: {
+        status: response.status,
+        error,
+        rideId: id,
+      },
+    })
     return null
   }
 
   const data = (await response.json()) as DefaultResponse
   const { message } = data
+
+  logger.info('Joined ride successfully', {
+    action: 'join_ride_success',
+    metadata: {
+      rideId: id,
+    },
+  })
 
   return message
 }
@@ -111,19 +170,32 @@ export const startRide = async (id: string) => {
 
   if (!response.ok) {
     const error = await response.json()
-    console.log({ status: response.status, error })
+    logger.error('Failed to start ride', {
+      action: 'start_ride_failed',
+      metadata: {
+        status: response.status,
+        error,
+        rideId: id,
+      },
+    })
     return null
   }
 
   const data = (await response.json()) as DefaultResponse
   const { message } = data
 
-  // Update Firebase user state when driver starts the ride
   if (message) {
     await updateFirebaseState({
       inRide: true,
       rideId: id,
       isDriver: true,
+    })
+
+    logger.info('Ride started successfully', {
+      action: 'start_ride_success',
+      metadata: {
+        rideId: id,
+      },
     })
   }
 
@@ -143,12 +215,26 @@ export const completeRide = async (id: string) => {
 
   if (!response.ok) {
     const error = await response.json()
-    console.log({ status: response.status, error })
+    logger.error('Failed to complete ride', {
+      action: 'complete_ride_failed',
+      metadata: {
+        status: response.status,
+        error,
+        rideId: id,
+      },
+    })
     return null
   }
 
   const data = (await response.json()) as DefaultResponse
   const { message } = data
+
+  logger.info('Ride completed successfully', {
+    action: 'complete_ride_success',
+    metadata: {
+      rideId: id,
+    },
+  })
 
   return message
 }

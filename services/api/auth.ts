@@ -2,7 +2,7 @@ import { API_URL } from '@utils/constansts/api'
 import { useAuthStore } from 'store/useAuthStore'
 import { SignUpResponse } from '~types/responses/auth'
 import { User } from '~types/user'
-import { debugApiRequest, debugApiResponse } from '@utils/debug-api'
+import { logger } from '@utils/logs'
 
 const usersUrl = `${API_URL}/users`
 export const signUp = async ({ user }: { user: User }) => {
@@ -17,14 +17,27 @@ export const signUp = async ({ user }: { user: User }) => {
 
   if (!response.ok) {
     const error = await response.json()
-    console.log({ status: response.status, error })
+    logger.error('Sign up failed', {
+      action: 'signup_failed',
+      metadata: {
+        status: response.status,
+        error,
+        email: user.email,
+      },
+    })
     return null
   }
 
   const data = (await response.json()) as SignUpResponse
-  const { message, user: userResponse } = data
+  const { user: userResponse } = data
 
-  console.log({ message, userResponse })
+  logger.info('User signed up successfully', {
+    action: 'signup_success',
+    metadata: {
+      userId: userResponse.id,
+      email: userResponse.email,
+    },
+  })
 
   return userResponse
 }
@@ -39,20 +52,32 @@ export const login = async ({ user }: { user: User }) => {
     },
     body: JSON.stringify({
       ...user,
-      name: 'Test', // TODO: Remove this
     }),
   })
 
   if (!response.ok) {
     const error = await response.json()
-    console.log('Login error:', { status: response.status, error })
+    logger.error('Login failed', {
+      action: 'login_failed',
+      metadata: {
+        status: response.status,
+        error,
+        email: user.email,
+      },
+    })
     return null
   }
 
   const data = (await response.json()) as SignUpResponse
-  const { message, user: userResponse } = data
+  const { user: userResponse } = data
 
-  console.log('Login success:', { message, userResponse })
+  logger.info('User logged in successfully', {
+    action: 'login_success',
+    metadata: {
+      userId: userResponse.id,
+      email: userResponse.email,
+    },
+  })
   return userResponse
 }
 
@@ -64,7 +89,12 @@ export const socialLogin = async ({
   token: string
 }) => {
   if (!token) {
-    console.error('No token provided for social login')
+    logger.error('No token provided for social login', {
+      action: 'social_login_no_token',
+      metadata: {
+        email: user.email,
+      },
+    })
     return null
   }
 
@@ -77,37 +107,31 @@ export const socialLogin = async ({
     body: JSON.stringify({ ...user }),
   }
 
-  debugApiRequest(`${usersUrl}/login/social`, requestOptions, 'Social Login')
-
   const response = await fetch(`${usersUrl}/login/social`, requestOptions)
 
-  await debugApiResponse(response, 'Social Login')
-
   if (!response.ok) {
-    // Check if response is HTML (error page) instead of JSON
-    const contentType = response.headers.get('content-type')
-    if (!contentType || !contentType.includes('application/json')) {
-      const htmlError = await response.text()
-      console.error(
-        'Received HTML response instead of JSON:',
-        htmlError.substring(0, 200),
-      )
-      return null
-    }
-
-    try {
-      const error = await response.json()
-      console.log('Social login error:', { status: response.status, error })
-    } catch (parseError) {
-      console.error('Failed to parse error response:', parseError)
-    }
+    const error = await response.json()
+    logger.error('Social login failed', {
+      action: 'social_login_failed',
+      metadata: {
+        status: response.status,
+        error,
+        email: user.email,
+      },
+    })
     return null
   }
 
   const data = (await response.json()) as SignUpResponse
-  const { message, user: userResponse } = data
+  const { user: userResponse } = data
 
-  console.log('Social login success:', { message, userResponse })
+  logger.info('Social login successful', {
+    action: 'social_login_success',
+    metadata: {
+      userId: userResponse.id,
+      email: userResponse.email,
+    },
+  })
   return userResponse
 }
 
@@ -136,11 +160,27 @@ export const signUpEmail = async ({
 
   if (!response.ok) {
     const error = await response.json()
-    console.log({ status: response.status, error })
+    logger.error('Email signup failed', {
+      action: 'signup_email_failed',
+      metadata: {
+        status: response.status,
+        error,
+        email: user.email,
+      },
+    })
     return null
   }
 
   const data = (await response.json()) as SignUpResponse
   const { user: userResponse } = data
+
+  logger.info('Email signup successful', {
+    action: 'signup_email_success',
+    metadata: {
+      userId: userResponse.id,
+      email: userResponse.email,
+    },
+  })
+
   return userResponse
 }
