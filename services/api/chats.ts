@@ -1,6 +1,7 @@
 import { API_URL } from '@utils/constansts/api'
 import { useAuthStore } from 'store/useAuthStore'
 import { ChatResponse } from '~types/responses/chat'
+import { logger } from '@utils/logs'
 
 export const getChats = async () => {
   const token = useAuthStore.getState().token
@@ -11,9 +12,22 @@ export const getChats = async () => {
   })
 
   if (!response.ok) {
+    logger.error('Failed to fetch chats', {
+      action: 'get_chats_failed',
+      metadata: {
+        status: response.status,
+      },
+    })
     return []
   }
   const data = (await response.json()) as ChatResponse[]
+
+  logger.info('Chats fetched successfully', {
+    action: 'get_chats_success',
+    metadata: {
+      count: data.length,
+    },
+  })
 
   return data
 }
@@ -27,10 +41,24 @@ export const getChat = async (id: string) => {
   })
 
   if (!response.ok) {
+    logger.error('Failed to fetch chat', {
+      action: 'get_chat_failed',
+      metadata: {
+        status: response.status,
+        chatId: id,
+      },
+    })
     return null
   }
 
   const data = (await response.json()) as ChatResponse
+
+  logger.info('Chat fetched successfully', {
+    action: 'get_chat_success',
+    metadata: {
+      chatId: id,
+    },
+  })
 
   return data
 }
@@ -47,10 +75,24 @@ export const sendMessage = async (chatId: string, message: string) => {
   })
 
   if (!response.ok) {
+    logger.error('Failed to send message', {
+      action: 'send_message_failed',
+      metadata: {
+        status: response.status,
+        chatId,
+      },
+    })
     return null
   }
 
   const data = (await response.json()) as ChatResponse
+
+  logger.info('Message sent successfully', {
+    action: 'send_message_success',
+    metadata: {
+      chatId,
+    },
+  })
 
   return data
 }

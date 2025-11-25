@@ -1,5 +1,6 @@
 import { API_URL } from '@utils/constansts/api'
 import { useAuthStore } from 'store/useAuthStore'
+import { logger } from '@utils/logs'
 
 interface CreatePaymentIntentRequest {
   userId: string
@@ -44,11 +45,28 @@ export const createPaymentIntent = async (
 
   if (!response.ok) {
     const error = await response.json()
-    console.log({ status: response.status, error: JSON.stringify(error) })
+    logger.error('Failed to create payment intent', {
+      action: 'create_payment_intent_failed',
+      metadata: {
+        status: response.status,
+        error,
+        rideId: request.rideId,
+        amount: request.amount,
+      },
+    })
     return null
   }
 
   const data = (await response.json()) as CreatePaymentIntentResponse
+
+  logger.info('Payment intent created successfully', {
+    action: 'create_payment_intent_success',
+    metadata: {
+      rideId: request.rideId,
+      amount: request.amount,
+    },
+  })
+
   return data
 }
 
@@ -67,10 +85,28 @@ export const completeSinpePayment = async (
 
   if (!response.ok) {
     const error = await response.json()
-    console.log({ status: response.status, error: JSON.stringify(error) })
+    logger.error('Failed to complete SINPE payment', {
+      action: 'complete_sinpe_payment_failed',
+      metadata: {
+        status: response.status,
+        error,
+        rideId: request.rideId,
+        amount: request.amount,
+      },
+    })
     return null
   }
 
   const data = (await response.json()) as CompleteSinpePaymentResponse
+
+  logger.info('SINPE payment completed successfully', {
+    action: 'complete_sinpe_payment_success',
+    metadata: {
+      rideId: request.rideId,
+      amount: request.amount,
+      paymentId: data.paymentId,
+    },
+  })
+
   return data
 }

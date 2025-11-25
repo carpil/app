@@ -5,6 +5,7 @@ import {
   RideRequestsResponse,
 } from '~types/responses/ride-request'
 import { CreateRideRequestInput, RideRequest } from '~types/ride-request'
+import { logger } from '@utils/logs'
 
 export const getRideRequests = async () => {
   const token = useAuthStore.getState().token
@@ -15,9 +16,23 @@ export const getRideRequests = async () => {
     },
   })
   if (!response.ok) {
+    logger.error('Failed to fetch ride requests', {
+      action: 'get_ride_requests_failed',
+      metadata: {
+        status: response.status,
+      },
+    })
     throw new Error('Failed to fetch ride requests')
   }
   const data = (await response.json()) as RideRequestsResponse
+
+  logger.info('Ride requests fetched successfully', {
+    action: 'get_ride_requests_success',
+    metadata: {
+      count: data.rideRequests?.length || 0,
+    },
+  })
+
   return data
 }
 
@@ -30,9 +45,24 @@ export const getRideRequestById = async (id: string) => {
     },
   })
   if (!response.ok) {
+    logger.error('Failed to fetch ride request', {
+      action: 'get_ride_request_failed',
+      metadata: {
+        status: response.status,
+        rideRequestId: id,
+      },
+    })
     throw new Error('Failed to fetch ride request')
   }
   const data = (await response.json()) as RideRequestResponse
+
+  logger.info('Ride request fetched successfully', {
+    action: 'get_ride_request_success',
+    metadata: {
+      rideRequestId: id,
+    },
+  })
+
   return data.rideRequest
 }
 
@@ -47,11 +77,26 @@ export const createRideRequest = async (request: CreateRideRequestInput) => {
     body: JSON.stringify(request),
   })
   if (!response.ok) {
-    console.log('🚫 Error creating ride request:', response.status)
+    logger.error('Failed to create ride request', {
+      action: 'create_ride_request_failed',
+      metadata: {
+        status: response.status,
+        origin: request.origin,
+        destination: request.destination,
+      },
+    })
     return null
   }
   const data = (await response.json()) as RideRequest
 
-  console.log('🚀 Ride request created:', data)
+  logger.info('Ride request created successfully', {
+    action: 'create_ride_request_success',
+    metadata: {
+      rideRequestId: data.id,
+      origin: request.origin,
+      destination: request.destination,
+    },
+  })
+
   return data
 }
