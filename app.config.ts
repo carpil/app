@@ -42,11 +42,18 @@ export default (config: ExpoConfig) => ({
     },
     googleServicesFile: './GoogleService-Info.plist',
     usesAppleSignIn: true,
+    icon: {
+      light: './assets/icons/ios-light.png',
+      dark: './assets/icons/ios-dark.png',
+      tinted: './assets/icons/ios-tinted.png',
+    },
   },
   android: {
     adaptiveIcon: {
-      foregroundImage: './assets/adaptive-icon.png',
-      backgroundColor: '#ffffff',
+      foregroundImage: './assets/icons/android-icon.png',
+      backgroundImage: './assets/icons/android-icon.png',
+      monochromeImage: './assets/icons/android-icon.png',
+      backgroundColor: '#1F2937',
     },
     config: {
       googleMaps: {
@@ -79,6 +86,19 @@ export default (config: ExpoConfig) => ({
           gradleProperties: {
             kspVersion: '2.0.21-1.0.28',
           },
+        },
+      },
+    ],
+    [
+      'expo-splash-screen',
+      {
+        image: './assets/splash/splash-icon-light.png',
+        resizeMode: 'contain',
+        backgroundColor: '#ffffff',
+        dark: {
+          image: './assets/splash/splash-icon-dark.png',
+          resizeMode: 'contain',
+          backgroundColor: '#1F2937',
         },
       },
     ],
