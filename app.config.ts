@@ -38,7 +38,15 @@ export default (config: ExpoConfig) => ({
     },
     infoPlist: {
       ITSAppUsesNonExemptEncryption: false,
-      UIBackgroundModes: ['remote-notification'],
+      UIBackgroundModes: ['remote-notification', 'location'],
+      NSLocationWhenInUseUsageDescription:
+        'Carpil needs your location to show nearby rides and provide accurate pickup and drop-off services.',
+      NSLocationAlwaysAndWhenInUseUsageDescription:
+        'Carpil needs your location to track your ride in real-time and provide navigation even when the app is in the background.',
+      NSCameraUsageDescription:
+        'Carpil needs access to your camera so you can take photos for your profile picture.',
+      NSPhotoLibraryUsageDescription:
+        'Carpil needs access to your photo library so you can select photos for your profile picture.',
     },
     googleServicesFile: './GoogleService-Info.plist',
     usesAppleSignIn: true,
