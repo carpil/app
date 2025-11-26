@@ -178,7 +178,11 @@ export default function Messages() {
   }
 
   return (
-    <SafeScreen backgroundColor={COLORS.dark_gray} applyTopInset={false}>
+    <SafeScreen
+      backgroundColor={COLORS.dark_gray}
+      applyTopInset={false}
+      keyboardAware
+    >
       <View style={styles.container}>
         {/* messages */}
         <View style={styles.messagesContainer}>

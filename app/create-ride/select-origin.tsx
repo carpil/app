@@ -12,7 +12,11 @@ export default function SelectOrigin() {
   const { setOrigin } = useContext(SelectLocationContext)
 
   return (
-    <SafeScreen backgroundColor={COLORS.dark_gray} applyTopInset={false}>
+    <SafeScreen
+      backgroundColor={COLORS.dark_gray}
+      applyTopInset={false}
+      keyboardAware
+    >
       <View style={{ flex: 1, paddingBottom: 10 }}>
         <PlacesAutocomplete
           placeholder={'¿Desde dónde sales?'}

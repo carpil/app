@@ -169,7 +169,7 @@ export default function SignUp() {
   }
 
   return (
-    <SafeScreen backgroundColor={COLORS.dark_gray}>
+    <SafeScreen backgroundColor={COLORS.dark_gray} keyboardAware>
       <Text style={styles.title}>¡Crea tu cuenta! 🚗</Text>
       <Text style={styles.subtitle}>
         Completa el formulario para registrarte y comenzar a compartir viajes.

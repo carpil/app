@@ -149,7 +149,7 @@ export default function LoginEmail() {
   }
 
   return (
-    <SafeScreen backgroundColor={COLORS.dark_gray}>
+    <SafeScreen backgroundColor={COLORS.dark_gray} keyboardAware>
       <Text style={styles.title}>Hola de nuevo! 👋🏼</Text>
       <Text style={styles.subtitle}>
         Completa el formulario para iniciar sesión con tu cuenta.
