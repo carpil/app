@@ -1,7 +1,7 @@
 import {
-  firebase,
   getAuth,
   signInWithCredential,
+  AppleAuthProvider,
 } from '@react-native-firebase/auth'
 import { socialLogin } from 'services/api/auth'
 import { User } from '~types/user'
@@ -19,8 +19,7 @@ export const handleAppleLogin = async () => {
     })
     const { identityToken } = credential
 
-    const appleCredential =
-      firebase.auth.AppleAuthProvider.credential(identityToken)
+    const appleCredential = AppleAuthProvider.credential(identityToken)
     try {
       const userCredential = await signInWithCredential(
         getAuth(),
