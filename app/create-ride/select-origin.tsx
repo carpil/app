@@ -15,7 +15,6 @@ export default function SelectOrigin() {
     <SafeScreen
       backgroundColor={COLORS.dark_gray}
       applyTopInset={false}
-      keyboardAware
     >
       <View style={{ flex: 1, paddingBottom: 10 }}>
         <PlacesAutocomplete
