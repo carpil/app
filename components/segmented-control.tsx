@@ -86,9 +86,7 @@ export default function SegmentedControl({
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 16,
     paddingVertical: 12,
-    // backgroundColor: COLORS.primary,
   },
   segmentedControl: {
     flexDirection: 'row',
