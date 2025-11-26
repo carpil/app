@@ -12,7 +12,11 @@ export default function SelectMeetingPoint() {
   const { setMeetingPoint } = useContext(SelectLocationContext)
 
   return (
-    <SafeScreen backgroundColor={COLORS.dark_gray} keyboardAware>
+    <SafeScreen
+      backgroundColor={COLORS.dark_gray}
+      applyTopInset={false}
+      keyboardAware
+    >
       <View style={{ flex: 1, paddingBottom: 10 }}>
         <PlacesAutocomplete
           placeholder={'¿Dónde recogerás a tus pasajeros?'}

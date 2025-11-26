@@ -8,12 +8,14 @@ export default function MessageBubble({
   user,
   message,
   isDriver,
+  createdAt,
 }: {
   user: User
   message: string
   isDriver: boolean
+  createdAt: Date
 }) {
-  const timestamp = formatDate(new Date())
+  const timestamp = formatDate(createdAt)
   return (
     <View style={isDriver ? styles.messageBubbleDriver : styles.messageBubble}>
       <Avatar user={user} size={24} />
@@ -24,7 +26,7 @@ export default function MessageBubble({
             : styles.messageBubbleContent
         }
       >
-        <Text>{message}</Text>
+        <Text style={styles.messageBubbleText}>{message}</Text>
         <Text style={styles.messageBubbleTimestamp}>{timestamp.hour}</Text>
       </View>
     </View>
@@ -53,6 +55,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row-reverse',
     alignItems: 'flex-end',
     gap: 8,
+  },
+  messageBubbleText: {
+    fontSize: 14,
+    color: COLORS.white,
   },
   messageBubbleTimestamp: {
     fontSize: 12,

@@ -1,4 +1,4 @@
-import { Stack, router } from 'expo-router'
+import { Stack } from 'expo-router'
 import { COLORS } from '@utils/constansts/colors'
 import BackButton from '@components/design-system/buttons/back-button'
 

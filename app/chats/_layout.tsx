@@ -1,4 +1,4 @@
-import { router, Stack } from 'expo-router'
+import { Stack } from 'expo-router'
 import { COLORS } from '@utils/constansts/colors'
 import BackButton from '@components/design-system/buttons/back-button'
 
@@ -23,10 +23,11 @@ export default function ChatsLayout() {
         }}
       />
       <Stack.Screen
-        name="messages"
+        name="[chatId]"
         options={{
           headerShown: true,
           headerLeft: () => <BackButton />,
+          headerTitle: 'Chat',
         }}
       />
     </Stack>

@@ -1,4 +1,5 @@
 import { User } from './user'
+import { FirebaseFirestoreTypes } from '@react-native-firebase/firestore'
 
 export interface Message {
   id: string
@@ -7,6 +8,16 @@ export interface Message {
   senderId?: string
   timestamp?: Date
   createdAt: Date
+  seenBy?: string[]
+}
+
+export interface FirestoreMessage {
+  id: string
+  content: string
+  userId: string
+  senderId?: string
+  timestamp?: FirebaseFirestoreTypes.Timestamp
+  createdAt: FirebaseFirestoreTypes.Timestamp
   seenBy?: string[]
 }
 

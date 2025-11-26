@@ -96,3 +96,7 @@ export const ChatIcon = ({ color, size = 24 }: IconProps) => (
 export const ArrowUpRightIcon = ({ color, size = 24 }: IconProps) => (
   <Feather name="arrow-up-right" size={size} color={color} />
 )
+
+export const ChevronRightIcon = ({ color, size = 24 }: IconProps) => (
+  <Ionicons name="chevron-forward" size={size} color={color} />
+)

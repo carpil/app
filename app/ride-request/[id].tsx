@@ -1,107 +1,154 @@
-import { Text, View, StyleSheet, ScrollView } from 'react-native'
+import { Text, View, StyleSheet, ActivityIndicator } from 'react-native'
 import { formatDate } from '@utils/format-date'
-import { rideRequests } from '@utils/mocks/ride-requests'
-import { Stack, useLocalSearchParams } from 'expo-router'
+import { useLocalSearchParams } from 'expo-router'
 import Avatar from '@components/avatar'
-import ReservationButton from '@components/reservation-button'
 import Screen from '@components/screen'
 import { COLORS } from '@utils/constansts/colors'
+import { useEffect, useState } from 'react'
+import { getRideRequestById } from 'services/api/ride-request'
+import { RideRequest } from '~types/ride-request'
+import SafeScreen from '@components/safe-screen'
 
 export default function RideRequestDetails() {
   const { id } = useLocalSearchParams()
+  const rideRequestId = id as string
+  const [rideRequest, setRideRequest] = useState<RideRequest | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
-  const rideRequest = rideRequests.find((rideRequest) => rideRequest.id === id)
+  useEffect(() => {
+    const fetchRideRequest = async () => {
+      try {
+        setLoading(true)
+        const data = await getRideRequestById(rideRequestId)
+        setRideRequest(data)
+        setError(null)
+      } catch (err) {
+        setError('Error al cargar la solicitud de ride')
+        console.error('Error fetching ride request:', err)
+      } finally {
+        setLoading(false)
+      }
+    }
 
-  if (!rideRequest) {
-    return <Text>No se encontró el ride request</Text>
+    fetchRideRequest()
+  }, [rideRequestId])
+
+  if (loading) {
+    return (
+      <Screen>
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={COLORS.primary} />
+          <Text style={styles.loadingText}>
+            Cargando detalles de la solicitud...
+          </Text>
+        </View>
+      </Screen>
+    )
   }
 
-  const { creator, origin, destination, departureDate, spaces } = rideRequest
+  if (error || !rideRequest) {
+    return (
+      <Screen>
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorIcon}>🚗</Text>
+          <Text style={styles.errorTitle}>Solicitud no encontrada</Text>
+          <Text style={styles.errorMessage}>
+            {error ||
+              'La solicitud que buscas no existe o ya no está disponible.'}
+          </Text>
+        </View>
+      </Screen>
+    )
+  }
+
+  const { creator, origin, destination, departureDate } = rideRequest
 
   const { hour, date } = formatDate(departureDate)
 
   return (
-    <Screen>
-      <Stack.Screen
-        options={{
-          headerShown: true,
-          headerTintColor: COLORS.white,
-          headerStyle: {
-            backgroundColor: COLORS.primary,
-          },
-          headerTitle: 'Carpil',
-          headerBackTitle: 'Volver',
-          headerBackVisible: true,
-        }}
-      />
-      <ScrollView>
-        <View style={styles.avatarContainer}>
-          <Avatar user={creator} size={100} />
-          <Text style={styles.creatorName}>{creator.name}</Text>
+    <SafeScreen>
+      <View style={styles.pictureContainer}>
+        <Avatar user={creator} size={100} goToUserDetails={true} />
+        <Text style={styles.creatorName}>{creator.name}</Text>
+      </View>
+
+      <View style={styles.detailsContainer}>
+        <View style={styles.card}>
+          <View style={styles.routeContainer}>
+            <Text style={styles.routeText}>{origin?.name.primary}</Text>
+            <Text style={styles.arrow}>➡️</Text>
+            <Text style={styles.routeText}>{destination?.name.primary}</Text>
+          </View>
         </View>
-        <View style={styles.contentContainer}>
-          <Text style={styles.subheading}>Busca ride</Text>
+
+        <View style={styles.rowContainer}>
           <View style={styles.card}>
-            <View style={styles.routeContainer}>
-              <Text style={styles.routeText}>{origin}</Text>
-              <Text style={styles.arrow}>{'➡️'}</Text>
-              <Text style={styles.routeText}>{destination}</Text>
+            <View style={styles.infoBlock}>
+              <Text style={styles.infoTitle}>{hour}</Text>
+              <Text style={styles.infoSubtitle}>{date}</Text>
             </View>
           </View>
-          <View style={styles.detailsRow}>
-            <View style={styles.card}>
-              <View style={styles.detailContainer}>
-                <Text style={styles.largeText}>{hour}</Text>
-                <Text style={styles.secondaryText}>{date}</Text>
-              </View>
-            </View>
-            <View style={styles.card}>
-              <View style={styles.detailContainer}>
-                <Text style={styles.largeText}>{spaces}</Text>
-                <Text style={styles.secondaryText}>Espacios</Text>
-              </View>
+
+          <View style={styles.card}>
+            <View style={styles.infoBlock}>
+              <Text style={styles.infoTitle}>📍</Text>
+              <Text style={styles.infoSubtitle}>Solicitud</Text>
             </View>
           </View>
         </View>
-        <ReservationButton
-          onPress={() => console.log(`ride request ${id} pressed`)}
-        />
-      </ScrollView>
-    </Screen>
+      </View>
+    </SafeScreen>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     paddingBottom: 16,
     justifyContent: 'center',
     alignItems: 'center',
-    marginHorizontal: 'auto',
+    maxWidth: 600,
+    alignSelf: 'center',
   },
-  avatarContainer: {
+  pictureContainer: {
     padding: 12,
     alignItems: 'center',
+    gap: 8,
   },
   creatorName: {
-    color: 'black', // text-gray-950
+    color: 'black',
     fontSize: 18,
     fontWeight: 'bold',
   },
-  contentContainer: {
+  statusBadge: {
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 16,
+    backgroundColor: COLORS.primary,
+  },
+  statusText: {
+    color: COLORS.white,
+    fontSize: 12,
+    fontWeight: 'bold',
+    textTransform: 'capitalize',
+  },
+  detailsContainer: {
+    width: '100%',
     gap: 8,
   },
   subheading: {
-    color: COLORS.dark_gray, // text-gray-900
+    color: COLORS.white,
     fontSize: 16,
     textAlign: 'center',
+    fontWeight: '600',
   },
   card: {
-    backgroundColor: COLORS.dark_gray, // bg-gray-900
+    backgroundColor: COLORS.inactive_gray,
     borderRadius: 8,
     paddingVertical: 16,
     paddingHorizontal: 12,
-    flex: 1,
+    width: '100%',
   },
   routeContainer: {
     flexDirection: 'row',
@@ -119,29 +166,58 @@ const styles = StyleSheet.create({
   arrow: {
     fontSize: 24,
   },
-  detailsRow: {
+  rowContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    width: '100%',
     gap: 8,
   },
-  detailContainer: {
+  infoBlock: {
     alignItems: 'center',
-    minHeight: 64,
+    gap: 4,
+    paddingHorizontal: 12,
   },
-  largeText: {
+  infoTitle: {
     fontSize: 24,
     color: COLORS.white,
     fontWeight: 'bold',
   },
-  secondaryText: {
+  infoSubtitle: {
     fontSize: 14,
     color: COLORS.gray_400,
     textAlign: 'center',
   },
-  deletedText: {
-    fontSize: 14,
-    color: COLORS.inactive_gray,
-    marginTop: 20,
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  loadingText: {
+    marginTop: 10,
+    color: COLORS.gray_400,
+    textAlign: 'center',
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  errorIcon: {
+    fontSize: 50,
+    marginBottom: 10,
+  },
+  errorTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: COLORS.white,
+    marginBottom: 5,
+  },
+  errorMessage: {
+    fontSize: 16,
+    color: COLORS.gray_400,
+    textAlign: 'center',
+    marginTop: 5,
   },
 })

@@ -38,15 +38,30 @@ export default (config: ExpoConfig) => ({
     },
     infoPlist: {
       ITSAppUsesNonExemptEncryption: false,
-      UIBackgroundModes: ['remote-notification'],
+      UIBackgroundModes: ['remote-notification', 'location'],
+      NSLocationWhenInUseUsageDescription:
+        'Carpil needs your location to show nearby rides and provide accurate pickup and drop-off services.',
+      NSLocationAlwaysAndWhenInUseUsageDescription:
+        'Carpil needs your location to track your ride in real-time and provide navigation even when the app is in the background.',
+      NSCameraUsageDescription:
+        'Carpil needs access to your camera so you can take photos for your profile picture.',
+      NSPhotoLibraryUsageDescription:
+        'Carpil needs access to your photo library so you can select photos for your profile picture.',
     },
     googleServicesFile: './GoogleService-Info.plist',
     usesAppleSignIn: true,
+    icon: {
+      light: './assets/icons/ios-light.png',
+      dark: './assets/icons/ios-dark.png',
+      tinted: './assets/icons/ios-tinted.png',
+    },
   },
   android: {
     adaptiveIcon: {
-      foregroundImage: './assets/adaptive-icon.png',
-      backgroundColor: '#ffffff',
+      foregroundImage: './assets/icons/android-icon.png',
+      backgroundImage: './assets/icons/android-icon.png',
+      monochromeImage: './assets/icons/android-icon.png',
+      backgroundColor: '#1F2937',
     },
     config: {
       googleMaps: {
@@ -64,6 +79,7 @@ export default (config: ExpoConfig) => ({
     '@react-native-google-signin/google-signin',
     '@react-native-firebase/app',
     '@react-native-firebase/auth',
+    '@react-native-firebase/crashlytics',
     'expo-apple-authentication',
     'expo-notifications',
     'expo-image-picker',
@@ -78,6 +94,19 @@ export default (config: ExpoConfig) => ({
           gradleProperties: {
             kspVersion: '2.0.21-1.0.28',
           },
+        },
+      },
+    ],
+    [
+      'expo-splash-screen',
+      {
+        image: './assets/splash/splash-icon-light.png',
+        resizeMode: 'contain',
+        backgroundColor: '#ffffff',
+        dark: {
+          image: './assets/splash/splash-icon-dark.png',
+          resizeMode: 'contain',
+          backgroundColor: '#1F2937',
         },
       },
     ],

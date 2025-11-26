@@ -62,6 +62,36 @@ export default function CreateRideLayout() {
           ),
         }}
       />
+      <Stack.Screen
+        name="ride-type"
+        options={{
+          title: '',
+          headerStyle: {
+            backgroundColor: 'transparent',
+          },
+          headerTransparent: true,
+          headerShown: true,
+          headerLeft: () => <BackButton />,
+          headerRight: () => (
+            <CloseButton onPress={() => router.replace('/(tabs)')} />
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="ride-request-overview"
+        options={{
+          title: '',
+          headerStyle: {
+            backgroundColor: 'transparent',
+          },
+          headerTransparent: true,
+          headerShown: true,
+          headerLeft: () => <BackButton />,
+          headerRight: () => (
+            <CloseButton onPress={() => router.replace('/(tabs)')} />
+          ),
+        }}
+      />
     </Stack>
   )
 }
