@@ -2,8 +2,17 @@ import { Stack, router } from 'expo-router'
 import { COLORS } from '@utils/constansts/colors'
 import BackButton from '@components/design-system/buttons/back-button'
 import CloseButton from '@components/design-system/buttons/close-button'
+import { useContext } from 'react'
+import { SelectLocationContext } from '@context/select-location'
 
 export default function CreateRideLayout() {
+  const { reset } = useContext(SelectLocationContext)
+
+  const handleClose = () => {
+    reset()
+    router.replace('/(tabs)')
+  }
+
   return (
     <Stack
       screenOptions={{
@@ -57,9 +66,7 @@ export default function CreateRideLayout() {
           headerTransparent: true,
           headerShown: true,
           headerLeft: () => <BackButton />,
-          headerRight: () => (
-            <CloseButton onPress={() => router.replace('/(tabs)')} />
-          ),
+          headerRight: () => <CloseButton onPress={handleClose} />,
         }}
       />
       <Stack.Screen
@@ -72,9 +79,7 @@ export default function CreateRideLayout() {
           headerTransparent: true,
           headerShown: true,
           headerLeft: () => <BackButton />,
-          headerRight: () => (
-            <CloseButton onPress={() => router.replace('/(tabs)')} />
-          ),
+          headerRight: () => <CloseButton onPress={handleClose} />,
         }}
       />
       <Stack.Screen
@@ -87,9 +92,7 @@ export default function CreateRideLayout() {
           headerTransparent: true,
           headerShown: true,
           headerLeft: () => <BackButton />,
-          headerRight: () => (
-            <CloseButton onPress={() => router.replace('/(tabs)')} />
-          ),
+          headerRight: () => <CloseButton onPress={handleClose} />,
         }}
       />
     </Stack>
