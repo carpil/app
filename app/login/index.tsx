@@ -1,5 +1,6 @@
 import {
   Image,
+  Linking,
   Platform,
   Pressable,
   StyleSheet,
@@ -21,14 +22,30 @@ export default function Login() {
     router.replace('/')
   }
 
+  const handleTermsAndConditions = () => {
+    Linking.openURL('https://www.carpil.app/terms')
+  }
+  const handlePrivacyPolicy = () => {
+    Linking.openURL('https://www.carpil.app/privacy')
+  }
+
   return (
     <SafeScreen backgroundColor={COLORS.dark_gray}>
       <View style={styles.container}>
         <Image source={logo} style={styles.logo} />
         <Text style={styles.title}>¡Comienza la aventura!</Text>
-        <Text style={styles.subtitle}>
-          Inicia sesión o crea una cuenta para continuar
-        </Text>
+        <View style={styles.termsContainer}>
+          <Text style={styles.termsText}>
+            Al registrarte aceptas los{' '}
+            <Text style={styles.termsLink} onPress={handleTermsAndConditions}>
+              términos y condiciones
+            </Text>{' '}
+            y{' '}
+            <Text style={styles.termsLink} onPress={handlePrivacyPolicy}>
+              políticas de privacidad
+            </Text>
+          </Text>
+        </View>
         <View style={styles.buttons}>
           <Link href={`/login/login-email`} asChild>
             <Pressable style={styles.button}>
@@ -113,5 +130,22 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 5,
     width: '100%',
+  },
+  termsContainer: {
+    marginTop: 20,
+    paddingHorizontal: 20,
+    maxWidth: 400,
+    alignSelf: 'center',
+  },
+  termsText: {
+    fontSize: 12,
+    color: '#A0A0A0',
+    textAlign: 'center',
+    lineHeight: 18,
+  },
+  termsLink: {
+    color: COLORS.primary,
+    textDecorationLine: 'underline',
+    fontWeight: '500',
   },
 })
