@@ -1,5 +1,4 @@
 import {
-  getFirestore,
   doc,
   setDoc,
   onSnapshot,
@@ -7,6 +6,7 @@ import {
 } from '@react-native-firebase/firestore'
 import { BootstrapResponse } from '~types/responses/bootstrap'
 import { User } from '~types/user'
+import FirestoreConfig from './config'
 
 export const updateUserState = async (
   userId: string,
@@ -19,7 +19,7 @@ export const updateUserState = async (
       return
     }
 
-    const db = getFirestore()
+    const db = FirestoreConfig.getDb()
     // Update the main user document
     const userRef = doc(db, 'users', userId)
 
@@ -52,7 +52,7 @@ export const subscribeToUserDocument = (
       return () => {}
     }
 
-    const db = getFirestore()
+    const db = FirestoreConfig.getDb()
     const userDocRef = doc(db, 'users', userId)
 
     console.log('🔍 Setting up user document listener for:', userId)

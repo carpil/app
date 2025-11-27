@@ -133,12 +133,16 @@ export default function SinpeMovilPayment() {
         setBootstrap(bootstrap)
       }
 
-      Alert.alert('¡Éxito!', 'Tu pago ha sido registrado exitosamente.', [
-        {
-          text: 'OK',
-          onPress: () => router.back(),
-        },
-      ])
+      Alert.alert(
+        '¡Pago completado!',
+        'Tu pago ha sido procesado exitosamente',
+        [
+          {
+            text: 'Continuar',
+            onPress: () => router.back(),
+          },
+        ],
+      )
     } catch (error) {
       console.error('Error completing SINPE payment:', error)
       Alert.alert(

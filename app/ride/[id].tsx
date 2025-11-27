@@ -4,6 +4,7 @@ import {
   View,
   StyleSheet,
   ActivityIndicator,
+  Alert,
 } from 'react-native'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import Screen from '@components/screen'
@@ -69,24 +70,33 @@ export default function RideDetails() {
     try {
       const message = await joinRide(rideId)
       if (message) {
-        console.log('Successfully joined ride:', message)
+        Alert.alert(
+          '¡Reserva confirmada!',
+          'Tu espacio ha sido reservado exitosamente',
+        )
       } else {
-        console.log('Failed to join ride')
+        Alert.alert('Error', 'No se pudo reservar el espacio')
       }
     } catch (error) {
       console.error('Error joining ride:', error)
+      Alert.alert('Error', 'Ocurrió un error al reservar el espacio')
     }
   }
 
   const handleStartRide = async () => {
     try {
       const message = await startRide(rideId)
-      console.log({ message })
       if (message) {
-        router.push(`/ride-navigation/${rideId}`)
+        Alert.alert('¡Viaje iniciado!', 'Comienza tu aventura. ¡Buen viaje!', [
+          {
+            text: 'Continuar',
+            onPress: () => router.push(`/ride-navigation/${rideId}`),
+          },
+        ])
       }
     } catch (error) {
       console.error('Error starting ride:', error)
+      Alert.alert('Error', 'No se pudo iniciar el viaje')
     }
   }
 

@@ -1,6 +1,6 @@
 import { COLORS } from '@utils/constansts/colors'
 import { useRef, useEffect, useState } from 'react'
-import { Platform, View, StyleSheet } from 'react-native'
+import { Platform, View, StyleSheet, Alert } from 'react-native'
 import { Modalize } from 'react-native-modalize'
 import { useAuthStore } from 'store/useAuthStore'
 import DriverRating from './driver-rating'
@@ -83,10 +83,15 @@ export default function RatingsModal({ pendingReviews }: RatingsModalProps) {
         console.log(
           `✅ All ${ratingsToSave.length} rating(s) saved successfully`,
         )
+        Alert.alert(
+          '¡Gracias por tu opinión!',
+          'Tu calificación ha sido guardada',
+        )
       } else {
         console.log(
           `⚠️ Only ${successfulSaves.length}/${ratingsToSave.length} ratings saved successfully`,
         )
+        Alert.alert('Aviso', 'Algunas calificaciones no se pudieron guardar')
       }
     } catch (error) {
       console.error('❌ Error saving ratings:', error)

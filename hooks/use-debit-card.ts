@@ -64,7 +64,10 @@ export const useDebitCard = ({ ride, user }: UseDebitCardProps) => {
         Alert.alert('Pago cancelado', presentError.message)
         return new Error(presentError.message)
       } else {
-        Alert.alert('Éxito', '¡Tu pago se ha procesado exitosamente!')
+        Alert.alert(
+          '¡Pago completado!',
+          'Tu pago ha sido procesado exitosamente',
+        )
         return null
       }
     } catch (error) {

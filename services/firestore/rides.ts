@@ -1,18 +1,18 @@
 import {
-  getFirestore,
   doc,
   collection,
   onSnapshot,
   Unsubscribe,
 } from '@react-native-firebase/firestore'
 import { Ride } from '~types/ride'
+import FirestoreConfig from './config'
 
 export const subscribeToRide = (
   rideId: string,
   onUpdate: (ride: Ride | null) => void,
   onError?: (error: Error) => void,
 ): Unsubscribe => {
-  const db = getFirestore()
+  const db = FirestoreConfig.getDb()
   const rideRef = doc(db, 'rides', rideId)
 
   return onSnapshot(
@@ -46,7 +46,7 @@ export const subscribeToRides = (
   onUpdate: (rides: Ride[]) => void,
   onError?: (error: Error) => void,
 ): Unsubscribe => {
-  const db = getFirestore()
+  const db = FirestoreConfig.getDb()
   const ridesRef = collection(db, 'rides')
 
   return onSnapshot(

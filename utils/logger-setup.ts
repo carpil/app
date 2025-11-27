@@ -1,5 +1,5 @@
 import * as Sentry from '@sentry/react-native'
-import crashlytics from '@react-native-firebase/crashlytics'
+import { getCrashlytics } from '@react-native-firebase/crashlytics'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import Constants from 'expo-constants'
 import { Platform } from 'react-native'
@@ -14,9 +14,6 @@ class LoggerSetup {
   private samplingEnabled: boolean = false
   private isInitialized: boolean = false
 
-  /**
-   * Initialize the logger with global configuration
-   */
   async initialize(): Promise<void> {
     if (this.isInitialized) return
 
@@ -34,23 +31,22 @@ class LoggerSetup {
         platform: Platform.OS,
       }
 
-      // Set up sampling for production
       if (this.config.enableSampling) {
         await this.setupSampling()
       } else {
-        // In development, always enable full logging to console
         this.samplingEnabled = false
       }
 
-      // Set global tags for Sentry
       Sentry.setTag('environment', environment)
       Sentry.setTag('app_version', appVersion)
       Sentry.setTag('platform', Platform.OS)
 
-      // Set global attributes for Crashlytics
-      await crashlytics().setAttribute('environment', environment)
-      await crashlytics().setAttribute('app_version', appVersion)
-      await crashlytics().setAttribute('platform', Platform.OS)
+      const crashlytics = getCrashlytics()
+      await crashlytics.setAttributes({
+        environment,
+        app_version: appVersion,
+        platform: Platform.OS,
+      })
 
       this.isInitialized = true
     } catch (error) {
@@ -95,44 +91,42 @@ class LoggerSetup {
     }
   }
 
-  /**
-   * Set user identification in both Sentry and Crashlytics
-   */
   async setUser(
     userId: string | null,
     userEmail?: string,
     userName?: string,
   ): Promise<void> {
     try {
+      const crashlytics = getCrashlytics()
+
       if (userId) {
-        // Set user in Sentry
         Sentry.setUser({
           id: userId,
           email: userEmail,
           username: userName,
         })
 
-        // Set user in Crashlytics
-        await crashlytics().setUserId(userId)
+        await crashlytics.setUserId(userId)
+
+        const attributes: Record<string, string> = {}
         if (userEmail) {
-          await crashlytics().setAttribute('user_email', userEmail)
+          attributes.user_email = userEmail
         }
         if (userName) {
-          await crashlytics().setAttribute('user_name', userName)
+          attributes.user_name = userName
+        }
+        if (Object.keys(attributes).length > 0) {
+          await crashlytics.setAttributes(attributes)
         }
       } else {
-        // Clear user
         Sentry.setUser(null)
-        await crashlytics().setUserId('')
+        await crashlytics.setUserId('')
       }
     } catch (error) {
       console.error('Failed to set user:', error)
     }
   }
 
-  /**
-   * Add a breadcrumb for tracking user actions
-   */
   addBreadcrumb(
     message: string,
     category: string,
@@ -147,47 +141,32 @@ class LoggerSetup {
         timestamp: Date.now() / 1000,
       })
 
-      // Crashlytics also supports breadcrumbs via log
-      crashlytics().log(`[${category}] ${message}`)
+      const crashlytics = getCrashlytics()
+      crashlytics.log(`[${category}] ${message}`)
     } catch (error) {
       console.error('Failed to add breadcrumb:', error)
     }
   }
 
-  /**
-   * Check if full logging should be enabled for this session
-   * In development: returns false (console only)
-   * In production: returns true if this session is sampled OR for WARN/ERROR levels
-   */
   shouldSendToServices(level: 'debug' | 'info' | 'warning' | 'error'): boolean {
-    // Development: never send to services
     if (this.config?.isDevelopment) {
       return false
     }
 
-    // Production: always send WARN and ERROR
     if (level === 'warning' || level === 'error') {
       return true
     }
 
-    // Production: send DEBUG and INFO only if sampled
     return this.samplingEnabled
   }
 
-  /**
-   * Get current configuration
-   */
   getConfig(): LoggerConfig | null {
     return this.config
   }
 
-  /**
-   * Check if logger is initialized
-   */
   isReady(): boolean {
     return this.isInitialized
   }
 }
 
-// Export singleton instance
 export const loggerSetup = new LoggerSetup()

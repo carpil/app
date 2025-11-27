@@ -7,7 +7,7 @@ import { isAfter } from '@formkit/tempo'
 import { Modalize } from 'react-native-modalize'
 import { router } from 'expo-router'
 import { SelectLocationContext } from '@context/select-location'
-import { View, StyleSheet, Platform, Text } from 'react-native'
+import { View, StyleSheet, Platform, Text, Alert } from 'react-native'
 import PassengersPill from '@components/create-ride-modal/passengers'
 import PricePill from '@components/create-ride-modal/price'
 import SchedulePill from '@components/create-ride-modal/schedule'
@@ -61,7 +61,13 @@ export default function RideOverview() {
     if (!ride) {
       return
     }
-    router.replace('/(tabs)')
+
+    Alert.alert('¡Viaje creado!', 'Tu viaje ha sido publicado exitosamente', [
+      {
+        text: 'Continuar',
+        onPress: () => router.replace('/(tabs)'),
+      },
+    ])
   }
 
   useEffect(() => {

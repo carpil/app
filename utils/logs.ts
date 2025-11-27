@@ -1,5 +1,5 @@
 import * as Sentry from '@sentry/react-native'
-import crashlytics from '@react-native-firebase/crashlytics'
+import { getCrashlytics } from '@react-native-firebase/crashlytics'
 import { useAuthStore } from 'store/useAuthStore'
 import { loggerSetup } from './logger-setup'
 import {
@@ -22,14 +22,12 @@ function buildLogContext(options?: LogOptions): LogContext {
     platform: config?.platform,
   }
 
-  // Add user information if available
   if (user) {
     context.userId = user.id
     context.userEmail = user.email
     context.userName = user.name
   }
 
-  // Add optional context from options
   if (options?.screen) {
     context.screen = options.screen
   }
@@ -45,9 +43,6 @@ function buildLogContext(options?: LogOptions): LogContext {
   return context
 }
 
-/**
- * Format log message for console output
- */
 function formatConsoleMessage(
   level: LogLevel,
   message: string,
@@ -77,9 +72,6 @@ function formatConsoleMessage(
   return parts.join(' ')
 }
 
-/**
- * Send log to Sentry with full context
- */
 function sendToSentry(
   level: LogLevel,
   message: string,
@@ -88,7 +80,6 @@ function sendToSentry(
 ): void {
   try {
     if (error && error instanceof Error) {
-      // For actual errors, capture exception
       Sentry.captureException(error, {
         level,
         tags: {
@@ -100,7 +91,6 @@ function sendToSentry(
         },
       })
     } else {
-      // For messages, capture message with context
       Sentry.captureMessage(message, {
         level,
         tags: {
@@ -117,9 +107,6 @@ function sendToSentry(
   }
 }
 
-/**
- * Send log to Firebase Crashlytics
- */
 function sendToCrashlytics(
   level: LogLevel,
   message: string,
@@ -127,26 +114,23 @@ function sendToCrashlytics(
   error?: Error | unknown,
 ): void {
   try {
+    const crashlytics = getCrashlytics()
     const logMessage = `[${level.toUpperCase()}] ${message} ${JSON.stringify({
       screen: context.screen,
       action: context.action,
       userId: context.userId,
     })}`
 
-    crashlytics().log(logMessage)
+    crashlytics.log(logMessage)
 
-    // If it's an error, also record it as a non-fatal error
     if (error && error instanceof Error) {
-      crashlytics().recordError(error)
+      crashlytics.recordError(error)
     }
   } catch (err) {
     console.error('Failed to send to Crashlytics:', err)
   }
 }
 
-/**
- * Core logging function
- */
 export function log(
   level: LogLevel,
   message: string,
@@ -156,7 +140,6 @@ export function log(
     const context = buildLogContext(options)
     const consoleMessage = formatConsoleMessage(level, message, context)
 
-    // Always log to console
     switch (level) {
       case LogLevel.DEBUG:
         console.debug(consoleMessage, context.metadata || '')
@@ -172,61 +155,38 @@ export function log(
         break
     }
 
-    // Check if we should send to external services
     if (loggerSetup.shouldSendToServices(level)) {
       sendToSentry(level, message, context, options?.error)
       sendToCrashlytics(level, message, context, options?.error)
     }
   } catch (error) {
-    // Never let logging crash the app
     console.error('Logger failed:', error)
   }
 }
 
-/**
- * Main logger instance
- */
 export const logger: Logger = {
-  /**
-   * Debug level logging - for development troubleshooting
-   */
   debug(message: string, options?: LogOptions): void {
     log(LogLevel.DEBUG, message, options)
   },
 
-  /**
-   * Info level logging - for general information
-   */
   info(message: string, options?: LogOptions): void {
     log(LogLevel.INFO, message, options)
   },
 
-  /**
-   * Warning level logging - for concerning but non-critical issues
-   */
   warn(message: string, options?: LogOptions): void {
     log(LogLevel.WARN, message, options)
   },
 
-  /**
-   * Error level logging - for errors that need attention
-   */
   error(message: string, options?: LogOptions): void {
     log(LogLevel.ERROR, message, options)
   },
 
-  /**
-   * Exception logging - specifically for caught exceptions
-   */
   exception(error: Error | unknown, options?: LogOptions): void {
     const message =
       error instanceof Error ? error.message : 'Unknown error occurred'
     log(LogLevel.ERROR, message, { ...options, error })
   },
 
-  /**
-   * Start a performance span for tracking operations
-   */
   startSpan(
     operation: string,
     description?: string,
@@ -235,20 +195,17 @@ export const logger: Logger = {
     const startTime = Date.now()
 
     try {
-      // Log start in Crashlytics
-      crashlytics().log(
+      const crashlytics = getCrashlytics()
+      crashlytics.log(
         `[SPAN_START] ${operation}: ${description || ''} ${JSON.stringify(data || {})}`,
       )
 
-      // Start Sentry span
       Sentry.startSpan(
         {
           name: description || operation,
           op: operation,
         },
-        () => {
-          // Span is active within this callback
-        },
+        () => {},
       )
     } catch (error) {
       console.error('Failed to start span:', error)
@@ -257,14 +214,13 @@ export const logger: Logger = {
     return {
       finish(finishData?: LogMetadata): void {
         try {
+          const crashlytics = getCrashlytics()
           const duration = Date.now() - startTime
 
-          // Log completion in Crashlytics
-          crashlytics().log(
+          crashlytics.log(
             `[SPAN_END] ${operation} (${duration}ms) ${JSON.stringify(finishData || {})}`,
           )
 
-          // Add breadcrumb for the completed operation
           logger.addBreadcrumb(`${operation} completed`, 'performance', {
             ...data,
             ...finishData,
@@ -277,29 +233,18 @@ export const logger: Logger = {
     }
   },
 
-  /**
-   * Set user identification
-   */
   setUser(userId: string | null, userEmail?: string, userName?: string): void {
     loggerSetup.setUser(userId, userEmail, userName)
   },
 
-  /**
-   * Add a breadcrumb for user action tracking
-   */
   addBreadcrumb(message: string, category: string, data?: LogMetadata): void {
     loggerSetup.addBreadcrumb(message, category, data)
   },
 }
 
-/**
- * Initialize the logger system
- * Should be called once at app startup
- */
 export async function initializeLogger(): Promise<void> {
   await loggerSetup.initialize()
 }
 
-// Export types for convenience
 export type { Logger, LogOptions, LogContext, LogSpan, LogMetadata }
 export { LogLevel }
