@@ -16,15 +16,13 @@ const TODAY = new Date()
 const TEN_MINUTES = 10 * 60000
 
 export default function RideRequestOverview() {
-  const { origin, destination, meetingPoint } = useContext(
-    SelectLocationContext,
-  )
+  const { origin, destination, reset } = useContext(SelectLocationContext)
   const modalizeRef = useRef<Modalize>(null)
   const [date, setDate] = useState<Date>(new Date(Date.now() + TEN_MINUTES))
   const [minDate, setMinDate] = useState(TODAY)
 
   const handleSearchRide = async () => {
-    if (!origin || !destination || !meetingPoint) {
+    if (!origin || !destination) {
       return
     }
 
@@ -40,12 +38,15 @@ export default function RideRequestOverview() {
     }
 
     Alert.alert(
-      '¡Solicitud enviada!',
-      'Te notificaremos cuando encontremos un conductor',
+      '¡Nueva búsqueda creada!',
+      'Tu solicitud ha sido creada exitosamente',
       [
         {
           text: 'Continuar',
-          onPress: () => router.push('/(tabs)'),
+          onPress: () => {
+            reset()
+            router.push('/(tabs)')
+          },
         },
       ],
     )
@@ -59,17 +60,13 @@ export default function RideRequestOverview() {
     return () => clearInterval(interval)
   }, [])
 
-  if (!origin || !destination || !meetingPoint) {
+  if (!origin || !destination) {
     return null
   }
 
   return (
     <View style={styles.container}>
-      <Map
-        origin={origin}
-        destination={destination}
-        meetingPoint={meetingPoint}
-      />
+      <Map origin={origin} destination={destination} />
 
       <Modalize
         ref={modalizeRef}

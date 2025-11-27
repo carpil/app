@@ -22,7 +22,7 @@ export default function RideType() {
     setSelectedType(type)
   }
 
-  if (!origin || !destination || !meetingPoint) {
+  if (!origin || !destination) {
     return null
   }
 
@@ -35,7 +35,11 @@ export default function RideType() {
   }
   return (
     <View style={styles.container}>
-      <Map origin={origin} destination={destination} />
+      <Map
+        origin={origin}
+        destination={destination}
+        meetingPoint={meetingPoint ?? undefined}
+      />
 
       <Modalize
         ref={modalizeRef}

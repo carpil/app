@@ -20,7 +20,7 @@ const TODAY = new Date()
 const TEN_MINUTES = 10 * 60000
 
 export default function RideOverview() {
-  const { origin, destination, meetingPoint } = useContext(
+  const { origin, destination, meetingPoint, reset } = useContext(
     SelectLocationContext,
   )
 
@@ -65,7 +65,10 @@ export default function RideOverview() {
     Alert.alert('¡Viaje creado!', 'Tu viaje ha sido publicado exitosamente', [
       {
         text: 'Continuar',
-        onPress: () => router.replace('/(tabs)'),
+        onPress: () => {
+          reset()
+          router.replace('/(tabs)')
+        },
       },
     ])
   }
