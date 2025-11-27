@@ -90,6 +90,8 @@ export default (config: ExpoConfig) => ({
           useFrameworks: 'static',
         },
         android: {
+          compileSdkVersion: 35,
+          targetSdkVersion: 35,
           kotlinVersion: '2.0.21',
           gradleProperties: {
             kspVersion: '2.0.21-1.0.28',
