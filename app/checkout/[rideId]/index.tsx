@@ -80,11 +80,21 @@ export default function Checkout() {
         console.log(
           `✅ All ${ratingsToSave.length} rating(s) saved successfully`,
         )
-        router.replace('/(tabs)')
+        Alert.alert(
+          '¡Gracias por tu opinión!',
+          'Tu calificación ha sido guardada',
+          [
+            {
+              text: 'Continuar',
+              onPress: () => router.replace('/(tabs)'),
+            },
+          ],
+        )
       } else {
         console.log(
           `⚠️ Only ${successfulSaves.length}/${ratingsToSave.length} ratings saved successfully`,
         )
+        Alert.alert('Aviso', 'Algunas calificaciones no se pudieron guardar')
       }
     } catch (error) {
       console.error('❌ Error saving ratings:', error)

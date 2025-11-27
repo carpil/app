@@ -3,6 +3,7 @@ import {
   signInWithCredential,
   AppleAuthProvider,
 } from '@react-native-firebase/auth'
+import { Alert } from 'react-native'
 import { socialLogin } from 'services/api/auth'
 import { User } from '~types/user'
 import * as AppleAuthentication from 'expo-apple-authentication'
@@ -47,6 +48,7 @@ export const handleAppleLogin = async () => {
 
       if (userResponse != null) {
         loginStore(userResponse, firebaseIdToken)
+        Alert.alert('¡Bienvenido de vuelta!', 'Sesión iniciada exitosamente')
       }
     } catch (error) {
       console.log('error', error)

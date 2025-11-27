@@ -1,4 +1,4 @@
-import { Platform } from 'react-native'
+import { Platform, Alert } from 'react-native'
 import {
   isErrorWithCode,
   statusCodes,
@@ -45,6 +45,7 @@ const handleSignInSuccess = async (idToken: string) => {
 
   if (userResponse != null) {
     loginStore(userResponse, firebaseIdToken)
+    Alert.alert('¡Bienvenido de vuelta!', 'Sesión iniciada exitosamente')
   }
 }
 
