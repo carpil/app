@@ -35,11 +35,7 @@ export default function RideType() {
   }
   return (
     <View style={styles.container}>
-      <Map
-        origin={origin}
-        destination={destination}
-        meetingPoint={meetingPoint}
-      />
+      <Map origin={origin} destination={destination} />
 
       <Modalize
         ref={modalizeRef}
