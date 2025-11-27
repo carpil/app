@@ -16,13 +16,11 @@ export const useRealtimeRide = (rideId: string) => {
         setLoading(true)
         setError(null)
 
-        // First, fetch the initial ride data
         const initialRide = await getRide(rideId)
         if (initialRide) {
           setRide(initialRide)
         }
 
-        // Then set up real-time listener
         unsubscribe = subscribeToRide(
           rideId,
           (updatedRide) => {
