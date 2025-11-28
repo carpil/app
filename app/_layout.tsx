@@ -11,10 +11,13 @@ import * as Sentry from '@sentry/react-native'
 import { initializeLogger } from '@utils/logs'
 import { logger } from '@utils/logs'
 
-const environment = (process.env as any).APP_VARIANT ?? 'development'
+const environment =
+  (process.env as any).EXPO_PUBLIC_ENVIRONMENT ?? 'development'
+
+const sentryDsn = (process.env as any).EXPO_PUBLIC_SENTRY_DSN ?? ''
 
 Sentry.init({
-  dsn: (process.env as any).EXPO_PUBLIC_SENTRY_DSN || undefined,
+  dsn: sentryDsn,
   replaysSessionSampleRate: 0.8,
   replaysOnErrorSampleRate: 1.0,
   environment,

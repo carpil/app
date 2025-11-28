@@ -3,11 +3,14 @@ import { getCrashlytics } from '@react-native-firebase/crashlytics'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import Constants from 'expo-constants'
 import { Platform } from 'react-native'
-import { LoggerConfig } from '~types/logger'
+import { LoggerConfig, LogLevel } from '~types/logger'
 
 const SAMPLING_KEY = '@logger_sampling_enabled'
 const SESSION_START_KEY = '@logger_session_start'
-const SESSION_DURATION = 24 * 60 * 60 * 1000 // 24 hours
+const SESSION_DURATION = 24 * 60 * 60 * 1000
+
+const environment =
+  (process.env as any).EXPO_PUBLIC_ENVIRONMENT ?? 'development'
 
 class LoggerSetup {
   private config: LoggerConfig | null = null
@@ -18,9 +21,8 @@ class LoggerSetup {
     if (this.isInitialized) return
 
     try {
-      const isDevelopment = __DEV__
-      const appVersion = Constants.expoConfig?.version || '1.0.0'
-      const environment = isDevelopment ? 'development' : 'production'
+      const isDevelopment = environment === 'development'
+      const appVersion = Constants.expoConfig?.version ?? '1.0.0'
 
       this.config = {
         enableSampling: !isDevelopment, // Only enable sampling in production
@@ -148,12 +150,12 @@ class LoggerSetup {
     }
   }
 
-  shouldSendToServices(level: 'debug' | 'info' | 'warning' | 'error'): boolean {
+  shouldSendToServices(level: LogLevel): boolean {
     if (this.config?.isDevelopment) {
       return false
     }
 
-    if (level === 'warning' || level === 'error') {
+    if (level === LogLevel.WARN || level === LogLevel.ERROR) {
       return true
     }
 
