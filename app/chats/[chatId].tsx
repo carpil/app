@@ -6,9 +6,9 @@ import {
   TextInput,
   Platform,
   TouchableOpacity,
-  Alert,
   ActivityIndicator,
 } from 'react-native'
+import { StyledAlert } from '@components/styled-alert'
 import { SendIcon } from '@components/icons'
 import { ChatResponse } from '~types/responses/chat'
 import { COLORS } from '@utils/constansts/colors'
@@ -170,7 +170,7 @@ export default function Messages() {
   const handleSendMessage = async () => {
     const data = await sendMessage(chatId as string, message)
     if (data == null) {
-      Alert.alert('Error', 'Error al enviar el mensaje')
+      StyledAlert.alert('Error', 'Error al enviar el mensaje')
       return
     }
 

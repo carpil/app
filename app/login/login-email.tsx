@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react'
-import { StyleSheet, Text, Alert } from 'react-native'
+import { StyleSheet, Text } from 'react-native'
 import { COLORS } from '@utils/constansts/colors'
+import { StyledAlert } from '@components/styled-alert'
 import { Controller, useForm } from 'react-hook-form'
 import { Pressable, TextInput, View } from 'react-native'
 import SafeScreen from '@components/safe-screen'
@@ -77,7 +78,7 @@ export default function LoginEmail() {
       const userResponse = await login({ user })
       if (userResponse != null) {
         loginStore(userResponse, userToken)
-        Alert.alert('¡Bienvenido de vuelta!', 'Sesión iniciada exitosamente')
+        StyledAlert.alert('¡Bienvenido de vuelta!', 'Sesión iniciada exitosamente')
       }
     } catch (error: any) {
       if (error.code === 'auth/invalid-credential') {
@@ -112,7 +113,7 @@ export default function LoginEmail() {
 
           if (userResponse != null) {
             loginStore(userResponse, userToken)
-            Alert.alert('¡Bienvenido!', 'Cuenta creada exitosamente')
+            StyledAlert.alert('¡Bienvenido!', 'Cuenta creada exitosamente')
           }
         } catch (createError: any) {
           console.error('Error creating user:', createError)

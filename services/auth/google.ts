@@ -1,4 +1,5 @@
-import { Platform, Alert } from 'react-native'
+import { Platform } from 'react-native'
+import { StyledAlert } from '@components/styled-alert'
 import {
   isErrorWithCode,
   statusCodes,
@@ -45,7 +46,7 @@ const handleSignInSuccess = async (idToken: string) => {
 
   if (userResponse != null) {
     loginStore(userResponse, firebaseIdToken)
-    Alert.alert('¡Bienvenido de vuelta!', 'Sesión iniciada exitosamente')
+    StyledAlert.alert('¡Bienvenido de vuelta!', 'Sesión iniciada exitosamente')
   }
 }
 
