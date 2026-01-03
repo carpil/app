@@ -158,6 +158,28 @@ export const joinRide = async (id: string) => {
   return message
 }
 
+export const unjoinRide = async (id: string) => {
+  const token = useAuthStore.getState().token
+  const response = await fetch(`${API_URL}/rides/${id}/un-join`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+  })
+
+  if (!response.ok) {
+    const error = await response.json()
+    console.log({ status: response.status, error })
+    return null
+  }
+
+  const data = (await response.json()) as DefaultResponse
+  const { message } = data
+
+  return message
+}
+
 export const startRide = async (id: string) => {
   const token = useAuthStore.getState().token
   const response = await fetch(`${API_URL}/rides/${id}/start`, {
