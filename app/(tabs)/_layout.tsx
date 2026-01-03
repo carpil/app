@@ -1,4 +1,4 @@
-import { Text, StyleSheet, View, Platform } from 'react-native'
+import { Text, StyleSheet, View } from 'react-native'
 import { CarIcon, MessagesIcon, ProfileIcon } from '@components/icons'
 import { COLORS } from '@utils/constansts/colors'
 import { Tabs } from 'expo-router'
@@ -19,7 +19,7 @@ const HeaderTitle = ({
     <View
       style={{
         backgroundColor: color,
-        paddingTop: (Platform.OS === 'ios' ? insets.top : 0) + 16,
+        paddingTop: insets.top + 16,
         paddingBottom: 10,
         paddingHorizontal: 16,
       }}
