@@ -6,6 +6,7 @@ import {
 } from 'react-native-google-places-autocomplete'
 import { Location } from '~types/location'
 import { COLORS } from '@utils/constansts/colors'
+import { logger } from '@utils/logs'
 
 const GOOGLE_MAPS_API_KEY = process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY ?? ''
 
@@ -53,6 +54,14 @@ export default function PlacesAutocomplete({
   onPress,
   onFail,
 }: Props) {
+  const handleFail = (error: any) => {
+    logger.error('Google Places Autocomplete failed', {
+      action: 'places_autocomplete_failed',
+      metadata: { error: error?.message || 'Unknown error', queryType },
+    })
+    onFail?.(error)
+  }
+
   return (
     <GooglePlacesAutocomplete
       fetchDetails
@@ -84,8 +93,14 @@ export default function PlacesAutocomplete({
         }
         onPress(location)
       }}
-      onFail={onFail}
+      onFail={handleFail}
       styles={{
+        container: {
+          flex: 0,
+        },
+        listView: {
+          backgroundColor: COLORS.dark_gray,
+        },
         textInput: {
           backgroundColor: COLORS.inactive_gray,
           color: 'white',
