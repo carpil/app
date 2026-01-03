@@ -6,8 +6,8 @@ import {
   StyleSheet,
   Text,
   Pressable,
-  Alert,
 } from 'react-native'
+import { StyledAlert } from '@components/styled-alert'
 import { Modalize } from 'react-native-modalize'
 import { RideInfo } from '~types/responses/bootstrap'
 import { formatCRC } from '@utils/currency'
@@ -65,7 +65,7 @@ export default function CheckoutModal({ pendingPayment }: CheckoutModalProps) {
       try {
         const result = await handlePayment()
         if (result instanceof Error) {
-          Alert.alert('Error', result.message)
+          StyledAlert.alert('Error', result.message)
           return
         }
 
@@ -78,7 +78,7 @@ export default function CheckoutModal({ pendingPayment }: CheckoutModalProps) {
         }
       } catch (error) {
         console.error('Error processing payment:', error)
-        Alert.alert('Error', 'Ocurrió un error al procesar el pago.')
+        StyledAlert.alert('Error', 'Ocurrió un error al procesar el pago.')
       }
     }
   }

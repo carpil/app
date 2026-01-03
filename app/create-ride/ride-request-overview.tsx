@@ -2,7 +2,8 @@ import { useContext, useEffect, useRef, useState } from 'react'
 import { COLORS } from '@utils/constansts/colors'
 import { Modalize } from 'react-native-modalize'
 import { SelectLocationContext } from '@context/select-location'
-import { View, StyleSheet, Platform, Text, Alert } from 'react-native'
+import { View, StyleSheet, Platform, Text } from 'react-native'
+import { StyledAlert } from '@components/styled-alert'
 import { LocationIcon } from '@components/icons'
 import ActionButton from '@components/design-system/buttons/action-button'
 import Map from '@components/design-system/maps/map'
@@ -37,7 +38,7 @@ export default function RideRequestOverview() {
       return
     }
 
-    Alert.alert(
+    StyledAlert.alert(
       '¡Nueva búsqueda creada!',
       'Tu solicitud ha sido creada exitosamente',
       [

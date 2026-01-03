@@ -4,8 +4,8 @@ import {
   View,
   StyleSheet,
   ActivityIndicator,
-  Alert,
 } from 'react-native'
+import { StyledAlert } from '@components/styled-alert'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import Screen from '@components/screen'
 import Avatar from '@components/avatar'
@@ -70,16 +70,16 @@ export default function RideDetails() {
     try {
       const message = await joinRide(rideId)
       if (message) {
-        Alert.alert(
+        StyledAlert.alert(
           '¡Reserva confirmada!',
           'Tu espacio ha sido reservado exitosamente',
         )
       } else {
-        Alert.alert('Error', 'No se pudo reservar el espacio')
+        StyledAlert.alert('Error', 'No se pudo reservar el espacio')
       }
     } catch (error) {
       console.error('Error joining ride:', error)
-      Alert.alert('Error', 'Ocurrió un error al reservar el espacio')
+      StyledAlert.alert('Error', 'Ocurrió un error al reservar el espacio')
     }
   }
 
@@ -87,7 +87,7 @@ export default function RideDetails() {
     try {
       const message = await startRide(rideId)
       if (message) {
-        Alert.alert('¡Viaje iniciado!', 'Comienza tu aventura. ¡Buen viaje!', [
+        StyledAlert.alert('¡Viaje iniciado!', 'Comienza tu aventura. ¡Buen viaje!', [
           {
             text: 'Continuar',
             onPress: () => router.push(`/ride-navigation/${rideId}`),
@@ -96,7 +96,7 @@ export default function RideDetails() {
       }
     } catch (error) {
       console.error('Error starting ride:', error)
-      Alert.alert('Error', 'No se pudo iniciar el viaje')
+      StyledAlert.alert('Error', 'No se pudo iniciar el viaje')
     }
   }
 

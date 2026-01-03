@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Alert } from 'react-native'
+import { StyledAlert } from '@components/styled-alert'
 import {
   initPaymentSheet,
   presentPaymentSheet,
@@ -40,7 +40,7 @@ export const useDebitCard = ({ ride, user }: UseDebitCardProps) => {
       })
 
       if (!paymentData || !paymentData.clientSecret) {
-        Alert.alert('Error', 'No se pudo crear el pago. Intenta nuevamente.')
+        StyledAlert.alert('Error', 'No se pudo crear el pago. Intenta nuevamente.')
         return new Error('No se pudo crear el pago. Intenta nuevamente.')
       }
 
@@ -53,7 +53,7 @@ export const useDebitCard = ({ ride, user }: UseDebitCardProps) => {
       })
 
       if (initError) {
-        Alert.alert('Error', initError.message)
+        StyledAlert.alert('Error', initError.message)
         return new Error(initError.message)
       }
 
@@ -61,10 +61,10 @@ export const useDebitCard = ({ ride, user }: UseDebitCardProps) => {
       const { error: presentError } = await presentPaymentSheet()
 
       if (presentError) {
-        Alert.alert('Pago cancelado', presentError.message)
+        StyledAlert.alert('Pago cancelado', presentError.message)
         return new Error(presentError.message)
       } else {
-        Alert.alert(
+        StyledAlert.alert(
           '¡Pago completado!',
           'Tu pago ha sido procesado exitosamente',
         )
@@ -72,7 +72,7 @@ export const useDebitCard = ({ ride, user }: UseDebitCardProps) => {
       }
     } catch (error) {
       console.error('Payment error:', error)
-      Alert.alert('Error', 'Ocurrió un error al procesar el pago.')
+      StyledAlert.alert('Error', 'Ocurrió un error al procesar el pago.')
       return new Error('Ocurrió un error al procesar el pago.')
     } finally {
       setIsPaymentProcessing(false)

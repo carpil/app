@@ -4,6 +4,7 @@ import LocationProvider from '@context/select-location'
 import { StripeProvider } from '@stripe/stripe-react-native'
 import { useAuthStore } from 'store/useAuthStore'
 import { logger } from '@utils/logs'
+import { StyledAlertProvider } from '@components/styled-alert'
 
 interface Props {
   children: React.ReactNode
@@ -48,8 +49,10 @@ export default function AppProviders({ children }: Props) {
     <StripeProvider publishableKey={STRIPE_PUBLISHABLE_KEY}>
       <LocationProvider>
         <NotificationProvider>
-          <LoggerAuthSync />
-          {children}
+          <StyledAlertProvider>
+            <LoggerAuthSync />
+            {children}
+          </StyledAlertProvider>
         </NotificationProvider>
       </LocationProvider>
     </StripeProvider>

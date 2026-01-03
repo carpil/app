@@ -1,4 +1,5 @@
-import { Text, View, StyleSheet, Pressable, Alert } from 'react-native'
+import { Text, View, StyleSheet, Pressable } from 'react-native'
+import { StyledAlert } from '@components/styled-alert'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import SafeScreen from '@components/safe-screen'
 import { useEffect, useState } from 'react'
@@ -43,7 +44,7 @@ export default function Checkout() {
     } else if (paymentMethod === PaymentMethod.DEBIT_CARD) {
       const result = await handlePayment()
       if (result instanceof Error) {
-        Alert.alert('Error', result.message)
+        StyledAlert.alert('Error', result.message)
         return
       }
       router.replace('/(tabs)')
@@ -80,7 +81,7 @@ export default function Checkout() {
         console.log(
           `✅ All ${ratingsToSave.length} rating(s) saved successfully`,
         )
-        Alert.alert(
+        StyledAlert.alert(
           '¡Gracias por tu opinión!',
           'Tu calificación ha sido guardada',
           [
@@ -94,7 +95,7 @@ export default function Checkout() {
         console.log(
           `⚠️ Only ${successfulSaves.length}/${ratingsToSave.length} ratings saved successfully`,
         )
-        Alert.alert('Aviso', 'Algunas calificaciones no se pudieron guardar')
+        StyledAlert.alert('Aviso', 'Algunas calificaciones no se pudieron guardar')
       }
     } catch (error) {
       console.error('❌ Error saving ratings:', error)

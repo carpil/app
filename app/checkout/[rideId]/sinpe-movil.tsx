@@ -4,8 +4,8 @@ import {
   StyleSheet,
   TouchableOpacity,
   Image,
-  Alert,
 } from 'react-native'
+import { StyledAlert } from '@components/styled-alert'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import SafeScreen from '@components/safe-screen'
 import { COLORS } from '@utils/constansts/colors'
@@ -95,7 +95,7 @@ export default function SinpeMovilPayment() {
 
   const handleFinish = async () => {
     if (!paymentImage || !ride || !user) {
-      Alert.alert('Error', 'Por favor sube un comprobante de pago.')
+      StyledAlert.alert('Error', 'Por favor sube un comprobante de pago.')
       return
     }
 
@@ -120,7 +120,7 @@ export default function SinpeMovilPayment() {
       })
 
       if (!response || !response.success) {
-        Alert.alert(
+        StyledAlert.alert(
           'Error',
           'No se pudo completar el pago. Intenta nuevamente.',
         )
@@ -133,7 +133,7 @@ export default function SinpeMovilPayment() {
         setBootstrap(bootstrap)
       }
 
-      Alert.alert(
+      StyledAlert.alert(
         '¡Pago completado!',
         'Tu pago ha sido procesado exitosamente',
         [
@@ -145,7 +145,7 @@ export default function SinpeMovilPayment() {
       )
     } catch (error) {
       console.error('Error completing SINPE payment:', error)
-      Alert.alert(
+      StyledAlert.alert(
         'Error',
         error instanceof Error
           ? error.message
