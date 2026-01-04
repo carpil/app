@@ -3,7 +3,7 @@ import { format } from '@formkit/tempo'
 export const formatDate = (dateTime: Date) => {
   const hour = format({
     date: dateTime,
-    format: 'hh:mm a',
+    format: 'hh:mm aa',
     tz: 'America/Costa_Rica',
   })
 
