@@ -18,6 +18,7 @@ import { User } from '~types/user'
 import ActionButton from '@components/design-system/buttons/action-button'
 import Map from '@components/design-system/maps/map'
 import { useAuthStore } from 'store/useAuthStore'
+import { logger } from '@utils/logs'
 
 export default function RideNavigationScreen() {
   const { rideId } = useLocalSearchParams<{ rideId: string }>()
@@ -32,7 +33,10 @@ export default function RideNavigationScreen() {
         router.replace('/checkout/' + rideId)
       }
     } catch (error) {
-      console.error('Error finishing ride:', error)
+      logger.exception(error, {
+        action: 'complete_ride_error',
+        metadata: { rideId },
+      })
     }
   }
 
@@ -40,8 +44,20 @@ export default function RideNavigationScreen() {
     const fetchRide = async () => {
       const ride = await getRide(rideId)
       if (ride == null) {
+        logger.error('Failed to load ride for navigation', {
+          action: 'ride_navigation_load_failed',
+          metadata: { rideId },
+        })
         return
       }
+      logger.info('Ride navigation loaded successfully', {
+        action: 'ride_navigation_loaded',
+        metadata: {
+          rideId,
+          passengerCount: ride.passengers.length,
+          hasDriver: !!ride.driver,
+        },
+      })
       setRide(ride)
     }
     fetchRide()
@@ -72,8 +88,6 @@ export default function RideNavigationScreen() {
             Platform.OS === 'ios' ? 450 + driverOffset : 200 + driverOffset
           }
           avoidKeyboardLikeIOS={true}
-          disableScrollIfPossible={true}
-          scrollViewProps={{ scrollEnabled: false }}
         >
           <View>
             {/* Ride Details */}
