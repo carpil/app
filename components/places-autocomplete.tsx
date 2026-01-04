@@ -69,6 +69,7 @@ export default function PlacesAutocomplete({
       enablePoweredByContainer={false}
       placeholder={placeholder}
       minLength={2}
+      keyboardShouldPersistTaps="handled"
       query={{
         key: GOOGLE_MAPS_API_KEY,
         language: 'es',
@@ -91,6 +92,14 @@ export default function PlacesAutocomplete({
             lng: detail?.geometry.location.lng,
           },
         }
+        logger.info('Location selected from autocomplete', {
+          action: 'location_selected_success',
+          metadata: {
+            placeId: data.place_id,
+            name: data.structured_formatting.main_text,
+            queryType,
+          },
+        })
         onPress(location)
       }}
       onFail={handleFail}
