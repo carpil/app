@@ -94,6 +94,7 @@ export default function PlacesAutocomplete({
         onPress(location)
       }}
       onFail={handleFail}
+      renderRightButton={() => null}
       styles={{
         container: {
           flex: 0,
@@ -111,6 +112,9 @@ export default function PlacesAutocomplete({
         },
         separator: {
           height: 0,
+        },
+        loader: {
+          display: 'none',
         },
       }}
       textInputProps={{
