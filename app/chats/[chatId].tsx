@@ -29,6 +29,7 @@ import { FirestoreMessage, MessageBubble } from '~types/message'
 import { useAuthStore } from 'store/useAuthStore'
 import { decryptMessage } from '@utils/decrypt-message'
 import MessageBubbleComponent from '@components/chats/message-bubble'
+import { logger } from '@utils/logs'
 
 export default function Messages() {
   const [chat, setChat] = useState<ChatResponse | null>(null)
@@ -126,7 +127,12 @@ export default function Messages() {
         return unsubscribe
       } catch (err) {
         setError('No se encontró el chat')
-        console.error('Error fetching chat:', err)
+        logger.exception(err, {
+          action: 'fetch_chat_error',
+          metadata: {
+            chatId: chatId as string,
+          },
+        })
         return null
       } finally {
         setLoading(false)
@@ -168,13 +174,43 @@ export default function Messages() {
   }
 
   const handleSendMessage = async () => {
-    const data = await sendMessage(chatId as string, message)
-    if (data == null) {
-      Alert.alert('Error', 'Error al enviar el mensaje')
+    if (!message.trim()) {
       return
     }
 
-    setMessage('')
+    const messageToSend = message.trim()
+    
+    try {
+      const data = await sendMessage(chatId as string, messageToSend)
+      if (data == null) {
+        logger.error('Failed to send message in chat', {
+          action: 'chat_send_message_failed',
+          metadata: {
+            chatId: chatId as string,
+            messageLength: messageToSend.length,
+          },
+        })
+        Alert.alert('Error', 'Error al enviar el mensaje')
+        return
+      }
+
+      setMessage('')
+      
+      logger.info('Message sent successfully in chat', {
+        action: 'chat_send_message_success',
+        metadata: {
+          chatId: chatId as string,
+        },
+      })
+    } catch (error) {
+      logger.exception(error, {
+        action: 'chat_send_message_error',
+        metadata: {
+          chatId: chatId as string,
+        },
+      })
+      Alert.alert('Error', 'Error al enviar el mensaje')
+    }
   }
 
   return (

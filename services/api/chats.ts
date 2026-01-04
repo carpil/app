@@ -2,6 +2,7 @@ import { API_URL } from '@utils/constansts/api'
 import { useAuthStore } from 'store/useAuthStore'
 import { ChatResponse } from '~types/responses/chat'
 import { logger } from '@utils/logs'
+import { encryptMessage } from '@utils/decrypt-message'
 
 export const getChats = async () => {
   const token = useAuthStore.getState().token
@@ -65,13 +66,15 @@ export const getChat = async (id: string) => {
 
 export const sendMessage = async (chatId: string, message: string) => {
   const token = useAuthStore.getState().token
+  const encryptedMessage = encryptMessage(message)
+  
   const response = await fetch(`${API_URL}/chats/${chatId}/messages`, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ content: message }),
+    body: JSON.stringify({ content: encryptedMessage }),
   })
 
   if (!response.ok) {
