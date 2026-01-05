@@ -22,6 +22,7 @@ import { bootstrapMe } from 'services/api/user'
 import { useBootstrapStore } from 'store/useBootstrapStore'
 import CloseButton from '@components/design-system/buttons/close-button'
 import { Stack } from 'expo-router'
+import Screen from '@components/screen'
 
 enum PaymentMethod {
   SINPE_MOVIL = 'sinpe_movil',
@@ -261,6 +262,7 @@ export default function Checkout() {
         <Stack.Screen
           options={{
             headerShown: true,
+            headerBackVisible: false,
             headerStyle: {
               backgroundColor: COLORS.dark_gray,
             },
@@ -283,6 +285,7 @@ export default function Checkout() {
       <Stack.Screen
         options={{
           headerShown: true,
+          headerBackVisible: false,
           headerStyle: {
             backgroundColor: COLORS.dark_gray,
           },
@@ -291,182 +294,182 @@ export default function Checkout() {
           headerRight: () => <CloseButton onPress={handleEmergencyExit} />,
         }}
       />
-      <SafeScreen backgroundColor={COLORS.dark_gray}>
-      <ScrollView style={{ flex: 1 }}>
-        <MapImage origin={ride.origin} destination={ride.destination} />
-        <Text
-          style={{
-            color: COLORS.white,
-            fontSize: 20,
-            fontWeight: 'bold',
-            textAlign: 'center',
-            marginTop: 15,
-          }}
-        >
-          ¡Tu viaje ha sido completado!
-        </Text>
-        <Text
-          style={{
-            color: COLORS.gray_400,
-            fontSize: 12,
-            textAlign: 'center',
-            marginBottom: 15,
-            marginTop: 2,
-          }}
-        >
-          Gracias por viajar con Carpil.
-        </Text>
-        {!isDriver && (
-          <>
-            <AvatarCard user={ride?.driver} role="driver" />
-            <AllPassengersCard passengers={ride?.passengers} />
-          </>
-        )}
-        {isDriver && (
-          <View>
-            <Text
-              style={{
-                color: COLORS.white,
-                marginBottom: 10,
-                fontSize: 14,
-                fontWeight: 'bold',
-                marginTop: 10,
-              }}
-            >
-              Califica a los pasajeros
-            </Text>
-            {ride?.passengers.map((passenger) => (
-              <View
-                key={passenger.id}
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  gap: 8,
-                  borderWidth: 1,
-                  borderColor: COLORS.gray_600,
-                  borderRadius: 8,
-                  padding: 8,
-                  backgroundColor: COLORS.inactive_gray,
-                }}
-              >
-                <Avatar user={passenger} size={42} />
-                <View
-                  style={{
-                    gap: 4,
-                  }}
-                >
-                  <View>
-                    <Text
-                      style={{
-                        color: COLORS.white,
-                        fontSize: 14,
-                        fontWeight: 'bold',
-                      }}
-                    >
-                      {passenger.name}
-                    </Text>
-                    <StarRating
-                      size={28}
-                      justifyContent="flex-start"
-                      onRatingChange={(rating) => {
-                        setRatings((prevRatings) => {
-                          // Remove existing rating for this user if it exists
-                          const filteredRatings = prevRatings.filter(
-                            (r) => r.userId !== passenger.id,
-                          )
-                          // Add the new rating
-                          return [
-                            ...filteredRatings,
-                            { userId: passenger.id, rating },
-                          ]
-                        })
-                      }}
-                    />
-                  </View>
-                </View>
-              </View>
-            ))}
-          </View>
-        )}
-        {!isDriver && (
-          <>
-            <View
-              style={{
-                marginTop: 40,
-              }}
-            >
+      <Screen backgroundColor={COLORS.dark_gray}>
+        <ScrollView style={{ flex: 1 }}>
+          <MapImage origin={ride.origin} destination={ride.destination} />
+          <Text
+            style={{
+              color: COLORS.white,
+              fontSize: 20,
+              fontWeight: 'bold',
+              textAlign: 'center',
+              marginTop: 15,
+            }}
+          >
+            ¡Tu viaje ha sido completado!
+          </Text>
+          <Text
+            style={{
+              color: COLORS.gray_400,
+              fontSize: 12,
+              textAlign: 'center',
+              marginBottom: 15,
+              marginTop: 2,
+            }}
+          >
+            Gracias por viajar con Carpil.
+          </Text>
+          {!isDriver && (
+            <>
+              <AvatarCard user={ride?.driver} role="driver" />
+              <AllPassengersCard passengers={ride?.passengers} />
+            </>
+          )}
+          {isDriver && (
+            <View>
               <Text
                 style={{
                   color: COLORS.white,
+                  marginBottom: 10,
                   fontSize: 14,
                   fontWeight: 'bold',
-                }}
-              >
-                Seleccione una forma de pago
-              </Text>
-              <View
-                style={{
-                  flexDirection: 'column',
-                  gap: 8,
                   marginTop: 10,
                 }}
               >
-                <Pressable
-                  style={[
-                    styles.button,
-                    paymentMethod === PaymentMethod.SINPE_MOVIL &&
-                      styles.buttonActive,
-                  ]}
-                  onPress={() => setPaymentMethod(PaymentMethod.SINPE_MOVIL)}
+                Califica a los pasajeros
+              </Text>
+              {ride?.passengers.map((passenger) => (
+                <View
+                  key={passenger.id}
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    gap: 8,
+                    borderWidth: 1,
+                    borderColor: COLORS.gray_600,
+                    borderRadius: 8,
+                    padding: 8,
+                    backgroundColor: COLORS.inactive_gray,
+                  }}
                 >
-                  <Text
-                    style={[
-                      styles.buttonText,
-                      paymentMethod === PaymentMethod.SINPE_MOVIL &&
-                        styles.buttonTextActive,
-                    ]}
+                  <Avatar user={passenger} size={42} />
+                  <View
+                    style={{
+                      gap: 4,
+                    }}
                   >
-                    SINPE Móvil
-                  </Text>
-                </Pressable>
-                <Pressable
-                  style={[
-                    styles.button,
-                    paymentMethod === PaymentMethod.DEBIT_CARD &&
-                      styles.buttonActive,
-                  ]}
-                  onPress={() => setPaymentMethod(PaymentMethod.DEBIT_CARD)}
-                >
-                  <Text
-                    style={[
-                      styles.buttonText,
-                      paymentMethod === PaymentMethod.DEBIT_CARD &&
-                        styles.buttonTextActive,
-                    ]}
-                  >
-                    Tarjeta de débito / crédito
-                  </Text>
-                </Pressable>
-              </View>
+                    <View>
+                      <Text
+                        style={{
+                          color: COLORS.white,
+                          fontSize: 14,
+                          fontWeight: 'bold',
+                        }}
+                      >
+                        {passenger.name}
+                      </Text>
+                      <StarRating
+                        size={28}
+                        justifyContent="flex-start"
+                        onRatingChange={(rating) => {
+                          setRatings((prevRatings) => {
+                            // Remove existing rating for this user if it exists
+                            const filteredRatings = prevRatings.filter(
+                              (r) => r.userId !== passenger.id,
+                            )
+                            // Add the new rating
+                            return [
+                              ...filteredRatings,
+                              { userId: passenger.id, rating },
+                            ]
+                          })
+                        }}
+                      />
+                    </View>
+                  </View>
+                </View>
+              ))}
             </View>
+          )}
+          {!isDriver && (
+            <>
+              <View
+                style={{
+                  marginTop: 40,
+                }}
+              >
+                <Text
+                  style={{
+                    color: COLORS.white,
+                    fontSize: 14,
+                    fontWeight: 'bold',
+                  }}
+                >
+                  Seleccione una forma de pago
+                </Text>
+                <View
+                  style={{
+                    flexDirection: 'column',
+                    gap: 8,
+                    marginTop: 10,
+                  }}
+                >
+                  <Pressable
+                    style={[
+                      styles.button,
+                      paymentMethod === PaymentMethod.SINPE_MOVIL &&
+                        styles.buttonActive,
+                    ]}
+                    onPress={() => setPaymentMethod(PaymentMethod.SINPE_MOVIL)}
+                  >
+                    <Text
+                      style={[
+                        styles.buttonText,
+                        paymentMethod === PaymentMethod.SINPE_MOVIL &&
+                          styles.buttonTextActive,
+                      ]}
+                    >
+                      SINPE Móvil
+                    </Text>
+                  </Pressable>
+                  <Pressable
+                    style={[
+                      styles.button,
+                      paymentMethod === PaymentMethod.DEBIT_CARD &&
+                        styles.buttonActive,
+                    ]}
+                    onPress={() => setPaymentMethod(PaymentMethod.DEBIT_CARD)}
+                  >
+                    <Text
+                      style={[
+                        styles.buttonText,
+                        paymentMethod === PaymentMethod.DEBIT_CARD &&
+                          styles.buttonTextActive,
+                      ]}
+                    >
+                      Tarjeta de débito / crédito
+                    </Text>
+                  </Pressable>
+                </View>
+              </View>
+              <ActionButton
+                onPress={handlePay}
+                text={`Pagar ${priceFormatted}`}
+                type="primary"
+                disabled={!paymentMethod || isPaymentProcessing}
+              />
+            </>
+          )}
+          {isDriver && (
             <ActionButton
-              onPress={handlePay}
-              text={`Pagar ${priceFormatted}`}
+              onPress={handleCompleteRating}
+              text="Finalizar viaje"
               type="primary"
-              disabled={!paymentMethod || isPaymentProcessing}
+              disabled={isCompleting}
             />
-          </>
-        )}
-        {isDriver && (
-          <ActionButton
-            onPress={handleCompleteRating}
-            text="Finalizar viaje"
-            type="primary"
-            disabled={isCompleting}
-          />
-        )}
-      </ScrollView>
-    </SafeScreen>
+          )}
+        </ScrollView>
+      </Screen>
     </>
   )
 }
