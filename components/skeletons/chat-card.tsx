@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: '#1F2937',
     borderRadius: 8,
-    padding: 12,
+    padding: 16,
     marginBottom: 12,
   },
   dateSkeleton: {

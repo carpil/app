@@ -29,6 +29,7 @@ import { FirestoreMessage, MessageBubble } from '~types/message'
 import { useAuthStore } from 'store/useAuthStore'
 import { decryptMessage } from '@utils/decrypt-message'
 import MessageBubbleComponent from '@components/chats/message-bubble'
+import { logger } from '@utils/logs'
 
 export default function Messages() {
   const [chat, setChat] = useState<ChatResponse | null>(null)
@@ -118,9 +119,17 @@ export default function Messages() {
               return message
             }),
           )
-          setMessages(
-            newMessages.filter((msg): msg is MessageBubble => msg !== null),
+          const filteredMessages = newMessages.filter(
+            (msg): msg is MessageBubble => msg !== null,
           )
+          setMessages(filteredMessages)
+
+          if (filteredMessages.length === 0) {
+            logger.info('Chat has no messages yet', {
+              action: 'chat_empty_state_shown',
+              metadata: { chatId: chatId as string },
+            })
+          }
         })
 
         return unsubscribe
@@ -186,15 +195,23 @@ export default function Messages() {
       <View style={styles.container}>
         {/* messages */}
         <View style={styles.messagesContainer}>
-          {messages.map((message) => (
-            <MessageBubbleComponent
-              key={message.id}
-              user={message.user}
-              message={message.content}
-              isDriver={message.isMe}
-              createdAt={message.createdAt}
-            />
-          ))}
+          {messages.length === 0 ? (
+            <View style={styles.emptyContainer}>
+              <Text style={styles.emptyIcon}>💬</Text>
+              <Text style={styles.emptyTitle}>Aún no hay mensajes</Text>
+              <Text style={styles.emptySubtitle}>Inicia la conversación</Text>
+            </View>
+          ) : (
+            messages.map((message) => (
+              <MessageBubbleComponent
+                key={message.id}
+                user={message.user}
+                message={message.content}
+                isDriver={message.isMe}
+                createdAt={message.createdAt}
+              />
+            ))
+          )}
         </View>
         <View style={styles.inputContainer}>
           <TextInput
@@ -316,6 +333,28 @@ const styles = StyleSheet.create({
     color: COLORS.gray_400,
     textAlign: 'center',
     marginTop: 10,
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 40,
+  },
+  emptyIcon: {
+    fontSize: 50,
+    marginBottom: 10,
+  },
+  emptyTitle: {
+    fontSize: 18,
+    color: COLORS.white,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  emptySubtitle: {
+    fontSize: 14,
+    color: COLORS.gray_400,
+    textAlign: 'center',
+    marginTop: 8,
   },
 })
 
