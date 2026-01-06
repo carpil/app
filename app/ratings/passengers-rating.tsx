@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet } from 'react-native'
+import { View, Text, StyleSheet, Alert } from 'react-native'
 import { COLORS } from '@utils/constansts/colors'
 import Avatar from '@components/avatar'
 import { useAuthStore } from 'store/useAuthStore'
@@ -8,10 +8,11 @@ import { Rating } from '~types/rating'
 import { UserInfo } from '~types/user'
 import { useBootstrap } from 'hooks/useBootstrap'
 import ActionButton from '@components/design-system/buttons/action-button'
+import { logger } from '@utils/logs'
 
 interface PassengersRatingProps {
   onComplete?: () => void
-  onSaveRating: (rating: Rating | Rating[]) => void
+  onSaveRating: (rating: Rating | Rating[]) => Promise<void>
   passengers: UserInfo[]
 }
 
@@ -33,13 +34,13 @@ export default function PassengersRating({
     return null
   }
 
-  const handleRatingComplete = () => {
-    console.log('📝 Collected ratings:', ratings)
-    console.log('📝 Number of passengers to rate:', passengers.length)
-    console.log('📝 Number of ratings collected:', ratings.length)
-
+  const handleRatingComplete = async () => {
     if (ratings.length === 0) {
-      console.log('⚠️ No ratings collected, skipping save')
+      logger.info('No ratings collected, skipping save', {
+        action: 'passengers_rating_skip',
+        metadata: { passengersCount: passengers.length },
+      })
+      Alert.alert('Completado', 'Has completado el proceso de calificación')
       onComplete?.()
       return
     }
@@ -51,9 +52,31 @@ export default function PassengersRating({
       comment: '',
     }))
 
-    console.log('📝 Ratings to save:', ratingsToSave)
-    onSaveRating(ratingsToSave)
-    onComplete?.()
+    logger.info('Completing passengers rating', {
+      action: 'passengers_rating_complete',
+      metadata: {
+        collected: ratings.length,
+        total: passengers.length,
+      },
+    })
+
+    try {
+      await onSaveRating(ratingsToSave)
+      Alert.alert(
+        '¡Gracias por tu opinión!',
+        'Tus calificaciones han sido guardadas exitosamente',
+      )
+      onComplete?.()
+    } catch (error) {
+      logger.exception(error, {
+        action: 'passengers_rating_save_error',
+        metadata: { ratingsCount: ratingsToSave.length },
+      })
+      Alert.alert(
+        'Error',
+        'Ocurrió un error al guardar las calificaciones. Por favor, intenta nuevamente.',
+      )
+    }
   }
 
   return (
@@ -74,13 +97,10 @@ export default function PassengersRating({
               <Text style={styles.name}>{passenger.name}</Text>
               <StarRating
                 onRatingChange={(rating) => {
-                  console.log(`⭐ Rating ${rating} for ${passenger.name}`)
                   setRatings((prevRatings) => {
-                    // Remove existing rating for this user if it exists
                     const filteredRatings = prevRatings.filter(
                       (r) => r.userId !== passenger.id,
                     )
-                    // Add the new rating
                     return [
                       ...filteredRatings,
                       { userId: passenger.id, rating },
@@ -88,9 +108,6 @@ export default function PassengersRating({
                   })
                 }}
               />
-              {ratings.some((r) => r.userId === passenger.id) && (
-                <Text style={styles.ratedText}>✅ Rated</Text>
-              )}
             </View>
           </View>
         </View>
@@ -156,12 +173,6 @@ const styles = StyleSheet.create({
     color: COLORS.white,
     fontSize: 16,
     fontWeight: 'bold',
-  },
-  ratedText: {
-    color: COLORS.primary,
-    fontSize: 12,
-    fontWeight: 'bold',
-    marginTop: 4,
   },
   disabledButton: {
     backgroundColor: COLORS.gray_400,

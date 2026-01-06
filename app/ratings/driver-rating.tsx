@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet } from 'react-native'
+import { View, Text, StyleSheet, Alert } from 'react-native'
 import Avatar from '@components/avatar'
 import StarRating from './star-rating'
 import { useState } from 'react'
@@ -7,11 +7,12 @@ import { COLORS } from '@utils/constansts/colors'
 import { Rating } from '~types/rating'
 import { useBootstrap } from 'hooks/useBootstrap'
 import ActionButton from '@components/design-system/buttons/action-button'
+import { logger } from '@utils/logs'
 
 interface DriverRatingProps {
   user: UserInfo
   onNext?: () => void
-  onSaveRating: (rating: Rating) => void
+  onSaveRating: (rating: Rating) => Promise<void>
   hasOtherPassengers?: boolean
 }
 
@@ -25,14 +26,44 @@ export default function DriverRating({
 
   const { rideId } = useBootstrap()
 
-  const handleCompleteRating = () => {
-    onSaveRating({
+  const handleCompleteRating = async () => {
+    const ratingToSave: Rating = {
       targetUserId: user.id,
       rideId: rideId || '',
       rating,
       comment: '',
+    }
+
+    logger.info('Saving driver rating', {
+      action: 'driver_rating_save_start',
+      metadata: {
+        targetUserId: user.id,
+        rating,
+        hasOtherPassengers,
+      },
     })
-    onNext?.()
+
+    try {
+      await onSaveRating(ratingToSave)
+      logger.info('Driver rating saved successfully', {
+        action: 'driver_rating_save_success',
+        metadata: { targetUserId: user.id, rating },
+      })
+      Alert.alert(
+        '¡Gracias por tu opinión!',
+        'Tu calificación ha sido guardada exitosamente',
+      )
+      onNext?.()
+    } catch (error) {
+      logger.exception(error, {
+        action: 'driver_rating_save_error',
+        metadata: { targetUserId: user.id, rating },
+      })
+      Alert.alert(
+        'Error',
+        'Ocurrió un error al guardar la calificación. Por favor, intenta nuevamente.',
+      )
+    }
   }
 
   return (
@@ -50,11 +81,11 @@ export default function DriverRating({
           <Text style={styles.name}>{user.name || 'Pepillo Figueres'}</Text>
         </View>
       </View>
-      <StarRating onRatingChange={setRating} />
+      <StarRating onRatingChange={setRating} size={40} />
       <ActionButton
         onPress={handleCompleteRating}
         text={hasOtherPassengers ? 'Siguiente' : 'Completar'}
-        type={hasOtherPassengers ? 'secondary' : 'primary'}
+        type="primary"
         disabled={!rating}
       />
     </View>
@@ -64,7 +95,6 @@ export default function DriverRating({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginHorizontal: 20,
     gap: 20,
     paddingTop: 20,
   },
