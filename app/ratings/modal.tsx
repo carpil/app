@@ -1,6 +1,6 @@
 import { COLORS } from '@utils/constansts/colors'
 import { useRef, useEffect, useState } from 'react'
-import { Platform, View, StyleSheet, Alert } from 'react-native'
+import { Platform, View, StyleSheet } from 'react-native'
 import { Modalize } from 'react-native-modalize'
 import { useAuthStore } from 'store/useAuthStore'
 import DriverRating from './driver-rating'
@@ -8,6 +8,8 @@ import PassengersRating from './passengers-rating'
 import { PendingReview } from '~types/responses/bootstrap'
 import { Rating } from '~types/rating'
 import { createRating } from 'services/api/ratings'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { logger } from '@utils/logs'
 
 interface RatingsModalProps {
   pendingReviews: PendingReview[]
@@ -17,20 +19,17 @@ export default function RatingsModal({ pendingReviews }: RatingsModalProps) {
   const modalizeRef = useRef<Modalize>(null)
   const user = useAuthStore((state) => state.user)
   const [canDismiss, setCanDismiss] = useState(false)
-  const [currentStep, setCurrentStep] = useState(1)
+
+  const insets = useSafeAreaInsets()
 
   const driver = pendingReviews.find((review) => review.role === 'driver')
   const passengers = pendingReviews.filter(
     (review) => review.role === 'passenger',
   )
 
-  useEffect(() => {
-    if (driver) {
-      setCurrentStep(1)
-    } else {
-      setCurrentStep(2)
-    }
-  }, [driver, passengers])
+  const [currentStep, setCurrentStep] = useState(() => {
+    return driver ? 1 : 2
+  })
 
   useEffect(() => {
     if (modalizeRef.current) {
@@ -39,13 +38,27 @@ export default function RatingsModal({ pendingReviews }: RatingsModalProps) {
   }, [])
 
   const handleNext = () => {
-    if (currentStep === 1 && passengers.length === 0) {
-      handleComplete()
-    }
     if (currentStep === 1) {
+      if (passengers.length === 0) {
+        logger.info('Completing driver rating with no passengers', {
+          action: 'driver_rating_complete',
+          metadata: { hasPassengers: false },
+        })
+        handleComplete()
+        return
+      }
+      logger.info('Moving to passengers rating step', {
+        action: 'move_to_passengers_rating',
+        metadata: { passengersCount: passengers.length },
+      })
       setCurrentStep(2)
+      return
     }
     if (currentStep === 2) {
+      logger.info('Completing passengers rating', {
+        action: 'passengers_rating_complete',
+        metadata: { passengersCount: passengers.length },
+      })
       handleComplete()
     }
   }
@@ -59,42 +72,38 @@ export default function RatingsModal({ pendingReviews }: RatingsModalProps) {
     }, 500)
   }
 
-  const handleSaveRating = async (rating: Rating | Rating[]) => {
-    try {
-      // Handle both single rating and array of ratings
-      const ratingsToSave = Array.isArray(rating) ? rating : [rating]
+  const handleSaveRating = async (rating: Rating | Rating[]): Promise<void> => {
+    const ratingsToSave = Array.isArray(rating) ? rating : [rating]
 
-      console.log(`Saving ${ratingsToSave.length} rating(s)...`)
+    logger.info('Saving ratings', {
+      action: 'save_ratings_start',
+      metadata: { count: ratingsToSave.length },
+    })
 
-      // Use Promise.all to save all ratings concurrently
-      const responses = await Promise.all(
-        ratingsToSave.map(async (ratingItem, index) => {
-          console.log(
-            `Saving rating ${index + 1}/${ratingsToSave.length} for user ${ratingItem.targetUserId}`,
-          )
-          return await createRating(ratingItem)
-        }),
+    const responses = await Promise.all(
+      ratingsToSave.map(async (ratingItem) => {
+        return await createRating(ratingItem)
+      }),
+    )
+
+    const successfulSaves = responses.filter((response) => response !== null)
+
+    if (successfulSaves.length === ratingsToSave.length) {
+      logger.info('All ratings saved successfully', {
+        action: 'save_ratings_success',
+        metadata: { count: ratingsToSave.length },
+      })
+    } else {
+      logger.error('Some ratings failed to save', {
+        action: 'save_ratings_partial',
+        metadata: {
+          saved: successfulSaves.length,
+          total: ratingsToSave.length,
+        },
+      })
+      throw new Error(
+        `Only ${successfulSaves.length} of ${ratingsToSave.length} ratings were saved`,
       )
-
-      // Check if all ratings were saved successfully
-      const successfulSaves = responses.filter((response) => response !== null)
-
-      if (successfulSaves.length === ratingsToSave.length) {
-        console.log(
-          `✅ All ${ratingsToSave.length} rating(s) saved successfully`,
-        )
-        Alert.alert(
-          '¡Gracias por tu opinión!',
-          'Tu calificación ha sido guardada',
-        )
-      } else {
-        console.log(
-          `⚠️ Only ${successfulSaves.length}/${ratingsToSave.length} ratings saved successfully`,
-        )
-        Alert.alert('Aviso', 'Algunas calificaciones no se pudieron guardar')
-      }
-    } catch (error) {
-      console.error('❌ Error saving ratings:', error)
     }
   }
 
@@ -123,7 +132,8 @@ export default function RatingsModal({ pendingReviews }: RatingsModalProps) {
       <View
         style={{
           ...styles.container,
-          paddingBottom: Platform.OS === 'ios' ? 40 : 20,
+          paddingBottom:
+            Platform.OS === 'ios' ? insets.bottom : insets.bottom + 40,
         }}
       >
         {currentStep === 1 && driver && (
@@ -134,7 +144,7 @@ export default function RatingsModal({ pendingReviews }: RatingsModalProps) {
             hasOtherPassengers={passengers.length > 0}
           />
         )}
-        {currentStep === 2 && passengers.length > 0 && (
+        {currentStep === 2 && (
           <PassengersRating
             onComplete={handleComplete}
             onSaveRating={handleSaveRating}
@@ -153,6 +163,5 @@ const styles = StyleSheet.create({
     gap: 20,
     paddingTop: 20,
     backgroundColor: COLORS.dark_gray,
-    paddingBottom: 40,
   },
 })
