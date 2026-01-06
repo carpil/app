@@ -12,29 +12,35 @@ export default function AllPassengersCard({
   return (
     <View
       style={{
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 8,
         borderWidth: 1,
         borderColor: COLORS.gray_600,
         borderRadius: 8,
-        padding: 8,
+        padding: 12,
         backgroundColor: COLORS.inactive_gray,
         marginTop: 15,
-        flexWrap: 'wrap',
       }}
     >
-      {passengers.map((passenger) => (
-        <Avatar user={passenger} size={42} key={passenger.id} />
-      ))}
       <Text
         style={{
-          color: COLORS.gray_400,
-          fontSize: 12,
+          color: COLORS.white,
+          fontSize: 14,
+          fontWeight: 'bold',
+          marginBottom: 12,
         }}
       >
-        {'Pasajeros'}
+        Pasajeros
       </Text>
+      <View
+        style={{
+          flexDirection: 'row',
+          flexWrap: 'wrap',
+          gap: 12,
+        }}
+      >
+        {passengers.map((passenger) => (
+          <Avatar user={passenger} size={42} key={passenger.id} />
+        ))}
+      </View>
     </View>
   )
 }

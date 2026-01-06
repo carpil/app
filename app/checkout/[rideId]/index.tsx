@@ -23,6 +23,7 @@ import { useBootstrapStore } from 'store/useBootstrapStore'
 import CloseButton from '@components/design-system/buttons/close-button'
 import { Stack } from 'expo-router'
 import Screen from '@components/screen'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 enum PaymentMethod {
   SINPE_MOVIL = 'sinpe_movil',
@@ -33,6 +34,7 @@ export default function Checkout() {
   const { rideId } = useLocalSearchParams<{ rideId: string }>()
   const router = useRouter()
   const logger = useLogger('CheckoutScreen')
+  const insets = useSafeAreaInsets()
   const [ride, setRide] = useState<Ride | null>(null)
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod | null>(null)
   const [ratings, setRatings] = useState<RatingComponentProps[]>([])
@@ -47,15 +49,60 @@ export default function Checkout() {
 
   const handlePay = async () => {
     if (!paymentMethod) return
+
     if (paymentMethod === PaymentMethod.SINPE_MOVIL) {
       router.push(`/checkout/${rideId}/sinpe-movil`)
-    } else if (paymentMethod === PaymentMethod.DEBIT_CARD) {
-      const result = await handlePayment()
-      if (result instanceof Error) {
-        Alert.alert('Error', result.message)
-        return
+      return
+    }
+
+    if (paymentMethod === PaymentMethod.DEBIT_CARD) {
+      try {
+        const result = await handlePayment()
+        if (result instanceof Error) {
+          Alert.alert('Error', result.message)
+          return
+        }
+
+        logger.info('Payment completed successfully, refetching bootstrap', {
+          action: 'payment_complete_refetch_bootstrap',
+          metadata: {
+            rideId: rideId || '',
+          },
+        })
+
+        const bootstrap = await bootstrapMe()
+        if (bootstrap) {
+          setBootstrap(bootstrap)
+          logger.info('Bootstrap refetched successfully after payment', {
+            action: 'payment_bootstrap_success',
+            metadata: {
+              rideId: rideId || '',
+            },
+          })
+        }
+
+        router.replace('/(tabs)')
+      } catch (error) {
+        logger.exception(error, {
+          action: 'payment_bootstrap_error',
+          metadata: {
+            rideId: rideId || '',
+          },
+        })
+
+        Alert.alert(
+          'Error',
+          'Ocurrió un error al actualizar el estado. Serás redirigido al inicio.',
+          [
+            {
+              text: 'Continuar',
+              onPress: () => {
+                router.replace('/(tabs)')
+              },
+            },
+          ],
+        )
       }
-      router.replace('/(tabs)')
     }
   }
 
@@ -76,63 +123,83 @@ export default function Checkout() {
         },
       })
 
-      // Handle case with no passengers
-      if (ratings.length === 0) {
+      // Save ratings for passengers (if any)
+      if (ratings.length > 0) {
+        const ratingsToSave = ratings.map((rating) => ({
+          targetUserId: rating.userId,
+          rideId: rideId || '',
+          rating: rating.rating,
+          comment: '',
+        }))
+
+        logger.info('Saving passenger ratings', {
+          action: 'finish_ride_saving_ratings',
+          metadata: {
+            rideId: rideId || '',
+            ratingsCount: ratingsToSave.length,
+          },
+        })
+
+        const responses = await Promise.all(
+          ratingsToSave.map(async (ratingItem) => {
+            return await createRating(ratingItem)
+          }),
+        )
+
+        const successfulSaves = responses.filter(
+          (response) => response !== null,
+        )
+
+        if (successfulSaves.length !== ratingsToSave.length) {
+          logger.warn('Some ratings failed to save', {
+            action: 'finish_ride_ratings_partial',
+            metadata: {
+              rideId: rideId || '',
+              successful: successfulSaves.length,
+              total: ratingsToSave.length,
+            },
+          })
+
+          Alert.alert('Aviso', 'Algunas calificaciones no se pudieron guardar')
+        } else {
+          logger.info('All ratings saved successfully', {
+            action: 'finish_ride_ratings_success',
+            metadata: {
+              rideId: rideId || '',
+              ratingsCount: successfulSaves.length,
+            },
+          })
+        }
+      } else {
         logger.info('No passengers to rate, completing ride', {
           action: 'finish_ride_no_passengers',
           metadata: {
             rideId: rideId || '',
           },
         })
-
-        Alert.alert(
-          '¡Viaje finalizado!',
-          'Tu viaje ha sido completado exitosamente',
-          [
-            {
-              text: 'Continuar',
-              onPress: () => {
-                // Navigation happens in finally block
-              },
-            },
-          ],
-        )
-        return
       }
 
-      // Save ratings for passengers
-      const ratingsToSave = ratings.map((rating) => ({
-        targetUserId: rating.userId,
-        rideId: rideId || '',
-        rating: rating.rating,
-        comment: '',
-      }))
-
-      logger.info('Saving passenger ratings', {
-        action: 'finish_ride_saving_ratings',
+      // Wait for all operations to complete, then refetch bootstrap
+      logger.info('Refetching bootstrap after ride completion', {
+        action: 'finish_ride_refetch_bootstrap',
         metadata: {
           rideId: rideId || '',
-          ratingsCount: ratingsToSave.length,
         },
       })
 
-      const responses = await Promise.all(
-        ratingsToSave.map(async (ratingItem) => {
-          return await createRating(ratingItem)
-        }),
-      )
-
-      const successfulSaves = responses.filter((response) => response !== null)
-
-      if (successfulSaves.length === ratingsToSave.length) {
-        logger.info('All ratings saved successfully', {
-          action: 'finish_ride_ratings_success',
+      const bootstrap = await bootstrapMe()
+      if (bootstrap) {
+        setBootstrap(bootstrap)
+        logger.info('Bootstrap refetched successfully', {
+          action: 'finish_ride_bootstrap_success',
           metadata: {
             rideId: rideId || '',
-            ratingsCount: successfulSaves.length,
           },
         })
+      }
 
+      // Show success message and navigate
+      if (ratings.length > 0) {
         Alert.alert(
           '¡Gracias por tu opinión!',
           'Tu calificación ha sido guardada',
@@ -140,22 +207,24 @@ export default function Checkout() {
             {
               text: 'Continuar',
               onPress: () => {
-                // Navigation happens in finally block
+                router.replace('/(tabs)')
               },
             },
           ],
         )
       } else {
-        logger.warn('Some ratings failed to save', {
-          action: 'finish_ride_ratings_partial',
-          metadata: {
-            rideId: rideId || '',
-            successful: successfulSaves.length,
-            total: ratingsToSave.length,
-          },
-        })
-
-        Alert.alert('Aviso', 'Algunas calificaciones no se pudieron guardar')
+        Alert.alert(
+          '¡Viaje finalizado!',
+          'Tu viaje ha sido completado exitosamente',
+          [
+            {
+              text: 'Continuar',
+              onPress: () => {
+                router.replace('/(tabs)')
+              },
+            },
+          ],
+        )
       }
     } catch (error) {
       logger.exception(error, {
@@ -169,38 +238,16 @@ export default function Checkout() {
       Alert.alert(
         'Error',
         'Ocurrió un error al finalizar el viaje. Serás redirigido al inicio.',
+        [
+          {
+            text: 'Continuar',
+            onPress: () => {
+              router.replace('/(tabs)')
+            },
+          },
+        ],
       )
     } finally {
-      // Always refetch bootstrap to ensure app state is updated
-      try {
-        logger.info('Refetching bootstrap after ride completion', {
-          action: 'finish_ride_refetch_bootstrap',
-          metadata: {
-            rideId: rideId || '',
-          },
-        })
-
-        const bootstrap = await bootstrapMe()
-        if (bootstrap) {
-          setBootstrap(bootstrap)
-          logger.info('Bootstrap refetched successfully', {
-            action: 'finish_ride_bootstrap_success',
-            metadata: {
-              rideId: rideId || '',
-            },
-          })
-        }
-      } catch (bootstrapError) {
-        logger.exception(bootstrapError, {
-          action: 'finish_ride_bootstrap_error',
-          metadata: {
-            rideId: rideId || '',
-          },
-        })
-      }
-
-      // Always navigate to home, no matter what
-      router.replace('/(tabs)')
       setIsCompleting(false)
     }
   }
@@ -280,6 +327,8 @@ export default function Checkout() {
 
   const priceFormatted = formatCRC(ride.price)
   const isDriver = user?.id === ride.driver.id
+
+  const passengerToRate = [...ride?.passengers]
   return (
     <>
       <Stack.Screen
@@ -295,89 +344,40 @@ export default function Checkout() {
         }}
       />
       <Screen backgroundColor={COLORS.dark_gray}>
-        <ScrollView style={{ flex: 1 }}>
-          <MapImage origin={ride.origin} destination={ride.destination} />
-          <Text
-            style={{
-              color: COLORS.white,
-              fontSize: 20,
-              fontWeight: 'bold',
-              textAlign: 'center',
-              marginTop: 15,
-            }}
+        <View style={styles.container}>
+          <ScrollView
+            style={styles.scrollView}
+            contentContainerStyle={[
+              styles.scrollContent,
+              styles.scrollContentWithButton,
+            ]}
+            showsVerticalScrollIndicator={false}
           >
-            ¡Tu viaje ha sido completado!
-          </Text>
-          <Text
-            style={{
-              color: COLORS.gray_400,
-              fontSize: 12,
-              textAlign: 'center',
-              marginBottom: 15,
-              marginTop: 2,
-            }}
-          >
-            Gracias por viajar con Carpil.
-          </Text>
-          {!isDriver && (
-            <>
-              <AvatarCard user={ride?.driver} role="driver" />
-              <AllPassengersCard passengers={ride?.passengers} />
-            </>
-          )}
-          {isDriver && (
-            <View>
-              <Text
-                style={{
-                  color: COLORS.white,
-                  marginBottom: 10,
-                  fontSize: 14,
-                  fontWeight: 'bold',
-                  marginTop: 10,
-                }}
-              >
-                Califica a los pasajeros
-              </Text>
-              {ride?.passengers.map((passenger) => (
-                <View
-                  key={passenger.id}
-                  style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    gap: 8,
-                    borderWidth: 1,
-                    borderColor: COLORS.gray_600,
-                    borderRadius: 8,
-                    padding: 8,
-                    backgroundColor: COLORS.inactive_gray,
-                  }}
-                >
-                  <Avatar user={passenger} size={42} />
-                  <View
-                    style={{
-                      gap: 4,
-                    }}
-                  >
-                    <View>
-                      <Text
-                        style={{
-                          color: COLORS.white,
-                          fontSize: 14,
-                          fontWeight: 'bold',
-                        }}
-                      >
-                        {passenger.name}
-                      </Text>
+            <MapImage origin={ride.origin} destination={ride.destination} />
+            <Text style={styles.title}>¡Tu viaje ha sido completado!</Text>
+            <Text style={styles.subtitle}>Gracias por viajar con Carpil.</Text>
+            {!isDriver && (
+              <>
+                <AvatarCard user={ride?.driver} role="driver" />
+                <AllPassengersCard passengers={ride?.passengers} />
+              </>
+            )}
+            {isDriver && (
+              <View>
+                <Text style={styles.ratingTitle}>Califica a los pasajeros</Text>
+                {passengerToRate.map((passenger) => (
+                  <View key={passenger.id} style={styles.passengerRatingCard}>
+                    <Avatar user={passenger} size={42} />
+                    <View style={styles.passengerRatingContent}>
+                      <Text style={styles.passengerName}>{passenger.name}</Text>
                       <StarRating
                         size={28}
                         justifyContent="flex-start"
                         onRatingChange={(rating) => {
                           setRatings((prevRatings) => {
-                            // Remove existing rating for this user if it exists
                             const filteredRatings = prevRatings.filter(
                               (r) => r.userId !== passenger.id,
                             )
-                            // Add the new rating
                             return [
                               ...filteredRatings,
                               { userId: passenger.id, rating },
@@ -387,33 +387,15 @@ export default function Checkout() {
                       />
                     </View>
                   </View>
-                </View>
-              ))}
-            </View>
-          )}
-          {!isDriver && (
-            <>
-              <View
-                style={{
-                  marginTop: 40,
-                }}
-              >
-                <Text
-                  style={{
-                    color: COLORS.white,
-                    fontSize: 14,
-                    fontWeight: 'bold',
-                  }}
-                >
+                ))}
+              </View>
+            )}
+            {!isDriver && (
+              <View style={styles.paymentSection}>
+                <Text style={styles.paymentTitle}>
                   Seleccione una forma de pago
                 </Text>
-                <View
-                  style={{
-                    flexDirection: 'column',
-                    gap: 8,
-                    marginTop: 10,
-                  }}
-                >
+                <View style={styles.paymentOptions}>
                   <Pressable
                     style={[
                       styles.button,
@@ -452,46 +434,111 @@ export default function Checkout() {
                   </Pressable>
                 </View>
               </View>
+            )}
+          </ScrollView>
+          {!isDriver && (
+            <View
+              style={[
+                styles.fixedButtonContainer,
+                { paddingBottom: insets.bottom + 16 },
+              ]}
+            >
               <ActionButton
                 onPress={handlePay}
                 text={`Pagar ${priceFormatted}`}
                 type="primary"
                 disabled={!paymentMethod || isPaymentProcessing}
               />
-            </>
+            </View>
           )}
           {isDriver && (
-            <ActionButton
-              onPress={handleCompleteRating}
-              text="Finalizar viaje"
-              type="primary"
-              disabled={isCompleting}
-            />
+            <View
+              style={[
+                styles.fixedButtonContainer,
+                { paddingBottom: insets.bottom + 16 },
+              ]}
+            >
+              <ActionButton
+                onPress={handleCompleteRating}
+                text="Finalizar viaje"
+                type="primary"
+                disabled={isCompleting}
+              />
+            </View>
           )}
-        </ScrollView>
+        </View>
       </Screen>
     </>
   )
 }
 
 const styles = StyleSheet.create({
-  mapContainer: {
-    backgroundColor: COLORS.inactive_gray,
-    borderWidth: 1,
-    borderColor: COLORS.gray_600,
-    padding: 10,
-    borderRadius: 10,
-    height: 200,
+  container: {
+    flex: 1,
   },
-  driverContainer: {
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingHorizontal: 16,
+    paddingBottom: 16,
+  },
+  scrollContentWithButton: {
+    paddingBottom: 100,
+  },
+  title: {
+    color: COLORS.white,
+    fontSize: 20,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginTop: 15,
+  },
+  subtitle: {
+    color: COLORS.gray_400,
+    fontSize: 12,
+    textAlign: 'center',
+    marginBottom: 15,
+    marginTop: 2,
+  },
+  ratingTitle: {
+    color: COLORS.white,
+    marginBottom: 10,
+    fontSize: 14,
+    fontWeight: 'bold',
+    marginTop: 10,
+  },
+  passengerRatingCard: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
+    borderWidth: 1,
+    borderColor: COLORS.gray_600,
+    borderRadius: 8,
+    padding: 8,
+    backgroundColor: COLORS.inactive_gray,
+    marginBottom: 8,
+  },
+  passengerRatingContent: {
+    gap: 4,
+    flex: 1,
   },
   passengerName: {
     color: COLORS.white,
     fontSize: 14,
     fontWeight: 'bold',
+  },
+  paymentSection: {
+    marginTop: 40,
+  },
+  paymentTitle: {
+    color: COLORS.white,
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
+  paymentOptions: {
+    flexDirection: 'column',
+    gap: 8,
+    marginTop: 10,
   },
   button: {
     paddingVertical: 12,
@@ -512,23 +559,11 @@ const styles = StyleSheet.create({
     color: COLORS.white,
     fontWeight: 'bold',
   },
-  finishRideButton: {
-    backgroundColor: COLORS.primary,
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 8,
-    marginTop: 20,
-    alignItems: 'center',
-  },
-  finishRideButtonDisabled: {
-    backgroundColor: COLORS.gray_600,
-  },
-  finishRideText: {
-    color: COLORS.white,
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  finishRideTextDisabled: {
-    color: COLORS.gray_400,
+  fixedButtonContainer: {
+    paddingHorizontal: 16,
+    paddingTop: 12,
+    backgroundColor: COLORS.dark_gray,
+    borderTopWidth: 1,
+    borderTopColor: COLORS.border_gray,
   },
 })
