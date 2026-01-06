@@ -9,7 +9,12 @@ interface StarRatingProps {
   maxRating?: number
   userId?: string
   size?: number
-  justifyContent?: 'center' | 'flex-start' | 'flex-end' | 'space-between' | 'space-around'
+  justifyContent?:
+    | 'center'
+    | 'flex-start'
+    | 'flex-end'
+    | 'space-between'
+    | 'space-around'
 }
 
 export default function StarRating({
