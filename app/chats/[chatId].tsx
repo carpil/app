@@ -108,9 +108,10 @@ export default function Messages() {
                 return null
               }
 
+              const decryptedContent = decryptMessage(data.content)
               const message: MessageBubble = {
                 id: doc.id,
-                content: decryptMessage(data.content),
+                content: decryptedContent,
                 createdAt: data.createdAt.toDate(),
                 user,
                 isMe: data.userId === userId,
