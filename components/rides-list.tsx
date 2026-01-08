@@ -1,12 +1,12 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { FlatList, RefreshControl, View, Text } from 'react-native'
 import { useFocusEffect } from '@react-navigation/native'
 import RideCard from '@components/ride-card'
 import RideCardSkeleton from '@components/skeletons/ride-card'
 import { getRides } from 'services/api/rides'
-import { useEffect } from 'react'
 import { Ride } from '~types/ride'
 import { COLORS } from '@utils/constansts/colors'
+import { logger } from '@utils/logs'
 
 export default function RidesList() {
   const [rides, setRides] = useState<Ride[]>([])
@@ -27,6 +27,15 @@ export default function RidesList() {
 
       const rides = await getRides()
 
+      logger.info('Rides fetched for list', {
+        action: 'rides_list_fetched',
+        metadata: {
+          count: rides.length,
+          isRefresh,
+          page,
+        },
+      })
+
       if (isRefresh || page === 1) {
         setRides(rides)
       } else {
@@ -35,7 +44,10 @@ export default function RidesList() {
 
       setHasMore(rides.length > 0)
     } catch (error) {
-      console.error('Error fetching rides:', error)
+      logger.exception(error as Error, {
+        action: 'rides_list_fetch_error',
+        metadata: { isRefresh, page },
+      })
     } finally {
       setLoading(false)
       setRefreshing(false)

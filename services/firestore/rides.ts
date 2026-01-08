@@ -6,6 +6,7 @@ import {
 } from '@react-native-firebase/firestore'
 import { Ride } from '~types/ride'
 import FirestoreConfig from './config'
+import { logger } from '@utils/logs'
 
 export const subscribeToRide = (
   rideId: string,
@@ -36,7 +37,10 @@ export const subscribeToRide = (
       }
     },
     (error) => {
-      console.error('Error listening to ride updates:', error)
+      logger.exception(error, {
+        action: 'ride_listener_error',
+        metadata: { rideId },
+      })
       onError?.(error)
     },
   )
@@ -64,7 +68,10 @@ export const subscribeToRides = (
       onUpdate(rides)
     },
     (error) => {
-      console.error('Error listening to rides updates:', error)
+      logger.exception(error, {
+        action: 'rides_listener_error',
+        metadata: {},
+      })
       onError?.(error)
     },
   )

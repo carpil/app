@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useState } from 'react'
+import { useEffect, useLayoutEffect, useState, useRef } from 'react'
 import {
   View,
   StyleSheet,
@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Alert,
   ActivityIndicator,
+  ScrollView,
 } from 'react-native'
 import { SendIcon } from '@components/icons'
 import { ChatResponse } from '~types/responses/chat'
@@ -17,7 +18,6 @@ import { useLocalSearchParams, useNavigation } from 'expo-router'
 import Avatar from '@components/avatar'
 import SafeScreen from '@components/safe-screen'
 import {
-  getFirestore,
   collection,
   doc,
   onSnapshot,
@@ -30,6 +30,7 @@ import { useAuthStore } from 'store/useAuthStore'
 import { decryptMessage } from '@utils/decrypt-message'
 import MessageBubbleComponent from '@components/chats/message-bubble'
 import { logger } from '@utils/logs'
+import FirestoreConfig from 'services/firestore/config'
 
 export default function Messages() {
   const [chat, setChat] = useState<ChatResponse | null>(null)
@@ -39,6 +40,7 @@ export default function Messages() {
   const [error, setError] = useState<string | null>(null)
   const { chatId } = useLocalSearchParams()
   const navigation = useNavigation()
+  const scrollViewRef = useRef<ScrollView>(null)
 
   const { user } = useAuthStore()
 
@@ -81,48 +83,120 @@ export default function Messages() {
         const chat = await getChat(chatId as string)
         setChat(chat)
 
-        const db = getFirestore()
+        const db = FirestoreConfig.getDb()
+        logger.info('Connected to Firestore database', {
+          action: 'firestore_connection',
+          metadata: {
+            databaseName: FirestoreConfig.getDatabaseName(),
+            chatId: chatId as string,
+          },
+        })
+
         const messagesQuery = query(
           collection(doc(db, 'chats', chatId as string), 'messages'),
           orderBy('createdAt', 'asc'),
         )
         const unsubscribe = onSnapshot(messagesQuery, async (snapshot) => {
+          logger.info('Firestore snapshot received', {
+            action: 'firestore_snapshot_received',
+            metadata: {
+              chatId: chatId as string,
+              docsCount: snapshot.docs.length,
+              chatParticipantsCount: chat?.participants?.length ?? 0,
+            },
+          })
+
           const newMessages = await Promise.all(
-            snapshot.docs.map(async (doc: any) => {
-              const data = doc.data() as FirestoreMessage
+            snapshot.docs.map(async (docSnapshot: any) => {
+              try {
+                const data = docSnapshot.data() as FirestoreMessage
 
-              if (data.seenBy?.includes(userId)) {
-                await updateDoc(
-                  doc(db, 'chats', chatId as string, 'messages', doc.id),
-                  {
-                    seenBy: [...(data.seenBy ?? []), userId],
+                logger.info('Processing message', {
+                  action: 'processing_firestore_message',
+                  metadata: {
+                    messageId: docSnapshot.id,
+                    userId: data.userId,
+                    hasChat: !!chat,
+                    participantsCount: chat?.participants?.length ?? 0,
                   },
+                })
+
+                if (!data.seenBy?.includes(userId)) {
+                  await updateDoc(
+                    doc(
+                      db,
+                      'chats',
+                      chatId as string,
+                      'messages',
+                      docSnapshot.id,
+                    ),
+                    {
+                      seenBy: [...(data.seenBy ?? []), userId],
+                    },
+                  )
+                }
+
+                const user = chat?.participants?.find(
+                  (participant) => participant.id === data.userId,
                 )
-              }
 
-              const user = chat?.participants?.find(
-                (participant) => participant.id === data.userId,
-              )
+                if (!user) {
+                  logger.error('User not found in participants', {
+                    action: 'message_user_not_found',
+                    metadata: {
+                      messageUserId: data.userId,
+                      chatParticipants:
+                        chat?.participants?.map((p) => p.id) ?? [],
+                    },
+                  })
+                  return null
+                }
 
-              if (!user) {
+                const decryptedContent = decryptMessage(data.content)
+                const message: MessageBubble = {
+                  id: docSnapshot.id,
+                  content: decryptedContent,
+                  createdAt: data.createdAt.toDate(),
+                  user,
+                  isMe: data.userId === userId,
+                }
+
+                logger.info('Message created successfully', {
+                  action: 'message_created',
+                  metadata: {
+                    messageId: docSnapshot.id,
+                    hasContent: !!decryptedContent,
+                    hasCreatedAt: !!data.createdAt,
+                  },
+                })
+
+                return message
+              } catch (error) {
+                logger.error('Failed to process message', {
+                  action: 'message_processing_failed',
+                  metadata: {
+                    messageId: docSnapshot.id,
+                    error: (error as Error).message,
+                  },
+                })
                 return null
               }
-
-              const decryptedContent = decryptMessage(data.content)
-              const message: MessageBubble = {
-                id: doc.id,
-                content: decryptedContent,
-                createdAt: data.createdAt.toDate(),
-                user,
-                isMe: data.userId === userId,
-              }
-
-              return message
             }),
           )
           const filteredMessages = newMessages.filter(
             (msg): msg is MessageBubble => msg !== null,
           )
+
+          logger.info('Messages processed', {
+            action: 'messages_processed',
+            metadata: {
+              chatId: chatId as string,
+              totalDocs: snapshot.docs.length,
+              filteredCount: filteredMessages.length,
+              nullCount: newMessages.filter((m) => m === null).length,
+            },
+          })
+
           setMessages(filteredMessages)
 
           if (filteredMessages.length === 0) {
@@ -136,7 +210,10 @@ export default function Messages() {
         return unsubscribe
       } catch (err) {
         setError('No se encontró el chat')
-        console.error('Error fetching chat:', err)
+        logger.exception(err as Error, {
+          action: 'setup_chat_listener_error',
+          metadata: { chatId: chatId as string },
+        })
         return null
       } finally {
         setLoading(false)
@@ -178,7 +255,13 @@ export default function Messages() {
   }
 
   const handleSendMessage = async () => {
-    const data = await sendMessage(chatId as string, message)
+    const trimmedMessage = message.trim()
+
+    if (trimmedMessage.length === 0) {
+      return
+    }
+
+    const data = await sendMessage(chatId as string, trimmedMessage)
     if (data == null) {
       Alert.alert('Error', 'Error al enviar el mensaje')
       return
@@ -195,7 +278,14 @@ export default function Messages() {
     >
       <View style={styles.container}>
         {/* messages */}
-        <View style={styles.messagesContainer}>
+        <ScrollView
+          ref={scrollViewRef}
+          style={styles.messagesContainer}
+          contentContainerStyle={styles.messagesContentContainer}
+          onContentSizeChange={() => {
+            scrollViewRef.current?.scrollToEnd({ animated: true })
+          }}
+        >
           {messages.length === 0 ? (
             <View style={styles.emptyContainer}>
               <Text style={styles.emptyIcon}>💬</Text>
@@ -213,7 +303,7 @@ export default function Messages() {
               />
             ))
           )}
-        </View>
+        </ScrollView>
         <View style={styles.inputContainer}>
           <TextInput
             style={styles.input}
@@ -227,12 +317,15 @@ export default function Messages() {
             style={{
               ...styles.sendButton,
               backgroundColor:
-                message.length > 0 ? COLORS.primary : COLORS.inactive_gray,
+                message.trim().length > 0
+                  ? COLORS.primary
+                  : COLORS.inactive_gray,
             }}
             onPress={handleSendMessage}
+            disabled={message.trim().length === 0}
           >
             <SendIcon
-              color={message.length > 0 ? COLORS.white : COLORS.gray_600}
+              color={message.trim().length > 0 ? COLORS.white : COLORS.gray_600}
             />
           </TouchableOpacity>
         </View>
@@ -248,9 +341,11 @@ const styles = StyleSheet.create({
   },
   messagesContainer: {
     flex: 1,
+  },
+  messagesContentContainer: {
     padding: 12,
     gap: 10,
-    margin: 10,
+    flexGrow: 1,
   },
   messageBubble: {
     flexDirection: 'row',
