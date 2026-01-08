@@ -51,9 +51,17 @@ export default function Avatar({
                 ...styles.placeholderContainer,
                 width: size,
                 height: size,
+                borderRadius: size / 2,
               }}
             >
-              <Text style={styles.placeholderText}>{initials}</Text>
+              <Text
+                style={[
+                  styles.placeholderText,
+                  { fontSize: Math.max(8, size * 0.35) },
+                ]}
+              >
+                {initials}
+              </Text>
             </View>
           )}
           {pressed && goToUserDetails && (
@@ -77,6 +85,8 @@ const styles = StyleSheet.create({
   },
   avatarContainer: {
     borderRadius: 100,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   avatarPressed: {
     opacity: 0.8,
@@ -93,14 +103,16 @@ const styles = StyleSheet.create({
   placeholderContainer: {
     width: DEFAULT_SIZE,
     height: DEFAULT_SIZE,
-    borderRadius: 32,
+    borderRadius: DEFAULT_SIZE / 2,
     backgroundColor: COLORS.gray_600,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 8,
   },
   placeholderText: {
-    fontSize: 16,
     color: COLORS.white_gray,
+    fontWeight: '600',
+    textAlign: 'center',
+    includeFontPadding: false,
+    textAlignVertical: 'center',
   },
 })
