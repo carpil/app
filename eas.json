@@ -9,31 +9,34 @@
       "distribution": "internal",
       "env": {
         "APP_VARIANT": "development",
-        "EXPO_PUBLIC_ENVIRONMENT": "development"
+        "EXPO_PUBLIC_ENVIRONMENT": "development",
+        "EXPO_PUBLIC_SENTRY_DSN": "https://ee0a00d649ff648e78f5733528e53a72@o4510399716392960.ingest.us.sentry.io/4510399717310464"
       }
     },
     "preview": {
       "distribution": "internal",
       "env": {
         "APP_VARIANT": "preview",
-        "EXPO_PUBLIC_ENVIRONMENT": "preview"
+        "EXPO_PUBLIC_ENVIRONMENT": "preview",
+        "EXPO_PUBLIC_SENTRY_DSN": "https://ee0a00d649ff648e78f5733528e53a72@o4510399716392960.ingest.us.sentry.io/4510399717310464"
       }
     },
     "preview-production": {
       "distribution": "store",
       "channel": "preview",
-      "environment": "preview",
       "autoIncrement": true,
       "env": {
         "APP_VARIANT": "preview",
-        "EXPO_PUBLIC_ENVIRONMENT": "preview"
+        "EXPO_PUBLIC_ENVIRONMENT": "preview",
+        "EXPO_PUBLIC_SENTRY_DSN": "https://ee0a00d649ff648e78f5733528e53a72@o4510399716392960.ingest.us.sentry.io/4510399717310464"
       }
     },
     "production": {
       "autoIncrement": true,
       "env": {
         "APP_VARIANT": "production",
-        "EXPO_PUBLIC_ENVIRONMENT": "production"
+        "EXPO_PUBLIC_ENVIRONMENT": "production",
+        "EXPO_PUBLIC_SENTRY_DSN": "https://ee0a00d649ff648e78f5733528e53a72@o4510399716392960.ingest.us.sentry.io/4510399717310464"
       }
     }
   }, 
