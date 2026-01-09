@@ -100,3 +100,39 @@ export const createRideRequest = async (request: CreateRideRequestInput) => {
 
   return data
 }
+
+export const deleteRideRequest = async (id: string) => {
+  const token = useAuthStore.getState().token
+  const response = await fetch(`${API_URL}/ride-requests/${id}`, {
+    method: 'DELETE',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+  })
+
+  if (!response.ok) {
+    const error = await response.json()
+    logger.error('Failed to delete ride request', {
+      action: 'delete_ride_request_failed',
+      metadata: {
+        status: response.status,
+        error,
+        rideRequestId: id,
+      },
+    })
+    return null
+  }
+
+  const data = (await response.json()) as { message: string }
+  const { message } = data
+
+  logger.info('Ride request deleted successfully', {
+    action: 'delete_ride_request_success',
+    metadata: {
+      rideRequestId: id,
+    },
+  })
+
+  return message
+}
