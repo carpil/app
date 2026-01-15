@@ -238,3 +238,75 @@ export const completeRide = async (id: string) => {
 
   return message
 }
+
+export const leaveRide = async (id: string) => {
+  const token = useAuthStore.getState().token
+  const response = await fetch(`${API_URL}/rides/${id}/leave`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+  })
+
+  if (!response.ok) {
+    const error = await response.json()
+    logger.error('Failed to leave ride', {
+      action: 'leave_ride_failed',
+      metadata: {
+        status: response.status,
+        error,
+        rideId: id,
+      },
+    })
+    return null
+  }
+
+  const data = (await response.json()) as DefaultResponse
+  const { message } = data
+
+  logger.info('Left ride successfully', {
+    action: 'leave_ride_success',
+    metadata: {
+      rideId: id,
+    },
+  })
+
+  return message
+}
+
+export const deleteRide = async (id: string) => {
+  const token = useAuthStore.getState().token
+  const response = await fetch(`${API_URL}/rides/${id}`, {
+    method: 'DELETE',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+  })
+
+  if (!response.ok) {
+    const error = await response.json()
+    logger.error('Failed to delete ride', {
+      action: 'delete_ride_failed',
+      metadata: {
+        status: response.status,
+        error,
+        rideId: id,
+      },
+    })
+    return null
+  }
+
+  const data = (await response.json()) as DefaultResponse
+  const { message } = data
+
+  logger.info('Ride deleted successfully', {
+    action: 'delete_ride_success',
+    metadata: {
+      rideId: id,
+    },
+  })
+
+  return message
+}

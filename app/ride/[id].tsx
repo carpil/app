@@ -11,10 +11,12 @@ import Screen from '@components/screen'
 import Avatar from '@components/avatar'
 import { formatDate } from '@utils/format-date'
 import { COLORS } from '@utils/constansts/colors'
-import { joinRide, startRide } from 'services/api/rides'
+import { joinRide, startRide, leaveRide, deleteRide } from 'services/api/rides'
 import { useRealtimeRide } from 'hooks/useRealtimeRide'
 import { useDriver } from 'hooks/useDriver'
 import ActionButton from '@components/design-system/buttons/action-button'
+import { useAuthStore } from 'store/useAuthStore'
+import { useState } from 'react'
 
 export default function RideDetails() {
   const { id } = useLocalSearchParams()
@@ -22,10 +24,12 @@ export default function RideDetails() {
   const { ride, loading, error } = useRealtimeRide(rideId)
   const { calculateDriver } = useDriver()
   const router = useRouter()
+  const { user } = useAuthStore()
+  const [actionLoading, setActionLoading] = useState(false)
 
   if (loading) {
     return (
-      <Screen>
+      <Screen backgroundColor={COLORS.dark_gray}>
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={COLORS.primary} />
           <Text style={styles.loadingText}>Cargando detalles del ride...</Text>
@@ -36,7 +40,7 @@ export default function RideDetails() {
 
   if (error || !ride) {
     return (
-      <Screen>
+      <Screen backgroundColor={COLORS.dark_gray}>
         <View style={styles.errorContainer}>
           <Text style={styles.errorIcon}>🚗</Text>
           <Text style={styles.errorTitle}>Ride no encontrado</Text>
@@ -60,6 +64,8 @@ export default function RideDetails() {
   } = ride
 
   const isDriver = calculateDriver(driver.id)
+  const isPassenger = passengers.some((passenger) => passenger.id === user?.id)
+  const isActiveRide = ride.status === 'active'
 
   const remainingSeats = availableSeats - passengers.length
   const fullSeats = availableSeats === passengers.length
@@ -67,7 +73,9 @@ export default function RideDetails() {
   const { hour, date } = formatDate(departureDate)
 
   const handleJoinRide = async () => {
+    if (actionLoading) return
     try {
+      setActionLoading(true)
       const message = await joinRide(rideId)
       if (message) {
         Alert.alert(
@@ -80,11 +88,15 @@ export default function RideDetails() {
     } catch (error) {
       console.error('Error joining ride:', error)
       Alert.alert('Error', 'Ocurrió un error al reservar el espacio')
+    } finally {
+      setActionLoading(false)
     }
   }
 
   const handleStartRide = async () => {
+    if (actionLoading) return
     try {
+      setActionLoading(true)
       const message = await startRide(rideId)
       if (message) {
         Alert.alert('¡Viaje iniciado!', 'Comienza tu aventura. ¡Buen viaje!', [
@@ -97,11 +109,141 @@ export default function RideDetails() {
     } catch (error) {
       console.error('Error starting ride:', error)
       Alert.alert('Error', 'No se pudo iniciar el viaje')
+    } finally {
+      setActionLoading(false)
     }
   }
 
+  const handleLeaveRide = async () => {
+    if (actionLoading) return
+    Alert.alert(
+      'Salir del viaje',
+      '¿Estás seguro de que quieres salir de este viaje?',
+      [
+        {
+          text: 'Cancelar',
+          style: 'cancel',
+        },
+        {
+          text: 'Salir',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              setActionLoading(true)
+              const message = await leaveRide(rideId)
+              if (message) {
+                Alert.alert(
+                  'Has salido del viaje',
+                  'Tu espacio ha sido liberado',
+                )
+                router.back()
+              } else {
+                Alert.alert('Error', 'No se pudo salir del viaje')
+              }
+            } catch (error) {
+              console.error('Error leaving ride:', error)
+              Alert.alert('Error', 'Ocurrió un error al salir del viaje')
+            } finally {
+              setActionLoading(false)
+            }
+          },
+        },
+      ],
+    )
+  }
+
+  const handleDeleteRide = async () => {
+    if (actionLoading) return
+    Alert.alert(
+      'Eliminar viaje',
+      '¿Estás seguro de que quieres eliminar este viaje? Esta acción no se puede deshacer.',
+      [
+        {
+          text: 'Cancelar',
+          style: 'cancel',
+        },
+        {
+          text: 'Eliminar',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              setActionLoading(true)
+              const message = await deleteRide(rideId)
+              if (message) {
+                Alert.alert(
+                  'Viaje eliminado',
+                  'El viaje ha sido eliminado exitosamente',
+                )
+                router.back()
+              } else {
+                Alert.alert('Error', 'No se pudo eliminar el viaje')
+              }
+            } catch (error) {
+              console.error('Error deleting ride:', error)
+              Alert.alert('Error', 'Ocurrió un error al eliminar el viaje')
+            } finally {
+              setActionLoading(false)
+            }
+          },
+        },
+      ],
+    )
+  }
+
+  const renderActionButton = () => {
+    if (isDriver && isActiveRide) {
+      return (
+        <View style={styles.driverActionsContainer}>
+          <ActionButton
+            onPress={handleStartRide}
+            text="Iniciar viaje"
+            type="primary"
+            disabled={actionLoading}
+          />
+          <ActionButton
+            onPress={handleDeleteRide}
+            text="Eliminar viaje"
+            type="outline"
+            disabled={actionLoading}
+          />
+        </View>
+      )
+    }
+
+    if (isPassenger) {
+      return (
+        <ActionButton
+          onPress={handleLeaveRide}
+          text="Salir del viaje"
+          type="secondary"
+          disabled={actionLoading}
+        />
+      )
+    }
+
+    if (isDriver) {
+      return (
+        <ActionButton
+          onPress={handleStartRide}
+          text="Iniciar viaje"
+          type="primary"
+          disabled={actionLoading}
+        />
+      )
+    }
+
+    return (
+      <ActionButton
+        onPress={handleJoinRide}
+        text="Reservar espacio"
+        type="primary"
+        disabled={actionLoading}
+      />
+    )
+  }
+
   return (
-    <Screen>
+    <Screen backgroundColor={COLORS.dark_gray}>
       <ScrollView>
         <View style={styles.pictureContainer}>
           <Avatar user={driver} size={100} goToUserDetails={true} />
@@ -174,19 +316,7 @@ export default function RideDetails() {
           </View>
         </View>
 
-        {isDriver ? (
-          <ActionButton
-            onPress={handleStartRide}
-            text="Iniciar viaje"
-            type="secondary"
-          />
-        ) : (
-          <ActionButton
-            onPress={handleJoinRide}
-            text="Reservar espacio"
-            type="secondary"
-          />
-        )}
+        <View style={{ marginTop: 30 }}>{renderActionButton()}</View>
       </ScrollView>
     </Screen>
   )
@@ -201,12 +331,15 @@ const styles = StyleSheet.create({
     maxWidth: 600,
     alignSelf: 'center',
   },
+  driverActionsContainer: {
+    gap: 15,
+  },
   pictureContainer: {
     padding: 12,
     alignItems: 'center',
   },
   driverName: {
-    color: 'black',
+    color: COLORS.white,
     fontSize: 18,
     fontWeight: 'bold',
   },

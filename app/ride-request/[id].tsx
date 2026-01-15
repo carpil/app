@@ -1,13 +1,25 @@
-import { Text, View, StyleSheet, ActivityIndicator } from 'react-native'
+import {
+  Text,
+  View,
+  StyleSheet,
+  ActivityIndicator,
+  Alert,
+  ScrollView,
+} from 'react-native'
 import { formatDate } from '@utils/format-date'
-import { useLocalSearchParams } from 'expo-router'
+import { useLocalSearchParams, useRouter } from 'expo-router'
 import Avatar from '@components/avatar'
 import Screen from '@components/screen'
 import { COLORS } from '@utils/constansts/colors'
 import { useEffect, useState } from 'react'
-import { getRideRequestById } from 'services/api/ride-request'
+import {
+  getRideRequestById,
+  deleteRideRequest,
+} from 'services/api/ride-request'
 import { RideRequest } from '~types/ride-request'
 import SafeScreen from '@components/safe-screen'
+import ActionButton from '@components/design-system/buttons/action-button'
+import { useAuthStore } from 'store/useAuthStore'
 
 export default function RideRequestDetails() {
   const { id } = useLocalSearchParams()
@@ -15,6 +27,9 @@ export default function RideRequestDetails() {
   const [rideRequest, setRideRequest] = useState<RideRequest | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [actionLoading, setActionLoading] = useState(false)
+  const { user } = useAuthStore()
+  const router = useRouter()
 
   useEffect(() => {
     const fetchRideRequest = async () => {
@@ -36,7 +51,7 @@ export default function RideRequestDetails() {
 
   if (loading) {
     return (
-      <Screen>
+      <Screen backgroundColor={COLORS.dark_gray}>
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={COLORS.primary} />
           <Text style={styles.loadingText}>
@@ -49,7 +64,7 @@ export default function RideRequestDetails() {
 
   if (error || !rideRequest) {
     return (
-      <Screen>
+      <Screen backgroundColor={COLORS.dark_gray}>
         <View style={styles.errorContainer}>
           <Text style={styles.errorIcon}>🚗</Text>
           <Text style={styles.errorTitle}>Solicitud no encontrada</Text>
@@ -66,38 +81,89 @@ export default function RideRequestDetails() {
 
   const { hour, date } = formatDate(departureDate)
 
+  const isCreator = user?.id === creator.id
+
+  const handleDeleteRideRequest = async () => {
+    if (actionLoading) return
+    Alert.alert(
+      'Eliminar solicitud',
+      '¿Estás seguro de que quieres eliminar esta solicitud de viaje? Esta acción no se puede deshacer.',
+      [
+        {
+          text: 'Cancelar',
+          style: 'cancel',
+        },
+        {
+          text: 'Eliminar',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              setActionLoading(true)
+              const message = await deleteRideRequest(rideRequestId)
+              if (message) {
+                Alert.alert(
+                  'Solicitud eliminada',
+                  'La solicitud de viaje ha sido eliminada exitosamente',
+                )
+                router.back()
+              } else {
+                Alert.alert('Error', 'No se pudo eliminar la solicitud')
+              }
+            } catch (error) {
+              console.error('Error deleting ride request:', error)
+              Alert.alert('Error', 'Ocurrió un error al eliminar la solicitud')
+            } finally {
+              setActionLoading(false)
+            }
+          },
+        },
+      ],
+    )
+  }
+
   return (
-    <SafeScreen>
-      <View style={styles.pictureContainer}>
-        <Avatar user={creator} size={100} goToUserDetails={true} />
-        <Text style={styles.creatorName}>{creator.name}</Text>
-      </View>
-
-      <View style={styles.detailsContainer}>
-        <View style={styles.card}>
-          <View style={styles.routeContainer}>
-            <Text style={styles.routeText}>{origin?.name.primary}</Text>
-            <Text style={styles.arrow}>➡️</Text>
-            <Text style={styles.routeText}>{destination?.name.primary}</Text>
-          </View>
+    <SafeScreen backgroundColor={COLORS.dark_gray}>
+      <ScrollView>
+        <View style={styles.pictureContainer}>
+          <Avatar user={creator} size={100} goToUserDetails={true} />
+          <Text style={styles.creatorName}>{creator.name}</Text>
         </View>
 
-        <View style={styles.rowContainer}>
+        <View style={styles.detailsContainer}>
           <View style={styles.card}>
-            <View style={styles.infoBlock}>
-              <Text style={styles.infoTitle}>{hour}</Text>
-              <Text style={styles.infoSubtitle}>{date}</Text>
+            <View style={styles.routeContainer}>
+              <Text style={styles.routeText}>{origin?.name.primary}</Text>
+              <Text style={styles.arrow}>➡️</Text>
+              <Text style={styles.routeText}>{destination?.name.primary}</Text>
             </View>
           </View>
 
-          <View style={styles.card}>
-            <View style={styles.infoBlock}>
-              <Text style={styles.infoTitle}>📍</Text>
-              <Text style={styles.infoSubtitle}>Solicitud</Text>
+          <View style={styles.rowContainer}>
+            <View style={styles.card}>
+              <View style={styles.infoBlock}>
+                <Text style={styles.infoTitle}>{hour}</Text>
+                <Text style={styles.infoSubtitle}>{date}</Text>
+              </View>
+            </View>
+
+            <View style={styles.card}>
+              <View style={styles.infoBlock}>
+                <Text style={styles.infoTitle}>📍</Text>
+                <Text style={styles.infoSubtitle}>Solicitud</Text>
+              </View>
             </View>
           </View>
         </View>
-      </View>
+
+        {isCreator && (
+          <ActionButton
+            onPress={handleDeleteRideRequest}
+            text="Eliminar solicitud"
+            type="outline"
+            disabled={actionLoading}
+          />
+        )}
+      </ScrollView>
     </SafeScreen>
   )
 }
@@ -117,7 +183,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   creatorName: {
-    color: 'black',
+    color: COLORS.white,
     fontSize: 18,
     fontWeight: 'bold',
   },
