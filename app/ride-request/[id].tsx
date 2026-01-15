@@ -12,7 +12,10 @@ import Avatar from '@components/avatar'
 import Screen from '@components/screen'
 import { COLORS } from '@utils/constansts/colors'
 import { useEffect, useState } from 'react'
-import { getRideRequestById, deleteRideRequest } from 'services/api/ride-request'
+import {
+  getRideRequestById,
+  deleteRideRequest,
+} from 'services/api/ride-request'
 import { RideRequest } from '~types/ride-request'
 import SafeScreen from '@components/safe-screen'
 import ActionButton from '@components/design-system/buttons/action-button'
@@ -48,7 +51,7 @@ export default function RideRequestDetails() {
 
   if (loading) {
     return (
-      <Screen>
+      <Screen backgroundColor={COLORS.dark_gray}>
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={COLORS.primary} />
           <Text style={styles.loadingText}>
@@ -61,7 +64,7 @@ export default function RideRequestDetails() {
 
   if (error || !rideRequest) {
     return (
-      <Screen>
+      <Screen backgroundColor={COLORS.dark_gray}>
         <View style={styles.errorContainer}>
           <Text style={styles.errorIcon}>🚗</Text>
           <Text style={styles.errorTitle}>Solicitud no encontrada</Text>
@@ -119,7 +122,7 @@ export default function RideRequestDetails() {
   }
 
   return (
-    <SafeScreen>
+    <SafeScreen backgroundColor={COLORS.dark_gray}>
       <ScrollView>
         <View style={styles.pictureContainer}>
           <Avatar user={creator} size={100} goToUserDetails={true} />
@@ -156,7 +159,7 @@ export default function RideRequestDetails() {
           <ActionButton
             onPress={handleDeleteRideRequest}
             text="Eliminar solicitud"
-            type="secondary"
+            type="outline"
             disabled={actionLoading}
           />
         )}
@@ -180,7 +183,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   creatorName: {
-    color: 'black',
+    color: COLORS.white,
     fontSize: 18,
     fontWeight: 'bold',
   },

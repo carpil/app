@@ -29,7 +29,7 @@ export default function RideDetails() {
 
   if (loading) {
     return (
-      <Screen>
+      <Screen backgroundColor={COLORS.dark_gray}>
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={COLORS.primary} />
           <Text style={styles.loadingText}>Cargando detalles del ride...</Text>
@@ -40,7 +40,7 @@ export default function RideDetails() {
 
   if (error || !ride) {
     return (
-      <Screen>
+      <Screen backgroundColor={COLORS.dark_gray}>
         <View style={styles.errorContainer}>
           <Text style={styles.errorIcon}>🚗</Text>
           <Text style={styles.errorTitle}>Ride no encontrado</Text>
@@ -193,12 +193,20 @@ export default function RideDetails() {
   const renderActionButton = () => {
     if (isDriver && isActiveRide) {
       return (
-        <ActionButton
-          onPress={handleDeleteRide}
-          text="Eliminar viaje"
-          type="secondary"
-          disabled={actionLoading}
-        />
+        <View style={styles.driverActionsContainer}>
+          <ActionButton
+            onPress={handleStartRide}
+            text="Iniciar viaje"
+            type="primary"
+            disabled={actionLoading}
+          />
+          <ActionButton
+            onPress={handleDeleteRide}
+            text="Eliminar viaje"
+            type="outline"
+            disabled={actionLoading}
+          />
+        </View>
       )
     }
 
@@ -218,7 +226,7 @@ export default function RideDetails() {
         <ActionButton
           onPress={handleStartRide}
           text="Iniciar viaje"
-          type="secondary"
+          type="primary"
           disabled={actionLoading}
         />
       )
@@ -228,14 +236,14 @@ export default function RideDetails() {
       <ActionButton
         onPress={handleJoinRide}
         text="Reservar espacio"
-        type="secondary"
+        type="primary"
         disabled={actionLoading}
       />
     )
   }
 
   return (
-    <Screen>
+    <Screen backgroundColor={COLORS.dark_gray}>
       <ScrollView>
         <View style={styles.pictureContainer}>
           <Avatar user={driver} size={100} goToUserDetails={true} />
@@ -308,7 +316,7 @@ export default function RideDetails() {
           </View>
         </View>
 
-        {renderActionButton()}
+        <View style={{ marginTop: 30 }}>{renderActionButton()}</View>
       </ScrollView>
     </Screen>
   )
@@ -323,12 +331,15 @@ const styles = StyleSheet.create({
     maxWidth: 600,
     alignSelf: 'center',
   },
+  driverActionsContainer: {
+    gap: 15,
+  },
   pictureContainer: {
     padding: 12,
     alignItems: 'center',
   },
   driverName: {
-    color: 'black',
+    color: COLORS.white,
     fontSize: 18,
     fontWeight: 'bold',
   },

@@ -6,7 +6,7 @@ interface ActionButtonProps {
   text: string
   onPress: () => void | Promise<void>
   disabled?: boolean
-  type: 'primary' | 'secondary'
+  type: 'primary' | 'secondary' | 'outline'
 }
 export default function ActionButton({
   text,
@@ -31,21 +31,41 @@ export default function ActionButton({
 
   const isDisabled = disabled || isLoading
 
+  const getButtonStyle = () => {
+    switch (type) {
+      case 'primary':
+        return styles.primaryButton
+      case 'secondary':
+        return styles.secondaryButton
+      case 'outline':
+        return styles.outlineButton
+    }
+  }
+
   return (
     <Pressable
       onPress={handlePress}
       disabled={isDisabled}
       style={({ pressed }) => [
         styles.button,
-        type === 'primary' ? styles.primaryButton : styles.secondaryButton,
+        getButtonStyle(),
         pressed && !isDisabled && styles.pressedButton,
-        isDisabled && styles.disabledButton,
+        isDisabled &&
+          (type === 'outline'
+            ? styles.disabledOutlineButton
+            : styles.disabledButton),
       ]}
     >
       {isLoading ? (
         <ActivityIndicator color={COLORS.white} size="small" />
       ) : (
-        <Text style={[styles.text, isDisabled && styles.disabledText]}>
+        <Text
+          style={[
+            styles.text,
+            type === 'outline' && styles.outlineText,
+            isDisabled && styles.disabledText,
+          ]}
+        >
           {text}
         </Text>
       )}
@@ -58,7 +78,6 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 8,
-    marginTop: 20,
     alignItems: 'center',
   },
   pressedButton: {
@@ -66,6 +85,10 @@ const styles = StyleSheet.create({
   },
   disabledButton: {
     backgroundColor: COLORS.gray_600,
+  },
+  disabledOutlineButton: {
+    borderColor: COLORS.gray_600,
+    opacity: 0.5,
   },
   disabledText: {
     color: COLORS.gray_400,
@@ -75,10 +98,18 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
+  outlineText: {
+    color: COLORS.gray_400,
+  },
   primaryButton: {
     backgroundColor: COLORS.primary,
   },
   secondaryButton: {
     backgroundColor: COLORS.secondary,
+  },
+  outlineButton: {
+    backgroundColor: 'transparent',
+    borderWidth: 1,
+    borderColor: COLORS.border_gray,
   },
 })

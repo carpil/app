@@ -14,7 +14,7 @@ export default function Screen({
     <View
       style={{
         flex: 1,
-        paddingHorizontal: 12,
+        paddingHorizontal: 15,
         backgroundColor,
         paddingTop: 12,
       }}
