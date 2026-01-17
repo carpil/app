@@ -1,8 +1,10 @@
 import { useState } from 'react'
-import { View, StyleSheet, Pressable, Text, Platform } from 'react-native'
-import DateTimePicker from '@react-native-community/datetimepicker'
-import { formatDate } from '@utils/format-date'
+import { Platform, View, StyleSheet, Pressable, Text } from 'react-native'
+import DateTimePicker, {
+  DateTimePickerEvent,
+} from '@react-native-community/datetimepicker'
 import { COLORS } from '@utils/constansts/colors'
+import { formatDate } from '@utils/format-date'
 
 interface ScheduleProps {
   date: Date
@@ -11,75 +13,89 @@ interface ScheduleProps {
   minDate?: Date
 }
 
+type PickerMode = 'date' | 'time'
+
 export default function SchedulePill({
   date,
-  isValid,
   minDate = new Date(),
   setDate,
 }: ScheduleProps) {
-  const [show, setShow] = useState(false)
-  const [mode, setMode] = useState<'date' | 'time'>('date')
+  const [showAndroidPicker, setShowAndroidPicker] = useState(false)
+  const [androidPickerMode, setAndroidPickerMode] = useState<PickerMode>('date')
 
-  const onChange = (event: any, selectedDate: any) => {
-    const currentDate = selectedDate
-    setDate(currentDate)
-    hidePicker()
+  const { dateText, hour } = formatDate(date)
+
+  const handleAndroidPress = () => {
+    setAndroidPickerMode('date')
+    setShowAndroidPicker(true)
   }
 
-  const showPicker = (mode: 'date' | 'time') => {
-    setShow(true)
-    setMode(mode)
+  const handleChange = (
+    event: DateTimePickerEvent,
+    selectedDate: Date | undefined,
+  ) => {
+    if (Platform.OS === 'android') {
+      setShowAndroidPicker(false)
+
+      if (event.type === 'set' && selectedDate) {
+        if (androidPickerMode === 'date') {
+          setDate(selectedDate)
+          setAndroidPickerMode('time')
+          setShowAndroidPicker(true)
+        } else {
+          setDate(selectedDate)
+        }
+      }
+    } else {
+      if (selectedDate) {
+        setDate(selectedDate)
+      }
+    }
   }
 
-  const hidePicker = () => {
-    setShow(false)
+  if (Platform.OS === 'ios') {
+    return (
+      <View style={styles.container}>
+        <DateTimePicker
+          value={date}
+          mode="datetime"
+          display="spinner"
+          onChange={handleChange}
+          minimumDate={minDate}
+          locale="es-CR"
+          themeVariant="dark"
+          style={styles.iosPicker}
+        />
+      </View>
+    )
   }
-
-  const { hour, dateText } = formatDate(date)
 
   return (
     <View style={styles.container}>
-      {Platform.OS === 'ios' && (
-        <DateTimePicker
-          testID="dateTimePicker"
-          value={date}
-          mode={'datetime'}
-          onChange={onChange}
-          locale="es-cr"
-          themeVariant="dark"
-          minimumDate={minDate}
-        />
-      )}
-      {Platform.OS === 'android' && (
-        <View style={{ flexDirection: 'row', gap: 5 }}>
-          <Pressable
-            style={isValid ? styles.input : styles.inputInvalid}
-            onPress={() => showPicker('date')}
-          >
-            <Text style={isValid ? styles.text : styles.textInvalid}>
-              {dateText}
-            </Text>
-          </Pressable>
-          <Pressable
-            onPress={() => showPicker('time')}
-            style={isValid ? styles.input : styles.inputInvalid}
-          >
-            <Text style={isValid ? styles.text : styles.textInvalid}>
-              {hour}
-            </Text>
-          </Pressable>
-          {show && (
-            <DateTimePicker
-              testID="dateTimePicker"
-              value={date}
-              mode={mode}
-              onChange={onChange}
-              locale="es-cr"
-              themeVariant="dark"
-              minimumDate={minDate}
-            />
-          )}
+      <Pressable
+        onPress={handleAndroidPress}
+        style={({ pressed }) => [
+          styles.androidButton,
+          pressed && styles.androidButtonPressed,
+        ]}
+      >
+        <View style={styles.dateTimeContainer}>
+          <Text style={styles.dateText}>{dateText}</Text>
+          <Text style={styles.separator}>•</Text>
+          <Text style={styles.timeText}>{hour}</Text>
         </View>
+        <Text style={styles.editText}>Cambiar</Text>
+      </Pressable>
+
+      {showAndroidPicker && (
+        <DateTimePicker
+          value={date}
+          mode={androidPickerMode}
+          display="default"
+          onChange={handleChange}
+          minimumDate={minDate}
+          locale="es-CR"
+        />
       )}
     </View>
   )
@@ -90,31 +106,47 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.dark_gray,
     borderRadius: 10,
     padding: 12,
-    gap: 10,
+    alignItems: 'center',
+  },
+  iosPicker: {
+    width: '100%',
+    height: 200,
+  },
+  androidButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
+    width: '100%',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    backgroundColor: COLORS.inactive_gray,
+    borderRadius: 8,
   },
-  input: {
-    backgroundColor: COLORS.raisin_black,
-    borderRadius: 10,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
+  androidButtonPressed: {
+    opacity: 0.8,
   },
-  inputInvalid: {
-    backgroundColor: COLORS.raisin_black,
-    borderRadius: 10,
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    borderColor: 'red',
-    borderWidth: 1,
+  dateTimeContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
   },
-  text: {
+  dateText: {
     color: COLORS.white,
-    fontSize: 18,
+    fontSize: 16,
+    fontWeight: '600',
   },
-  textInvalid: {
-    color: COLORS.secondary_gray_dark,
-    fontSize: 18,
+  separator: {
+    color: COLORS.gray_400,
+    fontSize: 16,
+  },
+  timeText: {
+    color: COLORS.white,
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  editText: {
+    color: COLORS.secondary,
+    fontSize: 14,
+    fontWeight: '500',
   },
 })

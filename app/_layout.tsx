@@ -1,7 +1,6 @@
 import { Stack, usePathname, useSegments } from 'expo-router'
-import { StyleSheet } from 'react-native'
+import { StyleSheet, Platform } from 'react-native'
 import { useEffect, useRef } from 'react'
-import { Platform } from 'react-native'
 import AppProviders from '@components/providers/app-providers'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
