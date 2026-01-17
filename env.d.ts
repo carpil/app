@@ -7,5 +7,6 @@ declare namespace NodeJS {
     EXPO_PUBLIC_GOOGLE_MAPS_API_KEY?: string
     EXPO_PUBLIC_SENTRY_DSN?: string
     EXPO_PUBLIC_ENVIRONMENT?: string
+    EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY?: string
   }
 }

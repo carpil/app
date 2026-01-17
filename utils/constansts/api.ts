@@ -23,3 +23,5 @@ const getApiBaseUrl = () => {
 export const API_URL = `${getApiBaseUrl()}/v1`
 export const IOS_GOOGLE_CLIENT_ID =
   process.env.EXPO_PUBLIC_IOS_GOOGLE_CLIENT_ID ?? ''
+export const STRIPE_PUBLISHABLE_KEY =
+  process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY ?? ''
