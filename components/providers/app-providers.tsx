@@ -4,42 +4,39 @@ import LocationProvider from '@context/select-location'
 import { StripeProvider } from '@stripe/stripe-react-native'
 import { useAuthStore } from 'store/useAuthStore'
 import { logger } from '@utils/logs'
+import { useTokenRefresh } from 'hooks/useTokenRefresh'
+import { STRIPE_PUBLISHABLE_KEY } from '@utils/constansts/api'
 
 interface Props {
   children: React.ReactNode
 }
 
-const STRIPE_PUBLISHABLE_KEY =
-  process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY ?? ''
-
-/**
- * Component that syncs authentication state with the logger
- * Updates user context in Sentry and Crashlytics when auth changes
- */
 function LoggerAuthSync() {
   const user = useAuthStore((state) => state.user)
 
   useEffect(() => {
-    if (user) {
-      // User logged in - set user context
-      logger.setUser(user.id, user.email, user.name)
-      logger.info('User logged in', {
-        action: 'user_login',
-        metadata: {
-          userId: user.id,
-          hasEmail: !!user.email,
-          profileCompleted: user.profileCompleted,
-        },
-      })
-    } else {
-      // User logged out - clear user context
+    if (!user) {
       logger.setUser(null)
-      logger.info('User logged out', {
-        action: 'user_logout',
-      })
+      logger.info('User logged out', { action: 'user_logout' })
+      return
     }
+
+    logger.setUser(user.id, user.email, user.name)
+    logger.info('User logged in', {
+      action: 'user_login',
+      metadata: {
+        userId: user.id,
+        hasEmail: !!user.email,
+        profileCompleted: user.profileCompleted,
+      },
+    })
   }, [user])
 
+  return null
+}
+
+function TokenRefreshSync() {
+  useTokenRefresh()
   return null
 }
 
@@ -49,6 +46,7 @@ export default function AppProviders({ children }: Props) {
       <LocationProvider>
         <NotificationProvider>
           <LoggerAuthSync />
+          <TokenRefreshSync />
           {children}
         </NotificationProvider>
       </LocationProvider>
