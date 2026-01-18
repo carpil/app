@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react'
-import { View, StyleSheet, FlatList, Text } from 'react-native'
+import React, { useEffect, useState, useCallback } from 'react'
+import { View, StyleSheet, FlatList, Text, RefreshControl } from 'react-native'
 import { useRouter } from 'expo-router'
+import { useFocusEffect } from '@react-navigation/native'
 import ChatCard from '@components/chats/card'
 import SafeScreen from '@components/safe-screen'
 import { COLORS } from '@utils/constansts/colors'
@@ -15,6 +16,7 @@ export default function Chats() {
   const [chats, setChats] = useState<ChatResponse[]>([])
   const { user } = useAuthStore()
   const [loading, setLoading] = useState(true)
+  const [refreshing, setRefreshing] = useState(false)
   const router = useRouter()
 
   const renderChat = ({ item }: { item: ChatResponse }) => (
@@ -44,27 +46,50 @@ export default function Chats() {
     </View>
   )
 
-  useEffect(() => {
-    const fetchChats = async () => {
-      try {
+  const fetchChats = async (isRefresh = false) => {
+    try {
+      if (isRefresh) {
+        setRefreshing(true)
+      } else {
         setLoading(true)
-        const chats = await getChats()
-        setChats(chats)
-        logger.info('Chats fetched successfully', {
-          action: 'fetch_chats_success',
-          metadata: { count: chats.length },
-        })
-      } catch (error) {
-        logger.exception(error as Error, {
-          action: 'fetch_chats_error',
-          metadata: { context: 'Failed to fetch chats' },
-        })
-      } finally {
-        setLoading(false)
       }
+
+      const chats = await getChats()
+      setChats(chats)
+
+      logger.info('Chats fetched successfully', {
+        action: 'fetch_chats_success',
+        metadata: { count: chats.length, isRefresh },
+      })
+    } catch (error) {
+      logger.exception(error as Error, {
+        action: 'fetch_chats_error',
+        metadata: { context: 'Failed to fetch chats', isRefresh },
+      })
+    } finally {
+      setLoading(false)
+      setRefreshing(false)
     }
+  }
+
+  // Initial load
+  useEffect(() => {
     fetchChats()
   }, [])
+
+  // Focus-based refresh - refetch when returning to this tab
+  useFocusEffect(
+    useCallback(() => {
+      // Always refetch on focus (skip only if still in initial load)
+      if (!loading) {
+        fetchChats(true)
+      }
+    }, [loading]),
+  )
+
+  const onRefresh = () => {
+    fetchChats(true)
+  }
 
   if (loading) {
     return (
@@ -89,6 +114,14 @@ export default function Chats() {
           data={chats}
           renderItem={renderChat}
           keyExtractor={(item) => item.id}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              tintColor={COLORS.primary}
+              colors={[COLORS.primary]}
+            />
+          }
           contentContainerStyle={styles.listContainer}
           showsVerticalScrollIndicator={false}
           ListEmptyComponent={renderEmpty}
@@ -112,8 +145,8 @@ const styles = StyleSheet.create({
     color: COLORS.white,
   },
   listContainer: {
-    padding: 16,
     flexGrow: 1,
+    paddingBottom: 100,
   },
   emptyContainer: {
     flex: 1,
