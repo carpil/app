@@ -7,6 +7,7 @@ import { router } from 'expo-router'
 import ActionButton from '@components/design-system/buttons/action-button'
 import Avatar from '@components/avatar'
 import { COLORS } from '@utils/constansts/colors'
+import { SENTRY_DSN } from '@utils/constansts/api'
 import { ChevronRightIcon } from '@components/icons'
 import { GoogleOneTapSignIn } from '@react-native-google-signin/google-signin'
 import * as Sentry from '@sentry/react-native'
@@ -15,7 +16,6 @@ import { logger } from '@utils/logs'
 
 const environment = (process.env as any).EXPO_PUBLIC_ENVIRONMENT ?? 'unknown'
 const appVersion = Constants.expoConfig?.version ?? 'unknown'
-const sentryDsn = (process.env as any).EXPO_PUBLIC_SENTRY_DSN ?? ''
 
 export default function Profile() {
   const user = useAuthStore((state) => state.user)
@@ -105,7 +105,7 @@ export default function Profile() {
 
             Alert.alert(
               'Enviado',
-              `Error de prueba enviado.\n\nEntorno: ${environment}\nVersión: ${appVersion}\nSentry DSN: ${sentryDsn ? 'Configurado ✅' : 'NO CONFIGURADO ❌'}\n\nRevisa Sentry y Firebase Crashlytics en 1-2 minutos.`,
+              `Error de prueba enviado.\n\nEntorno: ${environment}\nVersión: ${appVersion}\nSentry DSN: ${SENTRY_DSN ? 'Configurado ✅' : 'NO CONFIGURADO ❌'}\n\nRevisa Sentry y Firebase Crashlytics en 1-2 minutos.`,
             )
           },
         },

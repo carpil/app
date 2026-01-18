@@ -5,7 +5,7 @@ import AppProviders from '@components/providers/app-providers'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { GoogleOneTapSignIn } from '@react-native-google-signin/google-signin'
-import { IOS_GOOGLE_CLIENT_ID } from '@utils/constansts/api'
+import { IOS_GOOGLE_CLIENT_ID, SENTRY_DSN } from '@utils/constansts/api'
 import * as Sentry from '@sentry/react-native'
 import { initializeLogger } from '@utils/logs'
 import { logger } from '@utils/logs'
@@ -13,10 +13,8 @@ import { logger } from '@utils/logs'
 const environment =
   (process.env as any).EXPO_PUBLIC_ENVIRONMENT ?? 'development'
 
-const sentryDsn = (process.env as any).EXPO_PUBLIC_SENTRY_DSN ?? ''
-
 Sentry.init({
-  dsn: sentryDsn,
+  dsn: SENTRY_DSN,
   replaysSessionSampleRate: 0.8,
   replaysOnErrorSampleRate: 1.0,
   environment,
