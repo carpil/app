@@ -7,7 +7,6 @@ import {
 import { Redirect } from 'expo-router'
 import { useEffect, useState } from 'react'
 import { getUser } from 'services/api/user'
-import { useRealtimeBootstrap } from 'hooks/useRealtimeBootstrap'
 import { useBootstrap } from 'hooks/useBootstrap'
 import { useAuthStore } from 'store/useAuthStore'
 import { User } from '~types/user'
@@ -17,8 +16,6 @@ export default function Index() {
   const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null)
   const { login } = useAuthStore()
   const { inRide, rideId, isLoading } = useBootstrap()
-
-  useRealtimeBootstrap()
 
   useEffect(() => {
     const auth = getAuth()

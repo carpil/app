@@ -1,5 +1,12 @@
 import { useState } from 'react'
-import { Pressable, Text, StyleSheet, ActivityIndicator } from 'react-native'
+import {
+  Pressable,
+  Text,
+  StyleSheet,
+  ActivityIndicator,
+  StyleProp,
+  ViewStyle,
+} from 'react-native'
 import { COLORS } from '@utils/constansts/colors'
 
 interface ActionButtonProps {
@@ -7,12 +14,14 @@ interface ActionButtonProps {
   onPress: () => void | Promise<void>
   disabled?: boolean
   type: 'primary' | 'secondary' | 'outline'
+  style?: StyleProp<ViewStyle>
 }
 export default function ActionButton({
   text,
   onPress,
   disabled = false,
   type = 'primary',
+  style,
 }: ActionButtonProps) {
   const [isLoading, setIsLoading] = useState(false)
 
@@ -54,6 +63,7 @@ export default function ActionButton({
           (type === 'outline'
             ? styles.disabledOutlineButton
             : styles.disabledButton),
+        style,
       ]}
     >
       {isLoading ? (

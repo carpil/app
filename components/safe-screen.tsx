@@ -9,6 +9,7 @@ interface Props {
   applyTopInset?: boolean
   applyBottomInset?: boolean
   keyboardAware?: boolean
+  hasBanner?: boolean
 }
 
 export default function SafeScreen({
@@ -17,16 +18,18 @@ export default function SafeScreen({
   applyTopInset = true,
   applyBottomInset = false,
   keyboardAware = false,
+  hasBanner = false,
 }: Props) {
   const insets = useSafeAreaInsets()
-  
-  const paddingTop = applyTopInset 
-    ? (Platform.OS === 'ios' ? insets.top : 0) + 16 
+
+  const bannerHeight = hasBanner ? (insets.top > 0 ? insets.top + 68 : 68) : 0
+  const basePaddingTop = applyTopInset
+    ? (Platform.OS === 'ios' ? insets.top : 0) + 16
     : 16
-  
-  const paddingBottom = applyBottomInset 
-    ? insets.bottom 
-    : 0
+
+  const paddingTop = hasBanner ? bannerHeight : basePaddingTop
+
+  const paddingBottom = applyBottomInset ? insets.bottom : 0
 
   if (keyboardAware) {
     return (

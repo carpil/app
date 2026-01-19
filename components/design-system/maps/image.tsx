@@ -1,7 +1,7 @@
 import { View, Image, StyleSheet, ActivityIndicator } from 'react-native'
 import { COLORS } from '@utils/constansts/colors'
 import { Location } from '~types/location'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { getStaticMapImageUrl } from 'services/maps/static-map'
 
 interface MapImageProps {
@@ -9,6 +9,13 @@ interface MapImageProps {
   destination: Location
   width?: number
   height?: number
+}
+
+const MAP_PADDING = {
+  top: 220,
+  right: 150,
+  bottom: 300,
+  left: 150,
 }
 
 export default function MapImage({
@@ -20,6 +27,8 @@ export default function MapImage({
   const [mapImageUrl, setMapImageUrl] = useState<string>('')
   const [isLoading, setIsLoading] = useState(true)
 
+  const padding = useMemo(() => MAP_PADDING, [])
+
   useEffect(() => {
     const fetchMapImage = async () => {
       try {
@@ -28,6 +37,7 @@ export default function MapImage({
           destination,
           width,
           height,
+          padding,
         })
         setMapImageUrl(url)
       } catch (error) {
@@ -38,7 +48,7 @@ export default function MapImage({
     }
 
     fetchMapImage()
-  }, [origin, destination, width, height])
+  }, [origin, destination, width, height, padding])
 
   return (
     <View style={[styles.mapContainer, { height }]}>

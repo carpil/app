@@ -1,6 +1,12 @@
-import { Text, View, StyleSheet, Pressable, Alert } from 'react-native'
+import {
+  Text,
+  View,
+  StyleSheet,
+  Pressable,
+  Alert,
+  ActivityIndicator,
+} from 'react-native'
 import { useLocalSearchParams, useRouter } from 'expo-router'
-import SafeScreen from '@components/safe-screen'
 import { useEffect, useState } from 'react'
 import { getRide } from 'services/api/rides'
 import { Ride } from '~types/ride'
@@ -257,10 +263,27 @@ export default function Checkout() {
       const ride = await getRide(rideId)
       if (ride) {
         setRide(ride)
+      } else {
+        logger.error('Ride not found for checkout', {
+          action: 'checkout_ride_not_found',
+          metadata: { rideId: rideId || '' },
+        })
+        Alert.alert(
+          'Viaje no encontrado',
+          'El viaje que buscas no existe o ya no está disponible.',
+          [
+            {
+              text: 'Continuar',
+              onPress: () => {
+                router.replace('/(tabs)')
+              },
+            },
+          ],
+        )
       }
     }
     fetchRide()
-  }, [rideId])
+  }, [rideId, router, logger])
 
   const handleEmergencyExit = () => {
     logger.warn('Emergency exit from checkout', {
@@ -318,9 +341,12 @@ export default function Checkout() {
             headerRight: () => <CloseButton onPress={handleEmergencyExit} />,
           }}
         />
-        <SafeScreen>
-          <Text>Cargando...</Text>
-        </SafeScreen>
+        <Screen backgroundColor={COLORS.dark_gray}>
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color={COLORS.primary} />
+            <Text style={styles.loadingText}>Cargando...</Text>
+          </View>
+        </Screen>
       </>
     )
   }
@@ -475,6 +501,16 @@ export default function Checkout() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 16,
+  },
+  loadingText: {
+    color: COLORS.gray_400,
+    fontSize: 16,
   },
   scrollView: {
     flex: 1,

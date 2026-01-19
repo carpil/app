@@ -2,15 +2,14 @@ import { View, Text, StyleSheet, Alert } from 'react-native'
 import Avatar from '@components/avatar'
 import StarRating from './star-rating'
 import { useState } from 'react'
-import { UserInfo } from '~types/user'
+import { PendingReview } from '~types/responses/bootstrap'
 import { COLORS } from '@utils/constansts/colors'
 import { Rating } from '~types/rating'
-import { useBootstrap } from 'hooks/useBootstrap'
 import ActionButton from '@components/design-system/buttons/action-button'
 import { logger } from '@utils/logs'
 
 interface DriverRatingProps {
-  user: UserInfo
+  user: PendingReview
   onNext?: () => void
   onSaveRating: (rating: Rating) => Promise<void>
   hasOtherPassengers?: boolean
@@ -24,12 +23,10 @@ export default function DriverRating({
 }: DriverRatingProps) {
   const [rating, setRating] = useState(0)
 
-  const { rideId } = useBootstrap()
-
   const handleCompleteRating = async () => {
     const ratingToSave: Rating = {
       targetUserId: user.id,
-      rideId: rideId || '',
+      rideId: user.rideId,
       rating,
       comment: '',
     }

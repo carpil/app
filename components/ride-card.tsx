@@ -11,6 +11,7 @@ interface RideCardProps {
 }
 
 const MARGIN_LEFT = -14
+const DRIVER_AVATAR_SIZE = 64
 
 export default function RideCard({ ride }: RideCardProps) {
   const {
@@ -50,7 +51,12 @@ export default function RideCard({ ride }: RideCardProps) {
               </View>
             ))}
             {remainingSeats > 0 && (
-              <View style={styles.remainingSeatsContainer}>
+              <View
+                style={[
+                  styles.remainingSeatsContainer,
+                  passengers.length > 0 && { marginLeft: MARGIN_LEFT },
+                ]}
+              >
                 <Text style={styles.remainingSeatsText}>+{remainingSeats}</Text>
               </View>
             )}
@@ -107,6 +113,9 @@ const styles = StyleSheet.create({
   },
   passengersContainer: {
     flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    minWidth: DRIVER_AVATAR_SIZE,
     marginTop: -8,
   },
   remainingSeatsContainer: {
@@ -116,7 +125,6 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.border_gray,
     alignItems: 'center',
     justifyContent: 'center',
-    marginLeft: MARGIN_LEFT,
     overflow: 'hidden',
   },
   remainingSeatsText: {

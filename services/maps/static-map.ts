@@ -7,6 +7,56 @@ interface StaticMapOptions {
   width?: number
   height?: number
   scale?: number
+  padding?: {
+    top: number
+    right: number
+    bottom: number
+    left: number
+  }
+}
+
+const DEFAULT_PADDING = {
+  top: 220,
+  right: 150,
+  bottom: 300,
+  left: 150,
+}
+
+/**
+ * Calculates expanded bounds with padding
+ */
+function calculateVisibleBounds(
+  origin: Location,
+  destination: Location,
+  width: number,
+  height: number,
+  padding: { top: number; right: number; bottom: number; left: number }
+): string {
+  const lat1 = origin.location.lat!
+  const lng1 = origin.location.lng!
+  const lat2 = destination.location.lat!
+  const lng2 = destination.location.lng!
+
+  const minLat = Math.min(lat1, lat2)
+  const maxLat = Math.max(lat1, lat2)
+  const minLng = Math.min(lng1, lng2)
+  const maxLng = Math.max(lng1, lng2)
+
+  const latRange = maxLat - minLat || 0.01
+  const lngRange = maxLng - minLng || 0.01
+
+  const effectiveWidth = width - padding.left - padding.right
+  const effectiveHeight = height - padding.top - padding.bottom
+
+  const latPaddingFactor = (padding.top + padding.bottom) / effectiveHeight
+  const lngPaddingFactor = (padding.left + padding.right) / effectiveWidth
+
+  const expandedMinLat = minLat - latRange * latPaddingFactor
+  const expandedMaxLat = maxLat + latRange * latPaddingFactor
+  const expandedMinLng = minLng - lngRange * lngPaddingFactor
+  const expandedMaxLng = maxLng + lngRange * lngPaddingFactor
+
+  return `${expandedMinLat},${expandedMinLng}|${expandedMaxLat},${expandedMaxLng}`
 }
 
 /**
@@ -20,6 +70,7 @@ export async function getStaticMapImageUrl({
   width = 640,
   height = 240,
   scale = 2,
+  padding = DEFAULT_PADDING,
 }: StaticMapOptions): Promise<string> {
   try {
     // Fetch directions to get the encoded polyline
@@ -57,8 +108,10 @@ export async function getStaticMapImageUrl({
       'style=feature:road|element:labels|visibility:off',
     ].join('&')
 
-    // Generate static map URL with the route polyline, dark theme, custom colors, and HD resolution
-    const staticMapUrl = `https://maps.googleapis.com/maps/api/staticmap?size=${width}x${height}&scale=${scale}&${styleParams}&path=color:0x4285F4|weight:5|enc:${encodedPolyline}&markers=color:0x6F52EA|${origin.location.lat},${origin.location.lng}&markers=color:0x2AADAD|${destination.location.lat},${destination.location.lng}&key=${GOOGLE_MAPS_API_KEY}`
+    const visibleBounds = calculateVisibleBounds(origin, destination, width, height, padding)
+
+    // Generate static map URL with the route polyline, dark theme, custom colors, visible bounds for padding, and HD resolution
+    const staticMapUrl = `https://maps.googleapis.com/maps/api/staticmap?size=${width}x${height}&scale=${scale}&${styleParams}&visible=${visibleBounds}&path=color:0x4285F4|weight:5|enc:${encodedPolyline}&markers=color:0x6F52EA|${origin.location.lat},${origin.location.lng}&markers=color:0x2AADAD|${destination.location.lat},${destination.location.lng}&key=${GOOGLE_MAPS_API_KEY}`
 
     return staticMapUrl
   } catch (error) {

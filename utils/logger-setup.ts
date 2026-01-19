@@ -44,7 +44,7 @@ class LoggerSetup {
       Sentry.setTag('platform', Platform.OS)
 
       const crashlytics = getCrashlytics()
-      await crashlytics.setAttributes({
+      crashlytics.setAttributes({
         environment,
         app_version: appVersion,
         platform: Platform.OS,
@@ -108,7 +108,7 @@ class LoggerSetup {
           username: userName,
         })
 
-        await crashlytics.setUserId(userId)
+        crashlytics.setUserId(userId)
 
         const attributes: Record<string, string> = {}
         if (userEmail) {
@@ -118,11 +118,11 @@ class LoggerSetup {
           attributes.user_name = userName
         }
         if (Object.keys(attributes).length > 0) {
-          await crashlytics.setAttributes(attributes)
+          crashlytics.setAttributes(attributes)
         }
       } else {
         Sentry.setUser(null)
-        await crashlytics.setUserId('')
+        crashlytics.setUserId('')
       }
     } catch (error) {
       console.error('Failed to set user:', error)

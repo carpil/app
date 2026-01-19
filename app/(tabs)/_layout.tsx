@@ -5,21 +5,26 @@ import { Tabs } from 'expo-router'
 import { useBootstrap } from 'hooks/useBootstrap'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import CheckoutModal from 'app/checkout/modal'
+import PendingPaymentBanner from '@components/banners/pending-payment-banner'
 import RatingsModal from 'app/ratings/modal'
 
 const HeaderTitle = ({
   title,
   color = COLORS.primary,
+  hasBannerAbove = false,
 }: {
   title: string
   color: string
+  hasBannerAbove?: boolean
 }) => {
   const insets = useSafeAreaInsets()
+  const topPadding = hasBannerAbove ? 16 : insets.top + 16
+
   return (
     <View
       style={{
         backgroundColor: color,
-        paddingTop: insets.top + 16,
+        paddingTop: topPadding,
         paddingBottom: 10,
         paddingHorizontal: 16,
       }}
@@ -30,10 +35,15 @@ const HeaderTitle = ({
 }
 
 export default function TabsLayout() {
-  const { pendingReviews, pendingPayment } = useBootstrap()
+  const { inRide, rideId, pendingReviews, pendingPayment } = useBootstrap()
+
+  const hasActiveRideBanner = inRide && rideId
+  const hasPendingPaymentBanner = pendingPayment !== null
+  const hasBanner = Boolean(hasActiveRideBanner || hasPendingPaymentBanner)
 
   return (
-    <>
+    <View style={styles.container}>
+      <PendingPaymentBanner />
       <Tabs
         screenOptions={{
           headerShown: false,
@@ -54,7 +64,11 @@ export default function TabsLayout() {
             tabBarIcon: ({ color }) => <CarIcon color={color} />,
             headerShown: true,
             header: () => (
-              <HeaderTitle title="Viajes disponibles" color={COLORS.primary} />
+              <HeaderTitle
+                title="Viajes disponibles"
+                color={COLORS.primary}
+                hasBannerAbove={hasBanner}
+              />
             ),
           }}
         />
@@ -65,7 +79,11 @@ export default function TabsLayout() {
             tabBarIcon: ({ color }) => <MessagesIcon color={color} />,
             headerShown: true,
             header: () => (
-              <HeaderTitle title="Chats" color={COLORS.dark_gray} />
+              <HeaderTitle
+                title="Chats"
+                color={COLORS.dark_gray}
+                hasBannerAbove={hasBanner}
+              />
             ),
           }}
         />
@@ -76,7 +94,11 @@ export default function TabsLayout() {
             tabBarIcon: ({ color }) => <ProfileIcon color={color} />,
             headerShown: true,
             header: () => (
-              <HeaderTitle title="Perfil" color={COLORS.dark_gray} />
+              <HeaderTitle
+                title="Perfil"
+                color={COLORS.dark_gray}
+                hasBannerAbove={hasBanner}
+              />
             ),
           }}
         />
@@ -85,11 +107,14 @@ export default function TabsLayout() {
       {!pendingPayment && pendingReviews && pendingReviews.length > 0 && (
         <RatingsModal pendingReviews={pendingReviews} />
       )}
-    </>
+    </View>
   )
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
   header: {
     alignItems: 'center',
     justifyContent: 'center',
