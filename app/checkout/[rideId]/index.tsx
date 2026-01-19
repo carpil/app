@@ -7,7 +7,6 @@ import {
   ActivityIndicator,
 } from 'react-native'
 import { useLocalSearchParams, useRouter } from 'expo-router'
-import SafeScreen from '@components/safe-screen'
 import { useEffect, useState } from 'react'
 import { getRide } from 'services/api/rides'
 import { Ride } from '~types/ride'

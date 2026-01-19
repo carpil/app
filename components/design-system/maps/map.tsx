@@ -1,5 +1,5 @@
 import { useRef, useMemo } from 'react'
-import { Platform, StyleSheet } from 'react-native'
+import { StyleSheet } from 'react-native'
 import {
   GOOGLE_MAPS_API_KEY,
   googleMapsTheme,
@@ -15,13 +15,6 @@ export const COSTA_RICA_REGION: Region = {
   latitudeDelta: 5.0,
   longitude: -83.7534,
   longitudeDelta: 5.0,
-}
-
-const FINAL_PADDING = {
-  top: 100,
-  right: 60,
-  bottom: Platform.OS === 'ios' ? 300 : 200,
-  left: 60,
 }
 
 const MARKER_COLORS = {
@@ -52,9 +45,18 @@ export default function Map({ origin, destination, meetingPoint }: MapProps) {
     return points
   }, [origin, destination, meetingPoint])
 
+  const edgePadding = useMemo(() => {
+    return {
+      top: 220,
+      right: 150,
+      bottom: 300,
+      left: 150,
+    }
+  }, [])
+
   const handleFitToCoordinates = () => {
     mapRef.current?.fitToCoordinates(coordinates, {
-      edgePadding: FINAL_PADDING,
+      edgePadding,
       animated: true,
     })
   }

@@ -14,7 +14,7 @@ import { SendIcon } from '@components/icons'
 import { ChatResponse } from '~types/responses/chat'
 import { COLORS } from '@utils/constansts/colors'
 import { getChat, sendMessage } from 'services/api/chats'
-import { useLocalSearchParams, useNavigation, usePathname } from 'expo-router'
+import { useLocalSearchParams, useNavigation } from 'expo-router'
 import Avatar from '@components/avatar'
 import SafeScreen from '@components/safe-screen'
 import {
@@ -31,7 +31,6 @@ import { decryptMessage } from '@utils/decrypt-message'
 import MessageBubbleComponent from '@components/chats/message-bubble'
 import { logger } from '@utils/logs'
 import FirestoreConfig from 'services/firestore/config'
-import { useBootstrap } from 'hooks/useBootstrap'
 
 export default function Messages() {
   const [chat, setChat] = useState<ChatResponse | null>(null)
@@ -41,19 +40,11 @@ export default function Messages() {
   const [error, setError] = useState<string | null>(null)
   const { chatId } = useLocalSearchParams()
   const navigation = useNavigation()
-  const pathname = usePathname()
   const scrollViewRef = useRef<ScrollView>(null)
-  const { inRide, rideId, pendingPayment } = useBootstrap()
 
   const { user } = useAuthStore()
 
   const userId = user?.id ?? ''
-
-  const isOnRideNavigation = pathname?.includes('/ride-navigation/')
-  const isOnCheckout = pathname?.includes('/checkout/')
-  const hasActiveRideBanner = inRide && rideId && !isOnRideNavigation && !isOnCheckout
-  const hasPendingPaymentBanner = pendingPayment !== null && !isOnCheckout
-  const hasBanner = Boolean(hasActiveRideBanner || hasPendingPaymentBanner)
 
   useLayoutEffect(() => {
     if (chat?.ride?.origin && chat?.ride?.destination) {
@@ -284,7 +275,6 @@ export default function Messages() {
       backgroundColor={COLORS.dark_gray}
       applyTopInset={false}
       keyboardAware
-      hasBanner={hasBanner}
     >
       <View style={styles.container}>
         {/* messages */}
