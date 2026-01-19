@@ -4,10 +4,9 @@ import {
   getIdToken,
   onAuthStateChanged,
 } from '@react-native-firebase/auth'
-import { Redirect, usePathname } from 'expo-router'
+import { Redirect } from 'expo-router'
 import { useEffect, useState } from 'react'
 import { getUser } from 'services/api/user'
-import { useRealtimeBootstrap } from 'hooks/useRealtimeBootstrap'
 import { useBootstrap } from 'hooks/useBootstrap'
 import { useAuthStore } from 'store/useAuthStore'
 import { User } from '~types/user'
@@ -17,9 +16,6 @@ export default function Index() {
   const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null)
   const { login } = useAuthStore()
   const { inRide, rideId, isLoading } = useBootstrap()
-  const pathname = usePathname()
-
-  useRealtimeBootstrap()
 
   useEffect(() => {
     const auth = getAuth()
@@ -59,17 +55,8 @@ export default function Index() {
     return <Redirect href="/login" />
   }
 
-  const isOnRideNavigation = pathname?.includes('/ride-navigation/')
-
   if (inRide && rideId) {
-    if (!isOnRideNavigation) {
-      return <Redirect href={`/ride-navigation/${rideId}`} />
-    }
-    return null
-  }
-
-  if (isOnRideNavigation) {
-    return null
+    return <Redirect href={`/ride-navigation/${rideId}`} />
   }
 
   return <Redirect href="/(tabs)" />
