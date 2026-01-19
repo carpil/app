@@ -19,10 +19,15 @@ export default function InteractiveModal({
 
   const insets = useSafeAreaInsets()
 
+  const ANDROID_HEADER_HEIGHT = 56
+
   const snapPointHeight =
     Platform.OS === 'ios'
       ? insets.bottom + collapsedHeight
       : insets.bottom + collapsedHeight + 60
+
+  const modalTopOffset =
+    Platform.OS === 'ios' ? insets.top + 20 : ANDROID_HEADER_HEIGHT + 35
 
   const handlePositionChange = (position: 'top' | 'initial') => {
     setIsExpanded(position === 'top')
@@ -38,7 +43,7 @@ export default function InteractiveModal({
       handleStyle={styles.expandedHandle}
       onPositionChange={handlePositionChange}
       modalStyle={styles.modalStyle}
-      modalTopOffset={insets.top + 20}
+      modalTopOffset={modalTopOffset}
     >
       <View style={styles.contentContainer}>
         {!isExpanded && <View style={styles.handle} />}

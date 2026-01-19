@@ -139,7 +139,7 @@ export default function SinpeMovilPayment() {
         [
           {
             text: 'Continuar',
-            onPress: () => router.back(),
+            onPress: () => router.replace('/(tabs)'),
           },
         ],
       )

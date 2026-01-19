@@ -91,7 +91,11 @@ export default function RideNavigationScreen() {
                 nestedScrollEnabled={true}
               >
                 {allUsers.map((passenger) => (
-                  <PassengerCard key={passenger.id} passenger={passenger} />
+                  <PassengerCard
+                    key={passenger.id}
+                    passenger={passenger}
+                    chatId={ride.chatId}
+                  />
                 ))}
               </ScrollView>
             </View>

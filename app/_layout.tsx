@@ -1,7 +1,8 @@
 import { Stack, usePathname, useSegments } from 'expo-router'
-import { StyleSheet, Platform } from 'react-native'
+import { StyleSheet, Platform, View } from 'react-native'
 import { useEffect, useRef } from 'react'
 import AppProviders from '@components/providers/app-providers'
+import ActiveRideBanner from '@components/banners/active-ride-banner'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { GoogleOneTapSignIn } from '@react-native-google-signin/google-signin'
@@ -75,11 +76,14 @@ function RootLayoutContent() {
     <GestureHandlerRootView style={styles.container}>
       <SafeAreaProvider>
         <AppProviders>
-          <Stack
-            screenOptions={{
-              headerShown: false,
-            }}
-          />
+          <View style={styles.container}>
+            <ActiveRideBanner />
+            <Stack
+              screenOptions={{
+                headerShown: false,
+              }}
+            />
+          </View>
         </AppProviders>
       </SafeAreaProvider>
     </GestureHandlerRootView>

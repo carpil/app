@@ -11,6 +11,7 @@ export interface User {
   averageRating?: number
   currentRideId?: string | null
   pendingReviewRideIds?: string[]
+  inRide?: boolean | null
   lastUpdated?: Date
   createdAt?: Date
   updatedAt?: Date
