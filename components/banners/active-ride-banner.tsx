@@ -2,14 +2,14 @@ import { Pressable, StyleSheet, Text, View } from 'react-native'
 import { useRouter, usePathname } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { COLORS } from '@utils/constansts/colors'
-import { useBootstrapStore } from 'store/useBootstrapStore'
+import { useBootstrap } from 'hooks/useBootstrap'
 import { CarIcon } from '@components/icons'
 
 export default function ActiveRideBanner() {
   const router = useRouter()
   const pathname = usePathname()
   const insets = useSafeAreaInsets()
-  const { inRide, rideId } = useBootstrapStore()
+  const { inRide, rideId } = useBootstrap()
 
   const isOnRideNavigation = pathname.includes('/ride-navigation/')
   const isOnCheckout = pathname.includes('/checkout/')
@@ -20,7 +20,9 @@ export default function ActiveRideBanner() {
   }
 
   const handlePress = () => {
-    router.push(`/ride-navigation/${rideId}`)
+    if (rideId) {
+      router.replace(`/ride-navigation/${rideId}`)
+    }
   }
 
   return (

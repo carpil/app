@@ -264,10 +264,27 @@ export default function Checkout() {
       const ride = await getRide(rideId)
       if (ride) {
         setRide(ride)
+      } else {
+        logger.error('Ride not found for checkout', {
+          action: 'checkout_ride_not_found',
+          metadata: { rideId: rideId || '' },
+        })
+        Alert.alert(
+          'Viaje no encontrado',
+          'El viaje que buscas no existe o ya no está disponible.',
+          [
+            {
+              text: 'Continuar',
+              onPress: () => {
+                router.replace('/(tabs)')
+              },
+            },
+          ],
+        )
       }
     }
     fetchRide()
-  }, [rideId])
+  }, [rideId, router, logger])
 
   const handleEmergencyExit = () => {
     logger.warn('Emergency exit from checkout', {

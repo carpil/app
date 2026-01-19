@@ -5,15 +5,14 @@ import { useAuthStore } from 'store/useAuthStore'
 import StarRating from './star-rating'
 import { useState } from 'react'
 import { Rating } from '~types/rating'
-import { UserInfo } from '~types/user'
-import { useBootstrap } from 'hooks/useBootstrap'
+import { PendingReview } from '~types/responses/bootstrap'
 import ActionButton from '@components/design-system/buttons/action-button'
 import { logger } from '@utils/logs'
 
 interface PassengersRatingProps {
   onComplete?: () => void
   onSaveRating: (rating: Rating | Rating[]) => Promise<void>
-  passengers: UserInfo[]
+  passengers: PendingReview[]
 }
 
 export interface RatingComponentProps {
@@ -27,12 +26,13 @@ export default function PassengersRating({
   passengers,
 }: PassengersRatingProps) {
   const user = useAuthStore((state) => state.user)
-  const { rideId } = useBootstrap()
   const [ratings, setRatings] = useState<RatingComponentProps[]>([])
 
-  if (user == null) {
+  if (user == null || passengers.length === 0) {
     return null
   }
+
+  const rideId = passengers[0].rideId
 
   const handleRatingComplete = async () => {
     if (ratings.length === 0) {
@@ -47,7 +47,7 @@ export default function PassengersRating({
 
     const ratingsToSave = ratings.map((rating) => ({
       targetUserId: rating.userId,
-      rideId: rideId || '',
+      rideId,
       rating: rating.rating,
       comment: '',
     }))

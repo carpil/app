@@ -1,24 +1,9 @@
 import { API_URL } from '@utils/constansts/api'
 import { useAuthStore } from 'store/useAuthStore'
-import { updateUserState } from 'services/firestore/user-state'
 import { CreateRideRequest } from '~types/requests/ride'
 import { DefaultResponse } from '~types/responses/default'
 import { RideResponse, RidesResponse } from '~types/responses/rides'
 import { logger } from '@utils/logs'
-
-const updateFirebaseState = async (state: {
-  inRide: boolean
-  rideId: string | null
-  isDriver: boolean
-}) => {
-  const { user } = useAuthStore.getState()
-  if (user) {
-    await updateUserState(user.id, {
-      ...state,
-      rideId: state.rideId || undefined,
-    })
-  }
-}
 
 export const getRides = async () => {
   const response = await fetch(`${API_URL}/rides/drivers`, {
@@ -184,20 +169,12 @@ export const startRide = async (id: string) => {
   const data = (await response.json()) as DefaultResponse
   const { message } = data
 
-  if (message) {
-    await updateFirebaseState({
-      inRide: true,
+  logger.info('Ride started successfully', {
+    action: 'start_ride_success',
+    metadata: {
       rideId: id,
-      isDriver: true,
-    })
-
-    logger.info('Ride started successfully', {
-      action: 'start_ride_success',
-      metadata: {
-        rideId: id,
-      },
-    })
-  }
+    },
+  })
 
   return message
 }

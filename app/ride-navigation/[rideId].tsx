@@ -14,12 +14,15 @@ import InteractiveModal from '@components/modal/interactive-modal'
 import LocationCard from './components/location-card'
 import Map from '@components/design-system/maps/map'
 import PassengerCard from './components/passenger-card'
+import { useBootstrap } from 'hooks/useBootstrap'
 
 export default function RideNavigationScreen() {
   const { rideId } = useLocalSearchParams<{ rideId: string }>()
   const router = useRouter()
   const [ride, setRide] = useState<Ride | null>(null)
+  const [hasError, setHasError] = useState(false)
   const user = useAuthStore((state) => state.user)
+  const { inRide, pendingPayment } = useBootstrap()
 
   const insets = useSafeAreaInsets()
 
@@ -45,6 +48,8 @@ export default function RideNavigationScreen() {
           action: 'ride_navigation_load_failed',
           metadata: { rideId },
         })
+        setHasError(true)
+        router.replace('/(tabs)')
         return
       }
       logger.info('Ride navigation loaded successfully', {
@@ -58,7 +63,21 @@ export default function RideNavigationScreen() {
       setRide(ride)
     }
     fetchRide()
-  }, [rideId])
+  }, [rideId, router])
+
+  useEffect(() => {
+    if (!inRide && ride) {
+      if (pendingPayment) {
+        router.replace(`/checkout/${rideId}`)
+      } else {
+        router.replace('/(tabs)')
+      }
+    }
+  }, [inRide, pendingPayment, ride, rideId, router])
+
+  if (hasError) {
+    return null
+  }
 
   if (ride == null || ride.origin == null || ride.destination == null) {
     return null

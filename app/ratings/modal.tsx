@@ -1,15 +1,15 @@
 import { COLORS } from '@utils/constansts/colors'
-import { useRef, useEffect, useState } from 'react'
-import { Platform, View, StyleSheet } from 'react-native'
+import { createRating } from 'services/api/ratings'
+import { logger } from '@utils/logs'
 import { Modalize } from 'react-native-modalize'
+import { PendingReview } from '~types/responses/bootstrap'
+import { Platform, View, StyleSheet } from 'react-native'
+import { Rating } from '~types/rating'
 import { useAuthStore } from 'store/useAuthStore'
+import { useRef, useEffect, useState } from 'react'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import DriverRating from './driver-rating'
 import PassengersRating from './passengers-rating'
-import { PendingReview } from '~types/responses/bootstrap'
-import { Rating } from '~types/rating'
-import { createRating } from 'services/api/ratings'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { logger } from '@utils/logs'
 
 interface RatingsModalProps {
   pendingReviews: PendingReview[]

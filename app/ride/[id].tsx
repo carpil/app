@@ -99,12 +99,7 @@ export default function RideDetails() {
       setActionLoading(true)
       const message = await startRide(rideId)
       if (message) {
-        Alert.alert('¡Viaje iniciado!', 'Comienza tu aventura. ¡Buen viaje!', [
-          {
-            text: 'Continuar',
-            onPress: () => router.push(`/ride-navigation/${rideId}`),
-          },
-        ])
+        router.replace(`/ride-navigation/${rideId}`)
       }
     } catch (error) {
       console.error('Error starting ride:', error)

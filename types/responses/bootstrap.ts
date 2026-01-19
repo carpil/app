@@ -2,8 +2,10 @@ import { Location } from '~types/location'
 
 export interface PendingReview {
   id: string
+  userId: string
   name: string
   profilePicture: string
+  rideId: string
   role: 'driver' | 'passenger'
 }
 

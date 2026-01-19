@@ -3,7 +3,6 @@ import { CarIcon, MessagesIcon, ProfileIcon } from '@components/icons'
 import { COLORS } from '@utils/constansts/colors'
 import { Tabs } from 'expo-router'
 import { useBootstrap } from 'hooks/useBootstrap'
-import { useBootstrapStore } from 'store/useBootstrapStore'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import CheckoutModal from 'app/checkout/modal'
 import PendingPaymentBanner from '@components/banners/pending-payment-banner'
@@ -36,12 +35,11 @@ const HeaderTitle = ({
 }
 
 export default function TabsLayout() {
-  const { pendingReviews, pendingPayment } = useBootstrap()
-  const { inRide, rideId } = useBootstrapStore()
+  const { inRide, rideId, pendingReviews, pendingPayment } = useBootstrap()
 
   const hasActiveRideBanner = inRide && rideId
   const hasPendingPaymentBanner = pendingPayment !== null
-  const hasBanner = hasActiveRideBanner || hasPendingPaymentBanner
+  const hasBanner = Boolean(hasActiveRideBanner || hasPendingPaymentBanner)
 
   return (
     <View style={styles.container}>

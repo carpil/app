@@ -10,6 +10,7 @@ export interface User {
   pushToken?: string[]
   averageRating?: number
   currentRideId?: string | null
+  pendingPaymentRideIds?: string[]
   pendingReviewRideIds?: string[]
   inRide?: boolean | null
   lastUpdated?: Date
