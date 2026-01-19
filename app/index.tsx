@@ -15,7 +15,7 @@ export default function Index() {
   const [initializing, setInitializing] = useState(true)
   const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null)
   const { login } = useAuthStore()
-  const { inRide, rideId, isLoading } = useBootstrap()
+  const { isLoading } = useBootstrap()
 
   useEffect(() => {
     const auth = getAuth()
@@ -53,10 +53,6 @@ export default function Index() {
 
   if (!user) {
     return <Redirect href="/login" />
-  }
-
-  if (inRide && rideId) {
-    return <Redirect href={`/ride-navigation/${rideId}`} />
   }
 
   return <Redirect href="/(tabs)" />

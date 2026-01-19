@@ -19,6 +19,7 @@ android/
 # Environment variables
 .env
 .env.local
+.env.dev
 .env.development
 .env.preview
 .env.production
