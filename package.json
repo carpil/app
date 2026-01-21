@@ -26,7 +26,7 @@
     "@react-native-firebase/crashlytics": "^23.5.0",
     "@react-native-firebase/firestore": "21.14.0",
     "@react-native-firebase/storage": "21.14.0",
-    "@react-native-google-signin/google-signin": "^21.1.1",
+    "@react-native-google-signin/google-signin": "^22.4.0",
     "@react-navigation/bottom-tabs": "^7.2.0",
     "@react-navigation/native": "^7.0.14",
     "@react-navigation/native-stack": "^7.2.0",

@@ -2298,10 +2298,10 @@
   resolved "https://registry.npmjs.org/@react-native-firebase/storage/-/storage-21.14.0.tgz"
   integrity sha512-aI3ufzrz6vhrj/oE5i2dQ42xavS3sr1lWySpaBSfoF304vWwV9RqUIZTKQAsaB8PktDO0a3IMwnYwZrx56IddQ==
 
-"@react-native-google-signin/google-signin@^21.1.1":
-  version "21.2.0"
-  resolved "https://npm.pkg.github.com/download/@react-native-google-signin/google-signin/21.2.0/e525c1410b818aa64299e0e072828bb4d5e47ebd"
-  integrity sha512-U6hNxiy17gdFiD9DyEbvu7vy4k3ka1HEreFyZQDHiPt6pVsLWYqz80S7VZLKSMwGnMp7xjoiw4LsYbTV22NtHg==
+"@react-native-google-signin/google-signin@^22.4.0":
+  version "22.4.0"
+  resolved "https://npm.pkg.github.com/download/@react-native-google-signin/google-signin/22.4.0/d70ff8f9c595f7dfc537f77c2cbfddabf3817c6e#d70ff8f9c595f7dfc537f77c2cbfddabf3817c6e"
+  integrity sha512-PXuISzxetHwwfLgZSY2WOlJsjJtcsZ1WHgMI5sjdkW/2HdSXVLZqfal0FpLEDfCtTX+YQmEHNsky7xYx4JOxRw==
   dependencies:
     "@types/google-one-tap" "^1.2.6"
     jwt-decode "^4.0.0"
